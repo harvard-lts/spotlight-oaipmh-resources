@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:local="http://www.loc.org/namespace"
+   version="3.6"
+   xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd">
+   <titleInfo>
+      <title>Mr. Webster's Dudleian lecture on Presbyterian ordination</title>
+      <subTitle>lecture [delivered], Sept. 7, 1774</subTitle>
+   </titleInfo>
+   <name type="personal" usage="primary">
+      <namePart>Webster, Samuel</namePart>
+      <namePart type="date">1718-1796</namePart>
+      <role>
+         <roleTerm authority="marcrelator" type="text">creator</roleTerm>
+      </role>
+   </name>
+   <typeOfResource manuscript="yes">mixed material</typeOfResource>
+   <genre authority="rbgenr">Sermons-1774.</genre>
+   <genre authority="rbgenr">Lectures-Massachusetts-Cambridge-1774.</genre>
+   <originInfo>
+      <place>
+         <placeTerm type="code" authority="marccountry">mau</placeTerm>
+      </place>
+      <dateCreated encoding="marc">1774mau</dateCreated>
+      <dateIssued encoding="marc">1774</dateIssued>
+      <issuance>monographic</issuance>
+   </originInfo>
+   <physicalDescription>
+      <extent>.03 cubic feet (1 volume)</extent>
+      <extent>p. 20 x 16 cm.</extent>
+   </physicalDescription>
+   <abstract displayLabel="Scope and content">The hand-sewn notebook contains a manuscript draft of the Dudleian
+            lecture delivered by Samuel Webster on September 7, 1774 at Harvard College. The sermon
+            begins with the Biblical text Matt. 20:25-28. The copy includes a small number of edits
+            and struck-out words. The item is missing the back cover and appears to be missing its
+            final pages.</abstract>
+   <targetAudience authority="marctarget">adult</targetAudience>
+   <note type="biographical/historical">Samuel Webster (1718-1796), minister of Second Church of the West Parish
+            of Salisbury, Mass., was born on August 16, 1718 in Bradford, Mass. He received an AB
+            from Harvard in 1737 and an AM in 1740. He was ordained as a minister of the Rocky Hill
+            meetinghouse of the West Parish of Salisbury on August 12, 1741. In 1777 he delivered
+            the Election Sermon to the Massachusetts General Court. He received a doctorate in
+            sacred theology from Harvard in 1792. Webster died on July 18, 1796.</note>
+   <note>Received March 8, 1843 from President Quincy.</note>
+   <note type="biographical/historical">Harvard's oldest endowed lecture, the annual Dudleian
+            lecture, is funded by a bequest from the 1750 will of the Chief Justice of Massachusetts
+            Paul Dudley (1675-1750/1). Dudley specified that the topics of the annual sermon were to
+            rotate among four themes: natural religion, revealed religion, the "Romish church," and
+            the validity of the ordination of ministers. The first lecture was given in 1755, and
+            the series continued uninterrupted until 1857, when the fund was suspended to allow for
+            accumulation. The lecture series began again in 1888. In 1911, the Trustees voted to
+            discontinue the third lecture topic, and the series continued rotating among the three
+            topics until 1956, when another lecture topic, "Catholicism and Protestantism," was
+            voted into the rotation.</note>
+   <subject authority="lcsh">
+      <topic>Presbyterianism</topic>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard College (1636-1780)</namePart>
+      </name>
+      <genre>Sermons</genre>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Ordination</topic>
+      <genre>Early works to 1800</genre>
+   </subject>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Dudleian lecture</title>
+         <partNumber>1774</partNumber>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Dudleian lectures. 1774</title>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Collections of the Harvard University Archives</title>
+         <partName>University records</partName>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Collections of the Harvard University Archives</title>
+         <partName>Personal archives</partName>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Harvard in the Seventeenth and Eighteenth Centuries</title>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Colonial North American Project at Harvard University</title>
+      </titleInfo>
+   </relatedItem>
+   <location>
+      <physicalLocation>Networked Resource</physicalLocation>
+      <url access="preview"
+         >http://ids.lib.harvard.edu/ids/view/53779294?width=150&amp;height=150&amp;usethumb=y</url>
+      <url access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:26515075</url>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>HUC 5340.74.2</shelfLocator>
+   </location>
+   <location>
+      <url displayLabel="CNA" usage="primary display" access="object in context"
+         >http://colonialnorthamerica.library.harvard.edu/007139874</url>
+   </location>
+   <extension>
+      <originalDocument:originalDocument xmlns:originalDocument="http://lib.harvard.edu/TBD"
+         xmlns="http://lib.harvard.edu/TBD" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         >https://s3.amazonaws.com/harvard.librarycloud.marc.qa/007139874</originalDocument:originalDocument>
+   </extension>
+   <extension>
+      <usageData:usageData xmlns:usageData="http://lib.harvard.edu/usagedata"
+         xmlns="http://lib.harvard.edu/usagedata"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <stackScore>1</stackScore>
+      </usageData:usageData>
+   </extension>
+   <extension>
+      <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud"
+         xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <collection>
+            <type>collection</type>
+            <identifier>654</identifier>
+            <abstract/>
+            <title>CNA</title>
+         </collection>
+      </collections:collections>
+   </extension>
+   <recordInfo>
+      <recordContentSource authority="marcorg">HLS</recordContentSource>
+      <recordCreationDate encoding="marc">960912</recordCreationDate>
+      <recordChangeDate encoding="iso8601">20160413094520.0</recordChangeDate>
+      <recordOrigin>Converted from MARCXML to MODS version 3.5 using MARC21slim2MODS3-5.xsl
+         (Revision 1.102 2014/08/12)</recordOrigin>
+   </recordInfo>
+</mods>

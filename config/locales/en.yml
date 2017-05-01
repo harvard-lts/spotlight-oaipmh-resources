@@ -1,0 +1,13 @@
+en:
+  spotlight:
+    resources:
+        oaipmh_harvester:
+            form:
+              title: 'OAI-PMH MODS Harvest URL'
+              url: "Base URL"
+              add_item: "Add MODS items"
+              url-field:
+                help: "Add the base URL of the OAI MODS Set."
+              set: "Set name"
+              set-field:
+                help: "Type in the MODS set name."

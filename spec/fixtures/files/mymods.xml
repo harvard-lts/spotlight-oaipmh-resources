@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+   <responseDate>2017-04-26T09:15:22Z</responseDate>
+   <request verb="ListRecords" set="CNA" >http://faulkner.hul.harvard.edu:9024/oai/</request>
+   <ListRecords>
+      <record>
+         <header>
+            <identifier>div00407c00021</identifier>
+            <datestamp>20170214</datestamp>
+         </header>
+         <metadata>
+            <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+               <mods:titleInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <mods:title>Letter from Universalist Church in Pike Run, Washington County, Pennsylvania, May 2, 1792</mods:title>
+               </mods:titleInfo>
+               <mods:originInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <mods:dateCreated point="start">1792</mods:dateCreated>
+                  <mods:dateCreated point="end">1792</mods:dateCreated>
+                  <mods:dateCreated>May 2, 1792</mods:dateCreated>
+               </mods:originInfo>
+               <mods:physicalDescription xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <mods:note type="organization">otherlevel</mods:note>
+               </mods:physicalDescription>
+               <mods:identifier xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">bMS 407/1 (20).</mods:identifier>
+               <mods:accessCondition xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">There are no restrictions on access to this collection.</mods:accessCondition>
+               <mods:location xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <mods:url>http://nrs.harvard.edu/urn-3:DIV.LIB:17326823</mods:url>
+               </mods:location>
+               <mods:relatedItem xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink" type="host" displayLabel="collection">
+                  <mods:location>
+                     <mods:physicalLocation type="repository">Andover-Harvard Theological Library, Harvard Divinity School, Harvard University</mods:physicalLocation>
+                  </mods:location>
+                  <mods:identifier>bMS 407</mods:identifier>
+                  <mods:name>
+                     <mods:namePart>Philadelphia Universalist Convention.</mods:namePart>
+                     <mods:role>
+                        <mods:roleTerm>originator</mods:roleTerm>
+                     </mods:role>
+                  </mods:name>
+                  <mods:titleInfo>
+                     <mods:title>Philadelphia Universalist Convention. Records, 1789-1807.</mods:title>
+                  </mods:titleInfo>
+                  <mods:originInfo>
+                     <mods:dateCreated>1789-1807.</mods:dateCreated>
+                  </mods:originInfo>
+                  <mods:recordInfo>
+                     <mods:recordIdentifier>div00407</mods:recordIdentifier>
+                  </mods:recordInfo>
+               </mods:relatedItem>
+               <mods:extension xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                     <collection>
+                        <type>collection</type>
+                        <identifier>654</identifier>
+                        <abstract />
+                        <title>CNA</title>
+                     </collection>
+                  </collections:collections>
+               </mods:extension>
+               <mods:recordInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <mods:recordChangeDate encoding="iso8601">20170214</mods:recordChangeDate>
+                  <mods:recordIdentifier source="MH:OASIS">div00407c00021</mods:recordIdentifier>
+               </mods:recordInfo>
+            </mods:mods>
+         </metadata>
+      </record>
+      <resumptionToken completeListSize="6459">10:0001-01-01:9999-12-31:CNA:mods</resumptionToken>
+   </ListRecords>
+</OAI-PMH>
