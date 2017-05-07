@@ -8,35 +8,36 @@
 #          attribute: xxx (optional)
 #          attribute-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
 #          conditional: (optional)
-#          mods-path: xxx (optional)
-#          mods-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
-#
+#            - mods-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
+#              spotlight-value: xxx (defaults to path-text item if not present)
+#            - mods-path: xxx (you don't need both mods-value and mods-path but you can use both)
+#              value: xxx (optional, use !xxx for exclusion)
+#              spotlight-value: xxx (defaults to path-text item if not present)
 #
 
   # In CNA, this field has to append a urn if the record type is item - Michael may have to do this one
 - spotlight-field: unique-id_tesim
   mods:
       - path: recordInfo/recordIdentifier
-#- spotlight-field: record-type_ssim
-#  default-value: collection
-#  mods:
-#      - path: recordInfo/recordIdentifier
-#        conditional:
-#          mods-attribute: source
-#          mods-attribute-value: "MH:OASIS"
-#          spotlight-value: item
-- spotlight-field: full_title_tesim
+- spotlight-field: record-type_ssim
+  default-value: collection
   mods:
+      - path: recordInfo/recordIdentifier
+        attribute: source
+        conditional:
+          - mods-value: MH:OASIS
+            spotlight-value: item
+- mods:
       - path: titleInfo/title
 - spotlight-field: citation-title_tesim
   mods:
       - path: titleInfo/title
 - spotlight-field: creator_tesim
-  delimiter: " , "
   mods:
       - path: name/namePart
-        mods-path: name/role/roleTerm
-        mods-value: creator
+        conditional:
+        - mods-path: name/role/roleTerm
+          value: creator
 - spotlight-field: start-date_tesim
   mods:
       - path: originInfo/dateIssued
@@ -53,8 +54,9 @@
 - spotlight-field: contributer_tesim
   mods:
       - path: name/namePart
-        mods-path: name/role/roleTerm
-        mods-value: '!creator'
+        conditional:
+          - mods-path: name/role/roleTerm
+            value: '!creator'
 - spotlight-field: spotlight_upload_description_tesim
   mods: 
       - path: abstract
@@ -63,11 +65,9 @@
   mods:
       - path: note  # this needs to be parsed
 - spotlight-field: format_tesim
-  delimiter: "|"
   mods:
       - path: physicalDescription/extent
 - spotlight-field: language_ssim
-  default-value: eng
   mods: 
       - path: language/languageTerm
 - spotlight-field: repository_ssim
@@ -76,53 +76,42 @@
         attribute: type
         attribute-value: repository # this needs logic for pullng the collection info
 - spotlight-field: subjects_ssim
-  delimiter: --
+  delimiter: ---
   mods:
-      - path: subject
-        delimiter: "|"
-        subpaths:
-          - subpath: name/namePart
-          - subpath: topic
-          - subpath: genre
+      - path: subject/name/namePart
+      - path: name/topic
 - spotlight-field: type_ssim
-  delimiter: "|"
   mods:
       - path: genre
 - spotlight-field: origin_ssim
   mods:
       - path: originInfo/place/placeTerm
 - spotlight-field: biography_tesim
-  delimiter: "|"
   mods:
       - path: note
         attribute: type
         attribute-value: biographical/historical
 - spotlight-field: statement-of-responsibility_tesim
-  delimiter: "|"
   mods:
       - path: note
         attribute: type
         attribute-value: statement of responsibility
 - spotlight-field: citation_tesim
-  delimiter: "|"
   mods:
        - path: note
          attribute: type
          attribute-value: preferred citation
 - spotlight-field: physical-form_tesim
-  delimiter: "|"
   mods:
       - path: note
         attribute: type
         attribute-value: additional physical form
 - spotlight-field: language-info_tesim
-  delimiter: "|"
   mods:
       - path: note
         attribute: type
         attribute-value: language
 - spotlight-field: publications_tesim
-  delimiter: "|"
   mods:
       - path: note
         attribute: type
