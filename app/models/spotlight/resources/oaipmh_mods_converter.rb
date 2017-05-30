@@ -1,12 +1,7 @@
 include Spotlight::Resources::Exceptions
 module Spotlight::Resources
   
-#  class ConditionalModsValue
-#    attr_accessor :mods_attribute, :mods_attribute_value, :spotlight_value
-#  end
-#  class ConditionalModsPath
-#    attr_accessor :value, :spotlight_value, :mods_path
-#  end
+
   class ModsPath
     attr_accessor :path, :subpaths, :delimiter
   end
@@ -16,31 +11,40 @@ module Spotlight::Resources
   class ConverterItem
     attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
-    
+         #RESERVED_MODS_SHORTCUTS = {'full_title_tesim'=> "full_titles"}
+        
     def initialize()
       delimiter = ", "
     end
     
     def extract_value(modsrecord)
-      value = ""
+      values = Array.new
               
       mods_items.each do |item|
         #Throw error if path value fails
         begin
           node = modsrecord.mods_ng_xml
-          values = parse_paths(item, node)
-          
-          if (values.empty? && !default_value.blank?)
+          retvalues = parse_paths(item, node)
+          if (retvalues.empty? && !default_value.blank?)
             value = default_value
-          else
-            value = values.join(delimiter)
+            values << value
+          elsif (!retvalues.empty?)
+            value = retvalues.join(delimiter)
+            if (spotlight_field.eql?('spotlight_upload_description_tesim'))
+              puts 'DESCRIPTION>>>>>>>>>>>>'
+              puts retvalues.to_s
+            end
+            values << value
           end
+          
         rescue NoMethodError
           print  "The path " + item.mods_path.path + " does not exist\n"
         end
       
       end
-      value 
+      if (!values.empty?)
+        values.join(delimiter) 
+      end
     end
       
     
@@ -55,11 +59,10 @@ module Spotlight::Resources
         end
       end
       
-      sub_delimiter = ","
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
          
-        if (!item.mods_path.delimiter.blank?)
+        if (!item.mods_path.delimiter.nil?)
           sub_delimiter = item.mods_path.delimiter
         end
         item.mods_path.subpaths.each do |subpath|
@@ -75,7 +78,7 @@ module Spotlight::Resources
           subpaths << subpath_array
         end
       end
-       
+
        values = Array.new
        
        node = parentnode
@@ -83,11 +86,18 @@ module Spotlight::Resources
        path_array.each do |path|
          node = node.send(path)    
        end
+if (spotlight_field.eql?('collection-title_ssim'))
+  puts "Collection Title"
+             puts node.to_s
+             end
        #node.each do |subnode|
          if (!subpaths.empty?)
-           subpathvalues = Array.new
+           #subpathvalues = Array.new
            #subnodes when paths are stored in subpaths in the mapping file
-           node.each do |subnode|  
+           node.each do |subnode| 
+             subpathvalues = Array.new
+             puts subnode.to_s 
+             puts subpaths.to_s
              subpaths.each do |subpath_array|
                tempval = subnode
                
@@ -95,24 +105,27 @@ module Spotlight::Resources
                 subpath_array.each do |subpath|
                   tempval = tempval.send(subpath)
                 end
-                
-                if (!tempval.text.empty? && check_attributes(tempval, item) && check_conditional_path(tempval, item, parentnode))
+                if (!tempval.text.empty?)
                   subpathvalues << tempval.text
                 end
               end
-              #puts subpathvalues.to_s
+             if (spotlight_field.eql?('collection-title_ssim'))
+             puts subpathvalues.to_s
+             end
            if (!subpathvalues.empty?)
-             #puts "delimiter: " + sub_delimiter
              values << subpathvalues.join(sub_delimiter)
+
            end
            end
          else
+     
            node.each do |subnode|
             if (!subnode.text.blank? && check_attributes(subnode, item) && check_conditional_path(subnode, item, parentnode))
               values << subnode.text
             end
            end
          end
+
        #end
       values
     end
@@ -120,7 +133,7 @@ module Spotlight::Resources
     def check_attributes(node, item)
       if (!item.mods_attribute.blank?)
         attribute = node[item.mods_attribute]
-        if (item.mods_attribute_value[0].eql?("!") && !attribute.eql?(item.mods_attribute_value.delete("!")))
+        if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !attribute.eql?(item.mods_attribute_value.delete("!")))
           value_accepted = true
         elsif (attribute.eql?(item.mods_attribute_value))
           value_accepted = true
@@ -161,25 +174,17 @@ module Spotlight::Resources
 end
   
   class OaipmhModsConverter
-    RESERVED_PATHS = {'name/namePart'=> "personal_name/namePart", "name/role/roleTerm" => "personal_name/role/roleTerm", "title/titleInfo" => 'full_titles'}
-
+    RESERVED_PATHS = {'name/namePart'=> "personal_name/namePart", "name/role/roleTerm" => "personal_name/role/roleTerm"}
+    STANDARD_SPOTLIGHT_FIELDS = ['unique-id_tesim', 'full_title_tesim', 'spotlight_upload_description_tesim', 'thumbnail_url_ssm', 'full_image_url_ssm', 'spotlight_upload_date_tesim"', 'spotlight_upload_attribution_tesim']
+       
     #Initialize with the name of the set being converted
-    def initialize(set)
+    def initialize(set, exhibitslug, mapping_file)
       @set = set
-      @mapping_file = nil   
+      @exhibitslug = exhibitslug
+      @mapping_file = mapping_file   
       @converter_items = Array.new  
     end
     
-    #path: xxx (repeatable - all path fields will be concatenated)
-    #          attribute: xxx (optional)
-    #          attribute-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
-    #          conditional: (optional)
-    #            - mods-attribute: xxx
-    #              mods-attribute-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
-    #              spotlight-value: xxx 
-    #            - mods-path: xxx (you don't need both mods-value and mods-path but you can use both)
-    #              value: xxx (optional, use !xxx for exclusion)
-    #              spotlight-value: xxx (defaults to path-text item if not present)
     #Expects a Mods::Record parameter value
     def convert(modsrecord)
       if (@converter_items.empty?)
@@ -189,19 +194,26 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        solr_hash[item.spotlight_field] = item.extract_value(modsrecord)
+        solr_hash[get_spotligh_field_name(item.spotlight_field)] = item.extract_value(modsrecord)
       end
       solr_hash
+    end
+    
+    def get_spotligh_field_name(spotlight_field)      
+      if (!STANDARD_SPOTLIGHT_FIELDS.include?(spotlight_field))
+        spotlight_field = 'exhibit_' + @exhibitslug + '_' + spotlight_field
+      end
+      spotlight_field
     end
     
 
     #Retrieves the mapping file for the set, if one exists, otherwise uses the generic mapping file
     def mapping_file
       if (@mapping_file == nil)
-        @mapping_file = Rails.root.join('config', @set.downcase + "_mapping.yml")
-        if (!File.exists?(@mapping_file))
-          @mapping_file = Rails.root.join('config', 'mapping.yml')
-        end
+        engine_root = Spotlight::Oaipmh::Resources::Engine.root
+        @mapping_file = File.join(engine_root, 'config', 'mapping.yml')
+      else
+        @mapping_file = Rails.root.join("public/uploads/modsmapping", @mapping_file)
       end
       @mapping_file        
     end
@@ -210,7 +222,7 @@ end
   #private
   
   def parse_mapping_file(file)
-
+    
     mapping_config = YAML.load_file(file)
     mapping_config.each do |field|
       
@@ -235,7 +247,7 @@ end
         if (!mods_field.key?("path") || mods_field['path'].blank?)
           raise InvalidMappingFile, "path is required for each mods entry"
         end
-        
+             
         modsitem.mods_path = ModsPath.new
         #The mods gem has special names for certain reserved words/paths
         if (RESERVED_PATHS.key?(mods_field['path']))
@@ -243,6 +255,7 @@ end
         else
           modsitem.mods_path.path = mods_field['path']
         end
+        
         
         if (mods_field.key?('subpaths'))
           subpaths = Array.new
@@ -255,7 +268,7 @@ end
         if (mods_field.key?('delimiter'))
           modsitem.mods_path.delimiter = mods_field['delimiter']
         end
-        
+              
         if (mods_field.key?('attribute'))
           if (!mods_field.key?('attribute-value'))
             raise InvalidMappingFile, field['spotlight-field'] + " - " + mods_field['path'] + ": attribute-value is required if attribute is present" 
@@ -275,39 +288,6 @@ end
           end
           modsitem.conditional_mods_value = mods_field['mods-value']
         end
-
-#        if (mods_field.key?('conditional'))
-#          conditionals = mods_field['conditional']
-#          modsitem.conditional_mods_value = ConditionalModsValue.new
-#          modsitem.conditional_mods_path = Array.new
-#          conditionals.each do |conditional|
-#            if (conditional.key?('mods-attribute'))
-#              if (!conditional.key?('mods-attribute-value'))
-#                raise InvalidMappingFile, field['spotlight-field'] + " - " + mods_field['path'] + ": mods-attribute-value is required if mods-attribute is present"
-#              end
-#              if (!conditional.key?('spotlight-value'))
-#                raise InvalidMappingFile, field['spotlight-field'] + " - " + mods_field['path'] + ": spotlight-value is required if mods-attribute is present"
-#              end
-#              cond = ConditionalModsValue.new
-#              cond.mods_attribute = conditional['mods-attribute']
-#              cond.mods_attribute_value = conditional['mods-attribute-value']
-#              cond.spotlight_value = conditional['spotlight-value']
-#              modsitem.conditional_mods_values << cond
-#            end
-#            if (conditional.key('mods-path'))
-#              if (!conditional.key?('spotlight-value'))
-#                raise InvalidMappingFile, field['spotlight-field'] + " - " + mods_field['path'] + ": value is required if mods-path is present"
-#              end
-#              cond = ConditionalModsPath.new
-#              cond.mods_path = conditional['mods-path']
-#              if (conditional.key?('spotlight-value'))
-#                cond.spotlight_value = conditional['spotlight-value']
-#              end
-#              cond.value = conditional['value']
-#              modsitem.conditional_mods_paths << cond
-#            end
-#          end
-#        end
                 
         item.mods_items << modsitem
       end

@@ -1,11 +1,15 @@
 require 'oai'
+require 'mods'
+#require 'carrierwave'
 
 include OAI::XPath
 include Spotlight::Resources::Exceptions
 module Spotlight::Resources
   class OaipmhModsItem
+    extend CarrierWave::Mount
     attr_reader :titles, :id
-    attr_accessor :metadata
+    attr_accessor :metadata, :itemurl
+    mount_uploader :itemurl, Spotlight::ItemUploader
     def initialize(exhibit, converter)
       @solr_hash = {}
       @exhibit = exhibit
@@ -15,17 +19,17 @@ module Spotlight::Resources
     def to_solr
       add_document_id
       add_title
-      add_thumbnail_url
-      add_full_image_urls
+#      add_thumbnail_url
+#      add_full_image_urls
       add_manifest_url
       solr_hash
     end
     
     def parse_mods_record()
       
-      modsonly = xpath_first(@metadata, "//*[local-name()='mods']")
-      #print modsonly.to_s
-      modsrecord = Mods::Record.new.from_str(modsonly.to_s)
+      modsonly = xpath_first(metadata, "*[local-name()='mods']")
+      #puts modsonly.to_s
+      modsrecord = Mods::Record.new.from_str(modsonly.to_s, false)
       
       if (modsrecord.mods_ng_xml.record_info && modsrecord.mods_ng_xml.record_info.recordIdentifier)
         @id = modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
@@ -45,7 +49,7 @@ module Spotlight::Resources
         raise InvalidModsRecord, "Mods record " + @titles[0] + "must have a title. This mods record was not updated in Spotlight."
       end  
       
-    #@solr_hash << @converter.convert(modsrecord)
+      @solr_hash = @converter.convert(modsrecord)
                
 
 #            @titles = modsrecord.short_titles
@@ -137,7 +141,7 @@ module Spotlight::Resources
     end
 
     def add_title
-      solr_hash[:full_title_tesim] = @titles[0]
+      #solr_hash[:full_title_tesim] = @titles[0]
     end
     
 #    def add_image_urls

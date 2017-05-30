@@ -2,7 +2,7 @@ require 'spec_helper'
 
   RSpec.describe Spotlight::Resources::OaipmhModsItem, type: :model do
     let(:exhibit) { FactoryGirl.create(:exhibit) }
-    let(:converter) { Spotlight::Resources::OaipmhModsConverter.new('CNA')}
+    let(:converter) { Spotlight::Resources::OaipmhModsConverter.new('CNA', 'test-exhibit-name')}
     subject { described_class.new(exhibit, converter) }
       
 #      describe "fetch_ids_uri" do
@@ -50,18 +50,18 @@ require 'spec_helper'
 #          end
 #        end
 #        
-#      describe 'parse_mods_data' do
-#        context 'given a sample xml file' do
-#          it 'verifies that the title can be extracted' do
-#            require 'xml/libxml'
-#            fixture_mods_file = file_fixture("mods_sample.xml")
-#            doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
-#            subject.metadata = doc
-#            subject.parse_mods_record
-#            expect(subject.titles[0]).to eq("Mr. Webster's Dudleian lecture on Presbyterian ordination")
-#          end
-#        end
-#      end
+      describe 'parse_mods_data' do
+        context 'given a sample xml file' do
+          it 'verifies that the title can be extracted' do
+            require 'xml/libxml'
+            fixture_mods_file = file_fixture("mods_sample.xml")
+            doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
+            #subject.metadata = doc
+            solr_hash = subject.parse_mods_record(doc)
+            expect(solr_hash['full_title_tesim']).to eq("Mr. Webster's Dudleian lecture on Presbyterian ordination")
+          end
+        end
+      end
 #      
 #    describe 'parse_mods_ns_data' do
 #        context 'given a sample xml file' do
@@ -83,8 +83,8 @@ require 'spec_helper'
         require 'xml/libxml'
         fixture_mods_file = file_fixture("mods_sample_no_title.xml")
         doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
-        subject.metadata = doc
-        expect {subject.parse_mods_record}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
+        #subject.metadata = doc
+        expect {subject.parse_mods_record(doc)}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
       end
     end
   end
@@ -95,8 +95,8 @@ require 'spec_helper'
         require 'xml/libxml'
         fixture_mods_file = file_fixture("mods_sample_no_id.xml")
         doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
-        subject.metadata = doc
-        expect {subject.parse_mods_record}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
+        #subject.metadata = doc
+        expect {subject.parse_mods_record(doc)}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
       end
     end
    end

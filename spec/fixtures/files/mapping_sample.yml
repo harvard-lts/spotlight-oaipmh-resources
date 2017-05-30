@@ -26,11 +26,20 @@
 #          mods-attribute-value: "MH:OASIS"
 #          spotlight-value: item
 - spotlight-field: full_title_tesim
+  delimiter: ": "
   mods:
-      - path: titleInfo/title
+      - path: titleInfo
 - spotlight-field: citation-title_tesim
   mods:
       - path: titleInfo/title
+- spotlight-field: collection-title_ssim
+  mods:
+      - path: relatedItem
+        delimiter: " "
+        subpaths: 
+          - subpath: titleInfo/title
+        attribute: displayLabel
+        attribute-value: collection       
 - spotlight-field: creator_tesim
   delimiter: " , "
   mods:
@@ -56,9 +65,12 @@
         mods-path: name/role/roleTerm
         mods-value: '!creator'
 - spotlight-field: spotlight_upload_description_tesim
+  delimiter: "|"
   mods: 
       - path: abstract
       - path: note
+        attribute: type
+        attribute-value: 
 - spotlight-field: finding-aid_tesim
   mods:
       - path: note  # this needs to be parsed
@@ -74,12 +86,17 @@
   mods:
       - path: location/physicalLocation
         attribute: type
-        attribute-value: repository # this needs logic for pullng the collection info
+        attribute-value: repository
+      - path: relatedItem
+        subpaths:
+          - subpath: location/physicalLocation
+        attribute: displayLabel
+        attribute-value: collection
 - spotlight-field: subjects_ssim
-  delimiter: --
+  delimiter: "|"
   mods:
       - path: subject
-        delimiter: "|"
+        delimiter: "--"
         subpaths:
           - subpath: name/namePart
           - subpath: topic
