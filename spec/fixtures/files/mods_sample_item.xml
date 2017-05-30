@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+   <mods:titleInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:title>Hosack, David, 1769-1835. A.L.s. to Jared Sparks; New York, 8 Apr 1834.</mods:title>
+   </mods:titleInfo>
+   <mods:physicalDescription xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:extent>1s.(4p.)</mods:extent>
+   </mods:physicalDescription>
+   <mods:physicalDescription xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:note type="organization">item</mods:note>
+   </mods:physicalDescription>
+   <mods:identifier xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">(27).</mods:identifier>
+   <mods:accessCondition xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">There are no restrictions on physical access to this material.</mods:accessCondition>
+   <mods:location xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:url>http://nrs.harvard.edu/urn-3:FHCL.HOUGH:26877311</mods:url>
+   </mods:location>
+   <mods:relatedItem type="host" displayLabel="collection">
+         <mods:location>
+            <mods:physicalLocation type="repository">Houghton Library, Harvard Library, Harvard University</mods:physicalLocation>
+         </mods:location>
+         <mods:identifier>MS Sparks 49.1-49.3</mods:identifier>
+         <mods:name>
+            <mods:namePart>Sparks, Jared, 1789-1866, collector.</mods:namePart>
+            <mods:role>
+               <mods:roleTerm>originator</mods:roleTerm>
+            </mods:role>
+         </mods:name>
+         <mods:titleInfo>
+            <mods:title>Jared Sparks collection of documents concerning the American Revolution,</mods:title>
+         </mods:titleInfo>
+         <mods:originInfo>
+            <mods:dateCreated>1740-1866.</mods:dateCreated>
+         </mods:originInfo>
+         <mods:recordInfo>
+            <mods:recordIdentifier>hou00303</mods:recordIdentifier>
+         </mods:recordInfo>
+      </mods:relatedItem>
+   <mods:extension xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+         <collection>
+            <type>collection</type>
+            <identifier>1</identifier>
+            <abstract />
+            <title>CNA</title>
+         </collection>
+      </collections:collections>
+   </mods:extension>
+   <mods:recordInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:recordChangeDate encoding="iso8601">20170214</mods:recordChangeDate>
+      <mods:recordIdentifier source="MH:OASIS">hou00303c00028</mods:recordIdentifier>
+   </mods:recordInfo>
+</mods:mods>

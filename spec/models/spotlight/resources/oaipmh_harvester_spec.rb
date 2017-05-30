@@ -6,7 +6,8 @@ include OAI::XPath
   RSpec.describe Spotlight::Resources::OaipmhHarvester, type: :model do
     let(:exhibit) { FactoryGirl.create(:exhibit) }
     #subject { described_class.create(exhibit_id: exhibit.id, data: {base_url: 'http://faulkner.hul.harvard.edu:9024/vcoai/vc', set: 'cna2'}) }
-    subject { described_class.create(exhibit_id: exhibit.id, data: {base_url: 'http://faulkner.hul.harvard.edu:9024/oai', set: 'CNA'}) }
+    #subject { described_class.create(exhibit_id: exhibit.id, data: {base_url: 'http://faulkner.hul.harvard.edu:9024/oai', set: 'CNA'}) }
+    subject { described_class.create(exhibit_id: exhibit.id, data: {base_url: 'http://api-qa.lib.harvard.edu:8080/oai', set: 'CNA'}) }
 
     describe "retrieval" do
           context "given a url and collection" do
@@ -14,7 +15,7 @@ include OAI::XPath
               response = subject.oaipmh_harvests
               x = 0
               response.each do |record|
-                modsonly = xpath_first(record.metadata, './/mods:mods')
+                modsonly = xpath_first(record.metadata, "*[local-name()='mods']")
 #print modsonly.to_s
                 modsrecord = Mods::Record.new.from_str(modsonly.to_s)
                 titles = modsrecord.short_titles
@@ -22,14 +23,14 @@ include OAI::XPath
                for title in titles 
                  print title + "\n"
                end
-               modsrecord.mods_ng_xml.origin_info.dateCreated.map do |e| 
-                 print e.text
-                 if e.get_attribute("point") 
-                   print ": " + e.get_attribute("point") + "\n"
-                 else
-                   print "\n"
-                 end
-               end
+#               modsrecord.mods_ng_xml.origin_info.dateCreated.map do |e| 
+#                 print e.text
+#                 if e.get_attribute("point") 
+#                   print ": " + e.get_attribute("point") + "\n"
+#                 else
+#                   print "\n"
+#                 end
+#               end
                 relations = modsrecord.mods_ng_xml.location.url  #.map { |e| e.text }
 #               print "\n\nRelations:\n"
 #               for relation in relations
@@ -37,7 +38,7 @@ include OAI::XPath
 #                 print relation.text + "\n"
 #               end
                 x += 1
-                if (x > 1)
+                if (x > 3)
                   break
                 end
               end

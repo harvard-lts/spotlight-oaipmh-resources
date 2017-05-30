@@ -1,127 +1,157 @@
 #Structure:
 
 #  - spotlight-field: xxx
-#      default-value: xxx (optional)
-#      mods:
-#        delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
-#        path: xxx (repeatable - all path fields will be concatenated)
+#    default-value: xxx (optional)
+#    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
+#    mods:
+#        - path: xxx (repeatable - all path fields will be concatenated)
 #          attribute: xxx (optional)
-#          attribute-value: xxx (optional, use !xxx for exclusion)
+#          attribute-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
 #          conditional: (optional)
-#            - mods-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
-#                spotlight-value: xxx (defaults to path-text item if not present)
+#            - mods-attribute: xxx
+#              mods-attribute-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
+#              spotlight-value: xxx (defaults to path-text item if not present)
 #            - mods-path: xxx (you don't need both mods-value and mods-path but you can use both)
-#                value: xxx (optional, use !xxx for exclusion)
-#                spotlight-value: xxx (defaults to path-text item if not present)
+#              value: xxx (optional, use !xxx for exclusion)
+#              spotlight-value: xxx (defaults to path-text item if not present)
 #
 
   # In CNA, this field has to append a urn if the record type is item - Michael may have to do this one
 - spotlight-field: unique-id_tesim
-      mods:
-        path: recordInfo/recordIdentifier
-- spotlight-field: record-type_ssim
-      default-value: collection
-      mods:
-        path: recordInfo/recordIdentifier
-          attribute: source
-          conditional:
-            - mods-value: MH:OASIS
-              spotlight-value: item
+  mods:
+      - path: recordInfo/recordIdentifier
+#- spotlight-field: record-type_ssim
+#  default-value: collection
+#  mods:
+#      - path: recordInfo/recordIdentifier
+#        conditional:
+#            mods-attribute: source
+#            mods-attribute-value: "MH:OASIS"
+#            spotlight-value: item
 - spotlight-field: full_title_tesim
-      mods:
-        path: titleInfo/title
-- spotlight-field: citation-title_tesim
-      mods:
-        path: titleInfo/title
+  mods:
+      - path: titleInfo
+        delimiter: ": "
+        subpaths:
+          - subpath: title
+          - subpath: subTitle
 - spotlight-field: collection-title_ssim
-      mods:
-        path: relatedItem
-          attribute: displayLabel
-            value: collection
+  mods:
+      - path: relatedItem
+        delimiter: " "
+        attribute: displayLabel
+        attribute-value: collection
+        subpaths: 
+          - subpath: titleInfo/title
+          - subpath: originInfo/dateCreated
+- spotlight-field: citation-title_tesim
+  mods:
+      - path: titleInfo/title
 - spotlight-field: creator_tesim
-      mods:
-        path: name/namePart
-          conditional:
-            - mods-path: name/role/roleTerm
-              value: creator
+  delimiter: " , "
+  mods:
+      - path: name/namePart
+        mods-path: name/role/roleTerm
+        mods-value: creator
 - spotlight-field: start-date_tesim
-      mods:
-        path: originInfo/dateIssued
-          attribute: point
-          attribute-value: start
+  mods:
+      - path: originInfo/dateCreated
+        attribute: point
+        attribute-value: start
 - spotlight-field: end-date_tesim
-      mods:
-        path: originInfo/dateIssued
-          attribute: point
-          attribute-value: end
+  mods:
+      - path: originInfo/dateCreated
+        attribute: point
+        attribute-value: end
 - spotlight-field: date_tesim
-      mods:
-        path: originInfo/dateOther
+  mods:
+      - path: originInfo/dateOther
 - spotlight-field: contributer_tesim
-      mods:
-        path: name/namePart
-          conditional:
-            - mods-path: name/role/roleTerm
-                value: !creator
+  delimiter: " , "
+  mods:
+      - path: name/namePart
+        mods-path: name/role/roleTerm
+        mods-value: '!creator'
 - spotlight-field: spotlight_upload_description_tesim
-      mods: 
-        path: abstract
-        path: note
+  delimiter: "|"
+  mods: 
+      - path: abstract
+      - path: note
+        attribute: type
+        attribute-value: 
 - spotlight-field: finding-aid_tesim
-      mods:
-        path: note  # this needs to be parsed
+  mods:
+      - path: note  # this needs to be parsed
 - spotlight-field: format_tesim
-      mods:
-        path: physicalDescription/extent
+  delimiter: "|"
+  mods:
+      - path: physicalDescription/extent
 - spotlight-field: language_ssim
-      mods: 
-        path: language/languageTerm
+  default-value: eng
+  mods: 
+      - path: language/languageTerm
 - spotlight-field: repository_ssim
-      mods:
-        path: location/physicalLocation
-          attribute: type
-          attribute-value: repository # this needs logic for pullng the collection info
+  mods:
+      - path: location/physicalLocation
+        attribute: type
+        attribute-value: repository
+      - path: relatedItem
+        subpaths:
+          - subpath: location/physicalLocation
+        attribute: displayLabel
+        attribute-value: collection
 - spotlight-field: subjects_ssim
-      mods:
-        delimiter: ---
-        path: subject/name/namePart
-        path: name/topic
+  delimiter: "|"
+  mods:
+      - path: subject
+        delimiter: "--"
+        subpaths:
+          - subpath: name/namePart
+          - subpath: topic
+          - subpath: genre
 - spotlight-field: type_ssim
-      mods:
-        path: genre
+  delimiter: "|"
+  mods:
+      - path: genre
 - spotlight-field: origin_ssim
-      mods:
-        path: originInfo/place/placeTerm
+  mods:
+      - path: originInfo/place/placeTerm
 - spotlight-field: biography_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: biographical/historical
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: biographical/historical
 - spotlight-field: statement-of-responsibility_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: statement of responsibility
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: statement of responsibility
 - spotlight-field: citation_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: preferred citation
+  delimiter: "|"
+  mods:
+       - path: note
+         attribute: type
+         attribute-value: preferred citation
 - spotlight-field: physical-form_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: additional physical form
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: additional physical form
 - spotlight-field: language-info_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: language
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: language
 - spotlight-field: publications_tesim
-      mods:
-        path: note
-          attribute: type
-          attribute-value: publications
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: publications
           
         
           
