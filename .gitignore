@@ -4,3 +4,4 @@ Gemfile.lock
 .internal_test_app/
 .project
 .DS_Store
+/log/
