@@ -5,29 +5,30 @@
 #    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
 #    mods:
 #        - path: xxx (repeatable - all path fields will be concatenated)
-#          attribute: xxx (optional)
-#          attribute-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
-#          conditional: (optional)
-#            - mods-attribute: xxx
-#              mods-attribute-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
-#              spotlight-value: xxx (defaults to path-text item if not present)
-#            - mods-path: xxx (you don't need both mods-value and mods-path but you can use both)
-#              value: xxx (optional, use !xxx for exclusion)
-#              spotlight-value: xxx (defaults to path-text item if not present)
+#          delimiter: " "
+#          attribute: displayLabel
+#          attribute-value: collection
+#          mods-path: xxx 
+#          mods-value: xx
+#          subpaths: 
+#            - subpath: xxx
+#            - subpath: xxx
 #
 
   # In CNA, this field has to append a urn if the record type is item - Michael may have to do this one
 - spotlight-field: unique-id_tesim
   mods:
       - path: recordInfo/recordIdentifier
-#- spotlight-field: record-type_ssim
-#  default-value: collection
-#  mods:
-#      - path: recordInfo/recordIdentifier
-#        conditional:
-#            mods-attribute: source
-#            mods-attribute-value: "MH:OASIS"
-#            spotlight-value: item
+- spotlight-field: record-type_item_ssim
+  mods:
+      - path: recordInfo/recordIdentifier
+        attribute: source
+        attribute-value: "MH:OASIS"
+- spotlight-field: record-type_collection_ssim
+  mods:
+      - path: recordInfo/recordIdentifier
+        attribute: source
+        attribute-value: "MH:ALEPH"
 - spotlight-field: full_title_tesim
   mods:
       - path: titleInfo
@@ -155,6 +156,13 @@
 - spotlight-field: mirador-url_tesim
   mods:
       - path: location/url
+        attribute: access
+        attribute-value: raw object
+- spotlight-field: thumbnail_url_ssm
+  mods:
+      - path: location/url
+        attribute: access
+        attribute-value: preview
           
         
           

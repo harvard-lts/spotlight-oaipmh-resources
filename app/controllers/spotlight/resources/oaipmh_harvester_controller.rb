@@ -1,8 +1,8 @@
+
 module Spotlight::Resources
   class OaipmhHarvesterController < Spotlight::ApplicationController
     
     load_and_authorize_resource :exhibit, class: Spotlight::Exhibit
-    before_action :build_resource
     
     # POST /oaipmh_harvester
     def create
@@ -14,15 +14,13 @@ module Spotlight::Resources
         upload
         my_params.delete(:custom_mapping)
       end
-      @resource.attributes = my_params
-      if @resource.save_and_index
-        #Create delayed job
-        
-        redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
-      else
-        flash[:error] = @resource.errors.values.join(', ') if @resource.errors.present?
-        redirect_to spotlight.new_exhibit_resource_path(current_exhibit)
+      mapping_file = resource_params[:mapping_file]
+      if (resource_params.has_key?(:custom_mapping))
+              mapping_file = resource_params[:custom_mapping].original_filename
       end
+      Spotlight::Resources::PerformHarvestsJob.perform_later(resource_params[:url], resource_params[:set], mapping_file, current_exhibit, current_user)
+      flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
+      redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
     
   private
@@ -41,18 +39,6 @@ module Spotlight::Resources
       params.require(:resources_oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
     end
     
-    def build_resource
-      mapping_file = resource_params[:mapping_file]
-      if (resource_params.has_key?(:custom_mapping))
-        mapping_file = resource_params[:custom_mapping].original_filename
-      end
-      @resource ||= Spotlight::Resources::OaipmhHarvester.create(
-        url: resource_params[:url],
-        data: {base_url: resource_params[:url],
-          set: resource_params[:set],
-          mapping_file: mapping_file},
-        exhibit: current_exhibit)
-    end
   end
 
 end

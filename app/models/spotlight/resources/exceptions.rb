@@ -9,6 +9,9 @@ module Spotlight
       
       class ModsPathDoesNotExist < StandardError
       end
+      
+      class HarvestingFailedException < StandardError
+      end
     end
   end
 end

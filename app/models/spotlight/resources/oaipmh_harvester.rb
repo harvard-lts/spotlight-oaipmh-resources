@@ -9,8 +9,12 @@ module Spotlight::Resources
             
     def oaipmh_harvests
       self.url = self.data[:base_url] + '?verb=ListRecords&metadataPrefix=mods&set=' + self.data[:set]
-      client = OAI::Client.new self.data[:base_url]
-      @oaipmh_harvests = client.list_records :set => self.data[:set], :metadata_prefix => 'mods'
+      @client = OAI::Client.new self.data[:base_url]
+      @oaipmh_harvests = @client.list_records :set => self.data[:set], :metadata_prefix => 'mods'
+    end
+    
+    def resumption_oaipmh_harvests (token)
+      @oaipmh_harvests = @client.list_records :resumption_token => token
     end
     
     def self.mapping_files
