@@ -2,6 +2,7 @@ require 'oai'
 require 'net/http'
 require 'uri'
 require_relative '../../../mailer/spotlight/harvesting_complete_mailer'
+include Spotlight::Resources::Exceptions
  # encoding: utf-8
 module Spotlight::Resources
   ##
