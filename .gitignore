@@ -1,6 +1,4 @@
 log/*
-Gemfile.lock
-*.gem
 .internal_test_app/
 .project
 .DS_Store
