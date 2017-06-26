@@ -46,8 +46,10 @@ module Spotlight::Resources
     
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
-      path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
-      path_array[0] = path_array[0].join("_").downcase
+      if (path_array.count > 1)
+        path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
+        path_array[0] = path_array[0].join("_").downcase
+      end
       path_array.each_with_index do |value, key|
         #The mods gem has special names for certain reserved words/paths
         if (RESERVED_WORDS.key?(value))
@@ -101,9 +103,6 @@ module Spotlight::Resources
                   subpathvalues << tempval.text
                 end
               end
-             if (spotlight_field.eql?('collection-title_ssim'))
-             puts subpathvalues.to_s
-             end
            if (!subpathvalues.empty?)
              values << subpathvalues.join(sub_delimiter)
 

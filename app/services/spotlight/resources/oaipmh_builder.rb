@@ -23,9 +23,11 @@ module Spotlight
         until (resumption_token.nil?)
           puts 'RESUMPTION TOKEN>>>>'
           puts resumption_token
+          ##Shortening the harvest
           j = 0
         harvests.each do |record|
-          #if (j < 5)
+          ##shortening the harvest
+          if (j < 5)
           #puts i  
           item = OaipmhModsItem.new(exhibit, oai_mods_converter)
          
@@ -96,21 +98,32 @@ module Spotlight
               item_solr = add_image_dimensions(item_solr, fullimagefile)
               end
           end
+          
+          catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
+          #record_type_collection = oai_mods_converter.get_spotligh_field_name("record-type_collection_ssim")
+          catalog-url_item = oai_mods_converter.get_spotligh_field_name("catalog-url_item_tesim")
+              
+          ###More CNA Specific
+          if (item_solr.key?(catalog-url_item) && !item_solr[catalog-url_item].nil?)
+            item_solr[catalog_url_field_name] = "http://id.lib.harvard.edu/ead/" + item_solr[catalog-url_item] + "/catalog"
+            item_solr.delete(catalog-url_item)
+          end
                 
               
-          #j = j + 1
+          j = j + 1
           yield base_doc.merge(item_solr) if item_solr.present?
                 
-          #end
+          end
           
         end
-        #i = i+1
-        #if (i < 11)
+        ####Shortening the harvest
+        i = i+1
+        if (i < 11)
           harvests = resource.resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-        #else
-        #  resumption_token = nil
-        #end
+        else
+          resumption_token = nil
+        end
       end
       end
       
