@@ -30,10 +30,6 @@ module Spotlight::Resources
             values << value
           elsif (!retvalues.empty?)
             value = retvalues.join(delimiter)
-            if (spotlight_field.eql?('spotlight_upload_description_tesim'))
-              puts 'DESCRIPTION>>>>>>>>>>>>'
-              puts retvalues.to_s
-            end
             values << value
           end
           
@@ -86,10 +82,6 @@ module Spotlight::Resources
        path_array.each do |path|
          node = node.send(path)    
        end
-if (spotlight_field.eql?('collection-title_ssim'))
-  puts "Collection Title"
-             puts node.to_s
-             end
        #node.each do |subnode|
          if (!subpaths.empty?)
            #subpathvalues = Array.new
@@ -131,14 +123,16 @@ if (spotlight_field.eql?('collection-title_ssim'))
     end
     
     def check_attributes(node, item)
-      if (!item.mods_attribute.blank?)
-        
-        if (item.mods_attribute[0].eql?("!") && (!node.key?(item.mods_attribute.delete("!")) || node[item.mods_attribute.delete("!")].blank?))
+     value_accepted = false
+     if (!item.mods_attribute.blank?)
+        if (item.mods_attribute[0].eql?("!") && node[item.mods_attribute.delete("!")].blank?)
           value_accepted = true
-        elsif (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !node[item.mods_attribute].eql?(item.mods_attribute_value.delete("!")))
-          value_accepted = true
-        elsif (node[item.mods_attribute].eql?(item.mods_attribute_value))
-          value_accepted = true
+        elsif (!item.mods_attribute[0].eql?("!"))
+          if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !node[item.mods_attribute].eql?(item.mods_attribute_value.delete("!")))
+            value_accepted = true
+          elsif (node[item.mods_attribute].eql?(item.mods_attribute_value))
+            value_accepted = true
+          end
         end
       else
         value_accepted = true
