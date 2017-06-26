@@ -36,8 +36,7 @@ module Spotlight
           parsed_hash = item.parse_mods_record()
           
           item_solr = item.to_solr
-          
-            
+
           catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
           #record_type_collection = oai_mods_converter.get_spotligh_field_name("record-type_collection_ssim")
           catalog_url_item = oai_mods_converter.get_spotligh_field_name("catalog-url_item_tesim")
@@ -47,6 +46,7 @@ module Spotlight
             item_solr[catalog_url_field_name] = "http://id.lib.harvard.edu/ead/" + item_solr[catalog_url_item] + "/catalog"
             item_solr.delete(catalog_url_item)
           end
+
           
           record_type_field_name = oai_mods_converter.get_spotligh_field_name("record-type_ssim")
           record_type_collection = oai_mods_converter.get_spotligh_field_name("record-type_collection_ssim")
