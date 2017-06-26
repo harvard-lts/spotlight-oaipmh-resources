@@ -46,7 +46,7 @@ module Spotlight::Resources
     
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
-      if (path_array.count > 1)
+      if (!item.mods_path.eql?("accessCondition"))
         path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
         path_array[0] = path_array[0].join("_").downcase
       end

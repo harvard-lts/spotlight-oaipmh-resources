@@ -109,22 +109,8 @@ module Spotlight
               item_solr = add_image_dimensions(item_solr, fullimagefile)
               end
           end
-<<<<<<< HEAD
-
-=======
           
-          catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
-          #record_type_collection = oai_mods_converter.get_spotligh_field_name("record-type_collection_ssim")
-          catalog-url_item = oai_mods_converter.get_spotligh_field_name("catalog-url_item_tesim")
-              
-          ###More CNA Specific
-          if (item_solr.key?(catalog-url_item) && !item_solr[catalog-url_item].nil?)
-            item_solr[catalog_url_field_name] = "http://id.lib.harvard.edu/ead/" + item_solr[catalog-url_item] + "/catalog"
-            item_solr.delete(catalog-url_item)
-          end
->>>>>>> 23b7a009a561b449f0dc59183d047cee92d52b1d
-                
-              
+                    
           j = j + 1
           yield base_doc.merge(item_solr) if item_solr.present?
                 
