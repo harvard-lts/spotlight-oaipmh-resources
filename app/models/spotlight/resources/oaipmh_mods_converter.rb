@@ -132,10 +132,11 @@ if (spotlight_field.eql?('collection-title_ssim'))
     
     def check_attributes(node, item)
       if (!item.mods_attribute.blank?)
-        attribute = node[item.mods_attribute]
-        if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !attribute.eql?(item.mods_attribute_value.delete("!")))
+        if (item.mods_attribute.equals('none') && item.mods_attribute_value.blank && (node[item.mods_attribute].nil? || node[item.mods_attribute].blank?))
           value_accepted = true
-        elsif (attribute.eql?(item.mods_attribute_value))
+        elsif (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !node[item.mods_attribute].eql?(item.mods_attribute_value.delete("!")))
+          value_accepted = true
+        elsif (node[item.mods_attribute].eql?(item.mods_attribute_value))
           value_accepted = true
         end
       else
