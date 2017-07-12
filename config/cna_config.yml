@@ -1,0 +1,17 @@
+defaults: &defaults
+  HOLLIS_RECORD_XPATH: ".//*[local-name()='relatedItem']/*[local-name()='relatedItem'][@otherType='HOLLIS record']/*[local-name()='location']/*[local-name()='url']"
+  FINDING_AID_XPATH: ".//*[local-name()='relatedItem']/*[local-name()='relatedItem'][@otherType='Finding Aid']/*[local-name()='location']/*[local-name()='url']"
+
+development:
+  <<: *defaults
+  ALEPH_URL: http://id.lib.harvard.edu/aleph/
+  
+  
+test:
+  <<: *defaults
+  ALEPH_URL: http://id.lib.harvard.edu/aleph/
+
+production:
+  <<: *defaults
+  ALEPH_URL: http://id.lib.harvard.edu/aleph/
+  

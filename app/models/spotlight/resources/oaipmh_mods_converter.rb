@@ -11,7 +11,6 @@ module Spotlight::Resources
   class ConverterItem
     attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
-         #RESERVED_MODS_SHORTCUTS = {'full_title_tesim'=> "full_titles"}
         
     def initialize()
       delimiter = ", "
@@ -44,6 +43,8 @@ module Spotlight::Resources
     end
       
     
+    #Creates the proper path and subpath names to use since some words may be reserved.
+    #It then uses these paths to search for the value in the Mods::Record
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
       if (!item.mods_path.path.eql?("accessCondition"))
@@ -56,13 +57,13 @@ module Spotlight::Resources
           path_array[key] = RESERVED_WORDS[value]
         end
       end
-      
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
          
         if (!item.mods_path.delimiter.nil?)
           sub_delimiter = item.mods_path.delimiter
         end
+        
         item.mods_path.subpaths.each do |subpath|
           subpath_array = subpath.split("/")
           subpath_array.each_with_index do |value, key|
@@ -84,43 +85,63 @@ module Spotlight::Resources
        path_array.each do |path|
          node = node.send(path)    
        end
-       #node.each do |subnode|
-         if (!subpaths.empty?)
-           #subpathvalues = Array.new
-           #subnodes when paths are stored in subpaths in the mapping file
-           node.each do |subnode| 
-             subpathvalues = Array.new
-             puts subnode.to_s 
-             puts subpaths.to_s
-             subpaths.each do |subpath_array|
-               tempval = subnode
-               
-               #eg. subject/name/namePart
-                subpath_array.each do |subpath|
-                  tempval = tempval.send(subpath)
-                end
-                if (!tempval.text.empty?)
-                  subpathvalues << tempval.text
-                end
-              end
+       
+       if (!subpaths.empty?)
+         #subnodes when paths are stored in subpaths in the mapping file
+         node.each do |subnode| 
+           subpathvalues = Array.new
+           value = find_node_value(subnode, subpaths,  [], 0) 
+           if (!value.empty?)
+             subpathvalues << value
+           end
            if (!subpathvalues.empty?)
              values << subpathvalues.join(sub_delimiter)
-
-           end
-           end
-         else
-     
-           node.each do |subnode|
-            if (!subnode.text.blank? && check_attributes(subnode, item) && check_conditional_path(subnode, item, parentnode))
-              values << subnode.text
-            end
+  
            end
          end
+       else
+   
+         node.each do |subnode|
+          if (!subnode.text.blank? && check_attributes(subnode, item) && check_conditional_path(subnode, item, parentnode))
+            values << subnode.text
+          end
+         end
+       end
 
-       #end
       values
     end
     
+    #Loops through the nodes to find the supplied subpaths.  It is done this way to preserve the mods order of the subpath values
+    def find_node_value(nodeset, subpaths, parentpathname, popcount) 
+      values = []
+      pathname = parentpathname
+      nodeset.children.each do |node|
+
+        nodename = node.name
+        if (RESERVED_WORDS.key?(nodename))
+          nodename = RESERVED_WORDS[nodename]
+        end
+        if (!nodename.eql?('text'))
+          pathname << nodename
+          popcount = popcount + 1
+          if (subpaths.include?(pathname))
+            if (!node.text.blank?)
+              values << node.text
+            end
+            #If the paths have multiple levels, then we have to back out to the original nodepath.
+            until (popcount == 0) do
+              pathname.pop
+              popcount = popcount - 1;
+            end
+          elsif (node.children.count > 1 || (node.children.first == 1 && !node.children.first.name.eql?('text')))
+            values += find_node_value(node, subpaths, pathname, popcount + 1)
+          end
+        end
+      end
+      values
+    end
+    
+    #Make sure that the attribute value matches (if supplied)
     def check_attributes(node, item)
      value_accepted = false
      if (!item.mods_attribute.blank?)
@@ -139,6 +160,7 @@ module Spotlight::Resources
       value_accepted
     end
     
+    #Make sure the conditional path value matches (if supplied)
     def check_conditional_path(node, item, parentnode)
       value_accepted = false
       if (!item.conditional_mods_value.blank?)
@@ -194,6 +216,7 @@ end
       solr_hash
     end
     
+    #Some spotlight fields use the exhibit slug, others do not
     def get_spotligh_field_name(spotlight_field)      
       if (!STANDARD_SPOTLIGHT_FIELDS.include?(spotlight_field))
         spotlight_field = 'exhibit_' + @exhibitslug + '_' + spotlight_field
@@ -216,6 +239,7 @@ end
   
   #private
   
+   #parses the mapping file into a model
   def parse_mapping_file(file)
     
     mapping_config = YAML.load_file(file)

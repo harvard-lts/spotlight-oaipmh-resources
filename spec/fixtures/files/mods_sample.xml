@@ -21,7 +21,8 @@
       <place>
          <placeTerm type="code" authority="marccountry">mau</placeTerm>
       </place>
-      <dateCreated encoding="marc">1774mau</dateCreated>
+      <dateCreated point="start">1774mau</dateCreated>
+      <dateCreated>1774</dateCreated>
       <dateIssued encoding="marc">1774</dateIssued>
       <issuance>monographic</issuance>
    </originInfo>

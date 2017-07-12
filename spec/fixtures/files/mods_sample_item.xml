@@ -1,52 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
    <mods:titleInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <mods:title>Hosack, David, 1769-1835. A.L.s. to Jared Sparks; New York, 8 Apr 1834.</mods:title>
+      <mods:title>Dane, Nathan, 1752-1835. A.L.s.to Edward Little; Beverly, 20 Feb 1805.</mods:title>
    </mods:titleInfo>
+   <mods:originInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <mods:dateCreated point="start">1805</mods:dateCreated>
+      <mods:dateCreated point="end">1805</mods:dateCreated>
+      <mods:dateCreated>1805.</mods:dateCreated>
+   </mods:originInfo>
    <mods:physicalDescription xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <mods:extent>1s.(4p.)</mods:extent>
+      <mods:extent>1s.(2p.)</mods:extent>
    </mods:physicalDescription>
    <mods:physicalDescription xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <mods:note type="organization">item</mods:note>
+      <mods:note type="organization">otherlevel</mods:note>
    </mods:physicalDescription>
-   <mods:identifier xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">(27).</mods:identifier>
-   <mods:accessCondition xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">There are no restrictions on physical access to this material.</mods:accessCondition>
+   <mods:identifier xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">(1).</mods:identifier>
+   <mods:accessCondition xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">There are no restrictions on physical access to this material. Collection is open for research.</mods:accessCondition>
    <mods:location xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <mods:url>http://nrs.harvard.edu/urn-3:FHCL.HOUGH:26877311</mods:url>
+      <mods:url access="raw object">http://nrs.harvard.edu/urn-3:FHCL.HOUGH:29049987</mods:url>
+      <mods:url access="preview">http://ids.lib.harvard.edu/ids/view/425465687?width=150&amp;height=150&amp;usethumb=y</mods:url>
    </mods:location>
-   <mods:relatedItem type="host" displayLabel="collection">
+   <mods:subject authority="lcsh">
+      <mods:topic>Presbyterianism</mods:topic>
+   </mods:subject>
+   <mods:subject authority="lcsh">
+      <mods:name type="corporate">
+         <mods:namePart>Harvard College (1636-1780)</mods:namePart>
+      </mods:name>
+      <mods:genre>Sermons</mods:genre>
+   </mods:subject>
+   <mods:subject authority="lcsh">
+      <mods:topic>Ordination</mods:topic>
+      <mods:genre>Early works to 1800</mods:genre>
+   </mods:subject>
+   <mods:relatedItem xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink" type="host">
+      <mods:titleInfo>
+         <mods:title>XXII. Hartford Convention</mods:title>
+      </mods:titleInfo>
+      <mods:identifier>bMS Am 1649.22.</mods:identifier>
+      <mods:recordInfo>
+         <mods:recordIdentifier>hou01499c01475</mods:recordIdentifier>
+      </mods:recordInfo>
+      <mods:relatedItem type="host" displayLabel="collection">
          <mods:location>
             <mods:physicalLocation type="repository">Houghton Library, Harvard Library, Harvard University</mods:physicalLocation>
          </mods:location>
-         <mods:identifier>MS Sparks 49.1-49.3</mods:identifier>
+         <mods:identifier>MS Am 1649.1-1649.23</mods:identifier>
          <mods:name>
-            <mods:namePart>Sparks, Jared, 1789-1866, collector.</mods:namePart>
+            <mods:namePart>Dearborn, Frederick M. (Frederick Myers), b. 1876, collector.</mods:namePart>
             <mods:role>
                <mods:roleTerm>originator</mods:roleTerm>
+               <mods:roleTerm>creator</mods:roleTerm>
             </mods:role>
          </mods:name>
          <mods:titleInfo>
-            <mods:title>Jared Sparks collection of documents concerning the American Revolution,</mods:title>
+            <mods:title>Frederick M. Dearborn collection of military and political Americana, Part I: The Revolution and the Administration,</mods:title>
          </mods:titleInfo>
          <mods:originInfo>
-            <mods:dateCreated>1740-1866.</mods:dateCreated>
+            <mods:dateCreated>1669-1958.</mods:dateCreated>
          </mods:originInfo>
          <mods:recordInfo>
-            <mods:recordIdentifier>hou00303</mods:recordIdentifier>
+            <mods:recordIdentifier>hou01499</mods:recordIdentifier>
          </mods:recordInfo>
+         <mods:relatedItem otherType="HOLLIS record">
+            <mods:location>
+               <mods:url>http://id.lib.harvard.edu/aleph/000601800/catalog</mods:url>
+            </mods:location>
+         </mods:relatedItem>
+         <mods:relatedItem otherType="Finding Aid">
+            <mods:location>
+               <mods:url>http://id.lib.harvard.edu/ead/hou01499/catalog</mods:url>
+            </mods:location>
+         </mods:relatedItem>
       </mods:relatedItem>
+   </mods:relatedItem>
+   <mods:extension xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <HarvardDRS:DRSMetadata xmlns:HarvardDRS="http://hul.harvard.edu/ois/xml/ns/HarvardDRS" xmlns="http://www.loc.gov/mods/v3" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+         <HarvardDRS:accessFlag xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">P</HarvardDRS:accessFlag>
+         <HarvardDRS:contentModel xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">PDS DOCUMENT</HarvardDRS:contentModel>
+         <HarvardDRS:uriType xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">PDS</HarvardDRS:uriType>
+         <HarvardDRS:fileDeliveryURL xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">http://nrs.harvard.edu/urn-3:FHCL.HOUGH:29049987</HarvardDRS:fileDeliveryURL>
+         <HarvardDRS:ownerCode xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">FHCL.HOUGH</HarvardDRS:ownerCode>
+         <HarvardDRS:ownerCodeDisplayName xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">Houghton Library</HarvardDRS:ownerCodeDisplayName>
+         <HarvardDRS:metsLabel xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">Dearborn, Frederick M. (Frederick Myers), b. 1876, collector. Frederick M. Dearborn collection of military and political Americana, Part I: The Revolution and the Administration, 1669-1958. Hartford Convention. Dane, Nathan, 1752-1835. A.L.s.to Edward Little; Beverly, 20 Feb 1805. MS Am 1649.22 (1). Houghton Library, Harvard University, Cambridge, Mass.</HarvardDRS:metsLabel>
+         <HarvardDRS:lastModifiedDate xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">2016-10-20T17:28:23.819Z</HarvardDRS:lastModifiedDate>
+      </HarvardDRS:DRSMetadata>
+   </mods:extension>
    <mods:extension xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
       <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:xs="http://www.w3.org/2001/XMLSchema">
          <collection>
             <type>collection</type>
-            <identifier>1</identifier>
+            <identifier>6551</identifier>
             <abstract />
-            <title>CNA</title>
+            <title>CNAREVIEW</title>
          </collection>
       </collections:collections>
    </mods:extension>
    <mods:recordInfo xmlns="http://api.lib.harvard.edu/v2/item" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xlink="http://www.w3.org/1999/xlink">
       <mods:recordChangeDate encoding="iso8601">20170214</mods:recordChangeDate>
-      <mods:recordIdentifier source="MH:OASIS">hou00303c00028</mods:recordIdentifier>
+      <mods:recordIdentifier source="MH:OASIS">hou01499c01476</mods:recordIdentifier>
    </mods:recordInfo>
 </mods:mods>

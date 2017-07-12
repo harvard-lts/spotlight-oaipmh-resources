@@ -10,6 +10,7 @@ module Spotlight::Resources
   class PerformHarvestsJob < ActiveJob::Base
     queue_as :default
     
+    #This happens when the job starts or is enqueued, not after it finishes.  Why?
     after_perform do |job|
       url, set, mapping, exhibit, user = job.arguments
       Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now

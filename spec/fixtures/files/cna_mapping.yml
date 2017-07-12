@@ -54,6 +54,9 @@
       - path: name/namePart
         mods-path: name/role/roleTerm
         mods-value: creator
+      - path: name/namePart
+        mods-path: name/role/roleTerm
+        mods-value: originator
 - spotlight-field: start-date_tesim
   mods:
       - path: originInfo/dateCreated
@@ -169,4 +172,5 @@
 - spotlight-field: catalog-url_item_tesim
   mods:
       - path: recordInfo/recordIdentifier
+
           
