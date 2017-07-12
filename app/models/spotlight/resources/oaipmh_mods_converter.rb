@@ -59,7 +59,9 @@ module Spotlight::Resources
       end
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
-         
+        if (item.mods_path.path.eql?('relatedItem'))
+                     puts item.mods_path.subpaths
+                   end
         if (!item.mods_path.delimiter.nil?)
           sub_delimiter = item.mods_path.delimiter
         end
@@ -71,7 +73,7 @@ module Spotlight::Resources
             if (RESERVED_WORDS.key?(value))
               subpath_array[key] = RESERVED_WORDS[value]
             end
-            
+            #subpath = subpath_array.join('/')
           end
 
           subpaths << subpath_array
@@ -90,6 +92,7 @@ module Spotlight::Resources
          #subnodes when paths are stored in subpaths in the mapping file
          node.each do |subnode| 
            subpathvalues = Array.new
+                        
            value = find_node_value(subnode, subpaths,  [], 0) 
            if (!value.empty?)
              subpathvalues << value
@@ -118,6 +121,7 @@ module Spotlight::Resources
       nodeset.children.each do |node|
 
         nodename = node.name
+                    
         if (RESERVED_WORDS.key?(nodename))
           nodename = RESERVED_WORDS[nodename]
         end
@@ -135,6 +139,10 @@ module Spotlight::Resources
             end
           elsif (node.children.count > 1 || (node.children.first == 1 && !node.children.first.name.eql?('text')))
             values += find_node_value(node, subpaths, pathname, popcount + 1)
+            until (popcount == 0) do
+              pathname.pop
+              popcount = popcount - 1;
+            end
           end
         end
       end
