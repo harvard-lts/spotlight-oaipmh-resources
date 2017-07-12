@@ -55,7 +55,7 @@ module Spotlight::Resources
    #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
    def get_catalog_url()
      if (@catalog_url.nil?)
-       node = @modsrecord.mods_ng_xml.related_item.xpath(cna_config['HOLLIS_RECORD_XPATH'])
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['HOLLIS_RECORD_XPATH'])
        if (!node.nil?)
          @catalog_url = node.text
        else
@@ -69,7 +69,7 @@ module Spotlight::Resources
   #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
   def get_finding_aid()
      if (@finding_aid_url.nil?)
-       node = @modsrecord.mods_ng_xml.related_item.xpath(cna_config['FINDING_AID_XPATH'])
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['FINDING_AID_XPATH'])
        if (!node.nil?)
          @finding_aid_url = node.text
        else
