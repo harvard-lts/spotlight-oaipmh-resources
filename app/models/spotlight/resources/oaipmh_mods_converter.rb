@@ -59,9 +59,6 @@ module Spotlight::Resources
       end
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
-        if (item.mods_path.path.eql?('relatedItem'))
-                     puts item.mods_path.subpaths
-                   end
         if (!item.mods_path.delimiter.nil?)
           sub_delimiter = item.mods_path.delimiter
         end
@@ -73,7 +70,6 @@ module Spotlight::Resources
             if (RESERVED_WORDS.key?(value))
               subpath_array[key] = RESERVED_WORDS[value]
             end
-            #subpath = subpath_array.join('/')
           end
 
           subpaths << subpath_array

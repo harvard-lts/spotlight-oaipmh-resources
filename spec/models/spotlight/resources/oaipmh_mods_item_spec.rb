@@ -10,7 +10,7 @@ require 'spec_helper'
             it "returns the resolving ids url" do
                 uri = subject.fetch_ids_uri("http://nrs.harvard.edu/urn-3:FHCL:11403157")
                 
-                expect(uri).to eq("http://ids.lib.harvard.edu/ids/view/47373027")
+                expect(uri).to eq("https://ids.lib.harvard.edu/ids/view/47373027")
                       
                end
             end
@@ -53,9 +53,10 @@ require 'spec_helper'
       describe 'parse_mods_data' do
         context 'given a sample xml file' do
           it 'verifies that the title can be extracted' do
-            require 'xml/libxml'
+            require "rexml/document"
             fixture_mods_file = file_fixture("mods_sample.xml")
-            doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
+            file = File.new(fixture_mods_file)
+            doc = REXML::Document.new(file)
             subject.metadata = doc
             solr_hash = subject.parse_mods_record()
             expect(solr_hash['full_title_tesim']).to eq("Mr. Webster's Dudleian lecture on Presbyterian ordination: lecture [delivered], Sept. 7, 1774")
@@ -66,9 +67,10 @@ require 'spec_helper'
    describe 'parse_mods_data no title' do
     context 'given a sample xml file' do
       it 'verifies that the parsing throws an error' do
-        require 'xml/libxml'
+        require "rexml/document"
         fixture_mods_file = file_fixture("mods_sample_no_title.xml")
-        doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
+        file = File.new(fixture_mods_file)
+        doc = REXML::Document.new(file)
         subject.metadata = doc
         expect {subject.parse_mods_record()}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
       end
@@ -78,9 +80,10 @@ require 'spec_helper'
     describe 'parse_mods_data no id' do
     context 'given a sample xml file' do
       it 'verifies that the parsing throws an error' do
-        require 'xml/libxml'
+        require "rexml/document"
         fixture_mods_file = file_fixture("mods_sample_no_id.xml")
-        doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
+        file = File.new(fixture_mods_file)
+        doc = REXML::Document.new(file)
         subject.metadata = doc
         expect {subject.parse_mods_record()}.to raise_error(Spotlight::Resources::Exceptions::InvalidModsRecord)
       end

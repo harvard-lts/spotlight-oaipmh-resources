@@ -21,14 +21,13 @@ module Spotlight
         resumption_token = harvests.resumption_token
         until (resumption_token.nil?)
           harvests.each do |record|
-            ##shortening the harvest
             item = OaipmhModsItem.new(exhibit, oai_mods_converter, cna_config)
-           
+            
             item.metadata = record.metadata
             parsed_hash = item.parse_mods_record()
             
             item_solr = item.to_solr
-  
+            
             ###CNA Specific - Language and origin
             lang_field_name = oai_mods_converter.get_spotligh_field_name("language_ssim")
             origin_field_name = oai_mods_converter.get_spotligh_field_name("origin_ssim")
@@ -75,6 +74,10 @@ module Spotlight
               catalog_url = item.get_catalog_url
               if (!catalog_url.blank?)
                 item_solr[catalog_url_field_name] = catalog_url
+                #Extract the ALEPH ID from the URL
+                catalog_url_array = catalog_url.split('/').last(2)
+                collection_id_tesim = oai_mods_converter.get_spotligh_field_name("collection_id_tesim")
+                item_solr[collection_id_tesim] = catalog_url_array[0]
               end
               
               finding_aid_url = item.get_finding_aid

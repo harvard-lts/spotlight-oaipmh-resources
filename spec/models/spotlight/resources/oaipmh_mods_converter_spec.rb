@@ -84,6 +84,25 @@ include OAI::XPath
         end
       end
       
+      describe 'mapping sample2' do
+        context 'given a set name' do
+          it 'verifies that the expected fields exist' do
+            fixture_mapping_file = file_fixture("cna_mapping.yml")
+            mapping_config = YAML.load_file(fixture_mapping_file)
+            
+            require 'xml/libxml'
+            fixture_mods_file = file_fixture("mods_sample_item2.xml")
+            
+            doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
+            modsonly = xpath_first(doc, "//*[local-name()='mods']")
+            modsrecord = Mods::Record.new.from_str(modsonly.to_s)
+            puts modsrecord.mods_ng_xml.related_item.titleInfo.title
+            
+            solr_hash = subject.convert(modsrecord)
+            puts solr_hash['exhibit_test-exhibit-name_collection-title_ssim']
+          end
+        end
+      end
       
       describe 'parse mapping file' do
         context 'given a mapping file' do
