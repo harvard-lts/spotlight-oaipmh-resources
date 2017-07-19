@@ -106,11 +106,13 @@ module Spotlight
                 
                 if (!item.itemurl.nil? && !item.itemurl.file.nil? && !item.itemurl.file.file.nil?)
                   fullimagefile = item.itemurl.file.file
+                  fullurl = item.itemurl.file.file
                 end
                 
-                if (!item.itemurl.nil?)
+                if (!item.itemurl.nil? && !item.itemurl.thumb.nil?)
                   thumb = item.itemurl.thumb.file.file
-                  fullurl = item.itemurl.file.file
+                end
+                if (!item.itemurl.nil? && !item.itemurl.square.nil?)
                   square = item.itemurl.square.file.file
                 end
   
