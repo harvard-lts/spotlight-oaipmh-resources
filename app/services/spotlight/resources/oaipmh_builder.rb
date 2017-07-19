@@ -52,6 +52,9 @@ module Spotlight
             ##CNA Specific - catalog
             catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
             catalog_url_item = oai_mods_converter.get_spotligh_field_name("catalog-url_item_tesim")
+            
+            ##CNA Specific - collection id
+            collection_id_tesim = oai_mods_converter.get_spotligh_field_name("collection_id_tesim")
               
             #THIS IS SPECIFIC TO CNA   
                                
@@ -63,7 +66,8 @@ module Spotlight
               ##CNA Specific - catalog
               if (item_solr.key?(catalog_url_item) && !item_solr[catalog_url_item].nil?)
                 item_solr[catalog_url_field_name] = cna_config['ALEPH_URL'] + item_solr[catalog_url_item] + "/catalog"
-                item_solr.delete(catalog_url_item)
+                item_solr[collection_id_tesim] = item_solr[catalog_url_item]
+                item_solr.delete(catalog_url_item)  
               end
             else
               item_solr[record_type_field_name] = "item"
@@ -76,7 +80,6 @@ module Spotlight
                 item_solr[catalog_url_field_name] = catalog_url
                 #Extract the ALEPH ID from the URL
                 catalog_url_array = catalog_url.split('/').last(2)
-                collection_id_tesim = oai_mods_converter.get_spotligh_field_name("collection_id_tesim")
                 item_solr[collection_id_tesim] = catalog_url_array[0]
               end
               
