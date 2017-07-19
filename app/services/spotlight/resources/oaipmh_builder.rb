@@ -109,10 +109,10 @@ module Spotlight
                   fullurl = item.itemurl.file.file
                 end
                 
-                if (!item.itemurl.nil? && !item.itemurl.thumb.nil?)
+                if (!item.itemurl.nil? && !item.itemurl.thumb.nil? && !item.itemurl.thumb.file.nil?)
                   thumb = item.itemurl.thumb.file.file
                 end
-                if (!item.itemurl.nil? && !item.itemurl.square.nil?)
+                if (!item.itemurl.nil? && !item.itemurl.square.nil? && !item.itemurl.square.file.nil?)
                   square = item.itemurl.square.file.file
                 end
   
