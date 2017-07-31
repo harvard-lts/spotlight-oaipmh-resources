@@ -24,9 +24,10 @@ module Spotlight
             item = OaipmhModsItem.new(exhibit, oai_mods_converter, cna_config)
             
             item.metadata = record.metadata
-            parsed_hash = item.parse_mods_record()
+            item.parse_mods_record()
             
             item_solr = item.to_solr
+            item_sidecar = item.sidecar_data
             
             ###CNA Specific - Language and origin
             lang_field_name = oai_mods_converter.get_spotligh_field_name("language_ssim")
@@ -35,6 +36,9 @@ module Spotlight
             origin = perform_lookups(item_solr[origin_field_name], "orig")
             item_solr[lang_field_name] = language
             item_solr[origin_field_name] = origin
+            item_sidecar["language_ssim"] = language
+            item_sidecar["origin_ssim"] = origin
+                
             
             ##CNA Specific - Subjects
             subject_field_name = oai_mods_converter.get_spotligh_field_name("subjects_ssim")
@@ -42,12 +46,11 @@ module Spotlight
               #Split on |
               subjects = item_solr[subject_field_name].split('|')
               item_solr[subject_field_name] = subjects
+              item_sidecar["subjects_ssim"] = subjects
             end
             
             
             record_type_field_name = oai_mods_converter.get_spotligh_field_name("record-type_ssim")
-            record_type_collection = oai_mods_converter.get_spotligh_field_name("record-type_collection_ssim")
-            record_type_item = oai_mods_converter.get_spotligh_field_name("record-type_item_ssim")
                
             ##CNA Specific - catalog
             catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
@@ -55,12 +58,12 @@ module Spotlight
             
               
             #THIS IS SPECIFIC TO CNA   
-                               
+                              
             #If the collection field is populated then it is a collection, otherwise it is an item.
-            if (item_solr.key?(record_type_collection) && !item_solr[record_type_collection].blank?)
+            if (!item_solr[record_type_field_name].nil? && !item_solr[record_type_field_name].eql?("item"))
               item_solr[record_type_field_name] = "collection"
-              item_solr.delete(record_type_collection)
-              
+              item_sidecar["record-type_ssim"] = "collection"
+                
               ##CNA Specific - catalog
               if (item_solr.key?(catalog_url_item) && !item_solr[catalog_url_item].nil?)
                 item_solr[catalog_url_field_name] = cna_config['ALEPH_URL'] + item_solr[catalog_url_item] + "/catalog"
@@ -68,8 +71,7 @@ module Spotlight
               end
             else
               item_solr[record_type_field_name] = "item"
-              item_solr.delete(record_type_item)
-              item_solr.delete(catalog_url_item)
+              item_sidecar["record-type_ssim"] = "item"
               
               ##CNA Specific
               catalog_url = item.get_catalog_url
@@ -79,12 +81,14 @@ module Spotlight
                 catalog_url_array = catalog_url.split('/').last(2)
                 collection_id_tesim = oai_mods_converter.get_spotligh_field_name("collection_id_tesim")
                 item_solr[collection_id_tesim] = catalog_url_array[0]
+                item_sidecar["record-collection_id_tesim"] = catalog_url_array[0]
               end
               
               finding_aid_url = item.get_finding_aid
               if (!finding_aid_url.blank?)
                 finding_aid_url_field_name = oai_mods_converter.get_spotligh_field_name("finding-aid_tesim")
                 item_solr[finding_aid_url_field_name] = finding_aid_url
+                item_sidecar["finding-aid_tesim"] = finding_aid_url
               end 
             end
             
@@ -136,7 +140,10 @@ module Spotlight
               item_solr = add_image_info(item_solr, fullurl, thumb, square)
               item_solr = add_image_dimensions(item_solr, fullimagefile)
             end
-                
+             
+            #Add the sidecar info for editing
+            sidecar ||= resource.document_model.new(id: item.id).sidecar(resource.exhibit)   
+            sidecar.update(data: item_sidecar)
             yield base_doc.merge(item_solr) if item_solr.present?
        
           end
@@ -149,7 +156,6 @@ module Spotlight
       def add_image_info(solr_hash, fullurl, thumb, square)
           if (!thumb.nil?)
             solr_hash[:thumbnail_url_ssm] = thumb
-              
           end
         
           if (!fullurl.nil?)

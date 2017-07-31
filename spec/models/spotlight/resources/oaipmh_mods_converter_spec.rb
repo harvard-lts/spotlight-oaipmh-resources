@@ -76,10 +76,6 @@ include OAI::XPath
             expect(solr_hash['exhibit_test-exhibit-name_physical-form_tesim']).to be_nil
             expect(solr_hash['exhibit_test-exhibit-name_language-info_tesim']).to be_nil
             expect(solr_hash['exhibit_test-exhibit-name_publications_tesim']).to be_nil
-              
-            subjects = solr_hash['exhibit_test-exhibit-name_subjects_ssim'].split('|')
-             puts subjects                                                                                     
-            #solr_hash.each {|key, value| puts "#{key} : #{value}" }
           end
         end
       end

@@ -19,16 +19,11 @@
 - spotlight-field: unique-id_tesim
   mods:
       - path: recordInfo/recordIdentifier
-- spotlight-field: record-type_item_ssim
+- spotlight-field: record-type_ssim
   mods:
-      - path: recordInfo/recordIdentifier
-        attribute: source
-        attribute-value: "MH:OASIS"
-- spotlight-field: record-type_collection_ssim
-  mods:
-      - path: recordInfo/recordIdentifier
-        attribute: source
-        attribute-value: "MH:ALEPH"
+      - path: typeOfResource
+        attribute: collection
+        attribute-value: 'yes'
 - spotlight-field: full_title_tesim
   mods:
       - path: titleInfo

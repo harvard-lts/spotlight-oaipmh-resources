@@ -14,7 +14,7 @@
          <roleTerm authority="marcrelator" type="text">creator</roleTerm>
       </role>
    </name>
-   <typeOfResource manuscript="yes">mixed material</typeOfResource>
+   <typeOfResource collection="yes" manuscript="yes">mixed material</typeOfResource>
    <genre authority="rbgenr">Sermons-1774.</genre>
    <genre authority="rbgenr">Lectures-Massachusetts-Cambridge-1774.</genre>
    <originInfo>

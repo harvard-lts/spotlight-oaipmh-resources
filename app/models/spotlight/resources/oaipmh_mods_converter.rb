@@ -32,8 +32,9 @@ module Spotlight::Resources
             values << value
           end
           
-        rescue NoMethodError
-          print  "The path " + item.mods_path.path + " does not exist\n"
+        rescue NoMethodError => e
+          puts e.backtrace
+          puts  "The path " + item.mods_path.path + " does not exist\n"
         end
       
       end
@@ -47,7 +48,7 @@ module Spotlight::Resources
     #It then uses these paths to search for the value in the Mods::Record
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
-      if (!item.mods_path.path.eql?("accessCondition"))
+      if (!item.mods_path.path.eql?("accessCondition") && !item.mods_path.path.eql?("typeOfResource"))
         path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
         path_array[0] = path_array[0].join("_").downcase
       end
@@ -81,7 +82,7 @@ module Spotlight::Resources
        node = parentnode
        #eg: subject
        path_array.each do |path|
-         node = node.send(path)    
+         node = node.send(path) 
        end
        
        if (!subpaths.empty?)
@@ -197,6 +198,8 @@ end
   class OaipmhModsConverter
     RESERVED_PATHS = {'name/namePart'=> "personal_name/namePart", "name/role/roleTerm" => "personal_name/role/roleTerm"}
     STANDARD_SPOTLIGHT_FIELDS = ['unique-id_tesim', 'full_title_tesim', 'spotlight_upload_description_tesim', 'thumbnail_url_ssm', 'full_image_url_ssm', 'spotlight_upload_date_tesim"', 'spotlight_upload_attribution_tesim']
+    
+    attr_accessor :sidecar_hash
        
     #Initialize with the name of the set being converted
     def initialize(set, exhibitslug, mapping_file)
@@ -204,6 +207,7 @@ end
       @exhibitslug = exhibitslug
       @mapping_file = mapping_file   
       @converter_items = Array.new  
+      @sidecar_hash = {}
     end
     
     #Expects a Mods::Record parameter value
@@ -215,7 +219,9 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        solr_hash[get_spotligh_field_name(item.spotlight_field)] = item.extract_value(modsrecord)
+        value = item.extract_value(modsrecord)
+        solr_hash[get_spotligh_field_name(item.spotlight_field)] = value
+        @sidecar_hash[item.spotlight_field] = value
       end
       solr_hash
     end

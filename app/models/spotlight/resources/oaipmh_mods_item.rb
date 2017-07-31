@@ -8,7 +8,7 @@ module Spotlight::Resources
   class OaipmhModsItem
     extend CarrierWave::Mount
     attr_reader :titles, :id
-    attr_accessor :metadata, :itemurl
+    attr_accessor :metadata, :itemurl, :sidecar_data
     mount_uploader :itemurl, Spotlight::ItemUploader
     def initialize(exhibit, converter, cna_config)
       @solr_hash = {}
@@ -47,7 +47,7 @@ module Spotlight::Resources
       end  
       
       @solr_hash = @converter.convert(@modsrecord)
-
+      @sidecar_data = @converter.sidecar_hash
    end
    
    #This pulls the catalog url from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
