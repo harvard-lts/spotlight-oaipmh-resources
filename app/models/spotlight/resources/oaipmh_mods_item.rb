@@ -16,6 +16,8 @@ module Spotlight::Resources
       @converter = converter
       @catalog_url = nil
       @finding_aid_url = nil
+      @creator = nil
+      @repository = nil
       @cna_config = cna_config
     end
     
@@ -78,7 +80,37 @@ module Spotlight::Resources
      @finding_aid_url
    end
 
+  #This pulls the creator from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/name/namePart)
+  def get_creator()
+     if (@creator.nil?)
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['CREATOR_XPATH'])
+       if (!node.nil?)
+         node.role.roleTerm.each do |roleTerm|
+           if (roleTerm.text.eql?('creator'))
+             @creator = node.namePart.text
+           end
+         end
+       else
+         @creator = ""
+       end
+     end
+     @creator
+   end
 
+  #This pulls the repository from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/name/namePart)
+  def get_repository()
+     if (@repository.nil?)
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['REPOSITORY_XPATH'])
+       if (!node.nil?)
+         @repository = node.text
+       else
+         @repository = ""
+       end
+     end
+     @repository
+   end
     
    # private
     

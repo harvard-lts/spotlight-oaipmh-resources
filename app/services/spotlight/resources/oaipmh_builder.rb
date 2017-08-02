@@ -30,8 +30,8 @@ module Spotlight
             item_sidecar = item.sidecar_data
             
             ###CNA Specific - Language and origin
-            lang_field_name = oai_mods_converter.get_spotligh_field_name("language_ssim")
-            origin_field_name = oai_mods_converter.get_spotligh_field_name("origin_ssim")
+            lang_field_name = oai_mods_converter.get_spotlight_field_name("language_ssim")
+            origin_field_name = oai_mods_converter.get_spotlight_field_name("origin_ssim")
             language = perform_lookups(item_solr[lang_field_name], "lang")
             origin = perform_lookups(item_solr[origin_field_name], "orig")
             item_solr[lang_field_name] = language
@@ -41,7 +41,7 @@ module Spotlight
                 
             
             ##CNA Specific - Subjects
-            subject_field_name = oai_mods_converter.get_spotligh_field_name("subjects_ssim")
+            subject_field_name = oai_mods_converter.get_spotlight_field_name("subjects_ssim")
             if (item_solr.key?(subject_field_name) && !item_solr[subject_field_name].nil?)
               #Split on |
               subjects = item_solr[subject_field_name].split('|')
@@ -50,11 +50,11 @@ module Spotlight
             end
             
             
-            record_type_field_name = oai_mods_converter.get_spotligh_field_name("record-type_ssim")
+            record_type_field_name = oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                
             ##CNA Specific - catalog
-            catalog_url_field_name = oai_mods_converter.get_spotligh_field_name("catalog-url_tesim")
-            catalog_url_item = oai_mods_converter.get_spotligh_field_name("catalog-url_item_tesim")
+            catalog_url_field_name = oai_mods_converter.get_spotlight_field_name("catalog-url_tesim")
+            catalog_url_item = oai_mods_converter.get_spotlight_field_name("catalog-url_item_tesim")
             
               
             #THIS IS SPECIFIC TO CNA   
@@ -79,17 +79,37 @@ module Spotlight
                 item_solr[catalog_url_field_name] = catalog_url
                 #Extract the ALEPH ID from the URL
                 catalog_url_array = catalog_url.split('/').last(2)
-                collection_id_tesim = oai_mods_converter.get_spotligh_field_name("collection_id_tesim")
+                collection_id_tesim = oai_mods_converter.get_spotlight_field_name("collection_id_tesim")
                 item_solr[collection_id_tesim] = catalog_url_array[0]
                 item_sidecar["record-collection_id_tesim"] = catalog_url_array[0]
               end
               
               finding_aid_url = item.get_finding_aid
               if (!finding_aid_url.blank?)
-                finding_aid_url_field_name = oai_mods_converter.get_spotligh_field_name("finding-aid_tesim")
+                finding_aid_url_field_name = oai_mods_converter.get_spotlight_field_name("finding-aid_tesim")
                 item_solr[finding_aid_url_field_name] = finding_aid_url
                 item_sidecar["finding-aid_tesim"] = finding_aid_url
               end 
+              
+              #If the creator doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
+              creator_field_name = oai_mods_converter.get_spotlight_field_name("creator_tesim")
+              if (!item_solr.key?(creator_field_name) || item_solr[creator_field_name].blank?)
+                creator = item.get_creator
+                if (!creator.blank?)
+                  item_solr[creator_field_name] = creator
+                  item_sidecar["creator_tesim"] = creator
+                end
+              end
+              
+              #If the repository doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
+              repository_field_name = oai_mods_converter.get_spotlight_field_name("repository_ssim")
+              if (!item_solr.key?(repository_field_name) || item_solr[repository_field_name].blank?)
+                repo = item.get_repository
+                if (!repo.blank?)
+                  item_solr[repository_field_name] = repo
+                  item_sidecar["repository_ssim"] = repo
+                end
+              end
             end
             
             if (item_solr.key?('thumbnail_url_ssm') && !item_solr['thumbnail_url_ssm'].blank? && !item_solr['thumbnail_url_ssm'].eql?('null'))

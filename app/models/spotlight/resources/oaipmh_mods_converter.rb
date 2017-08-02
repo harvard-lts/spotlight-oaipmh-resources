@@ -220,14 +220,14 @@ end
         
       @converter_items.each do |item|
         value = item.extract_value(modsrecord)
-        solr_hash[get_spotligh_field_name(item.spotlight_field)] = value
+        solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
         @sidecar_hash[item.spotlight_field] = value
       end
       solr_hash
     end
     
     #Some spotlight fields use the exhibit slug, others do not
-    def get_spotligh_field_name(spotlight_field)      
+    def get_spotlight_field_name(spotlight_field)      
       if (!STANDARD_SPOTLIGHT_FIELDS.include?(spotlight_field))
         spotlight_field = 'exhibit_' + @exhibitslug + '_' + spotlight_field
       end
