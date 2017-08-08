@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <script />
+   <titleInfo>
+      <title>Commission of Noah Cooke, Jr., as chaplain in the Continental Army, signed by John Hancock, 1776 January 1</title>
+   </titleInfo>
+   <name type="corporate">
+      <namePart>United States</namePart>
+      <namePart>Continental Congress.</namePart>
+      <role>
+         <roleTerm type="text">creator</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>Hancock, John</namePart>
+      <namePart type="date">1737-1793</namePart>
+   </name>
+   <name type="personal">
+      <namePart>Cooke, Noah</namePart>
+      <namePart type="date">1749-1829</namePart>
+   </name>
+   <typeOfResource manuscript="yes">mixed material</typeOfResource>
+   <genre authority="aat">Commissions (permissions).</genre>
+   <originInfo>
+      <place>
+         <placeTerm authority="marccountry" type="code">xxu</placeTerm>
+      </place>
+      <dateCreated encoding="marc">1776</dateCreated>
+      <issuance>monographic</issuance>
+   </originInfo>
+   <language>
+      <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+   </language>
+   <physicalDescription>
+      <extent>.14 linear feet (1 document)</extent>
+   </physicalDescription>
+   <abstract type="Summary">Commission of Noah Cooke, Jr., as chaplain in the Continental Army, signed by John Hancock, 1 January 1776.</abstract>
+   <note>Transcription of document: "In Congress. The delegates of the United Colonies of New-Hampshire, Massachusetts-Bay, Rhode-Island, Connecticut, New-York, New-Jersey, Pennsylvania, the Counties of Newcastle, Kent, and Suffolk on Delaware, Maryland, Virginia, North-Carolina, and South Carolina to the Reverend Noah Cooke Junr. We [...] do by these presents constitute and appoint you to be Chaplain of the fifth Regiment of Foot Commanded by Colonel John Stark, and to the eighth Regiment Commanded by Colonel Enoch Poor in the army of the United Colonies, raised for the defense of American Liberty, and for repelling every invasion thereof [...]."</note>
+   <note>Title supplied by cataloger.</note>
+   <note>Transferred from the Fogg Art Museum (originally received from one of the Harvard houses) to the Harvard University Library on September 14, 1955. On the verso there is a Harvard University Library stamp in black ink; the month "SEP" is included in the stamp. The remainder of the date was added in graphite: "14, 1955".</note>
+   <note>Pasted to paperboard backing.</note>
+   <note type="biographical/historical">Noah Cooke, Jr. (1749-1829) earned his Harvard AB 1769. His early career was as a clergyman, but he later became a lawyer. He was admitted to the bar in Cheshire County, New Hampshire in 1784. He practiced law in New Ipswich and Keene. Cooke held a variety of local offices in Keene. See biographical sketch in Sibley's Harvard Graduates, Vol. XVII.</note>
+   <subject authority="lcsh">
+      <name type="personal">
+         <namePart>Cooke, Noah</namePart>
+         <namePart type="date">1749-1829</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>United States.</namePart>
+         <namePart>Continental Army</namePart>
+      </name>
+      <topic>Chaplains</topic>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Military chaplains</topic>
+      <geographic>United States</geographic>
+   </subject>
+   <subject authority="lcsh">
+      <geographic>United States</geographic>
+      <topic>History</topic>
+      <temporal>Revolution, 1775-1783</temporal>
+      <genre>sources</genre>
+   </subject>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Collections of the Harvard University Archives</title>
+         <partName>Personal archives</partName>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Harvard in the Seventeenth and Eighteenth Centuries</title>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Colonial North American Project at Harvard University</title>
+      </titleInfo>
+   </relatedItem>
+   <location>
+      <physicalLocation type="repository">HUA</physicalLocation>
+      <shelfLocator>HUG 300 Cooke</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation>NET</physicalLocation>
+      <url note="Provides access to page images of entire work" access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:23678423</url>
+      <url access="preview">http://ids.lib.harvard.edu/ids/view/52653084?width=150&amp;height=150&amp;usethumb=y</url>
+      <holdingSimple>
+         <copyInformation>
+            <note type="reproduction">Electronic reproduction. Cambridge, Mass. : Harvard Library Preservation, 2015. (Colonial North American Project at Harvard University). Copy digitized: Harvard University Archives: HUG 300 Cooke.</note>
+         </copyInformation>
+      </holdingSimple>
+   </location>
+   <extension>
+      <originalDocument:originalDocument xmlns:originalDocument="http://lib.harvard.edu/TBD" xmlns="http://lib.harvard.edu/TBD" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://s3.amazonaws.com/harvard.librarycloud.marc.dev/008704078</originalDocument:originalDocument>
+   </extension>
+   <extension>
+      <usageData:usageData xmlns:usageData="http://lib.harvard.edu/usagedata" xmlns="http://lib.harvard.edu/usagedata" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <stackScore>1</stackScore>
+      </usageData:usageData>
+   </extension>
+   <extension>
+      <HarvardDRS:DRSMetadata xmlns:HarvardDRS="http://hul.harvard.edu/ois/xml/ns/HarvardDRS" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <HarvardDRS:accessFlag xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">P</HarvardDRS:accessFlag>
+         <HarvardDRS:contentModel xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">PDS DOCUMENT</HarvardDRS:contentModel>
+         <HarvardDRS:uriType xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">PDS</HarvardDRS:uriType>
+         <HarvardDRS:fileDeliveryURL xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">http://nrs.harvard.edu/urn-3:HUL.ARCH:23678423</HarvardDRS:fileDeliveryURL>
+         <HarvardDRS:ownerCode xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">HUL.ARCH</HarvardDRS:ownerCode>
+         <HarvardDRS:ownerCodeDisplayName xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">Harvard University Archives</HarvardDRS:ownerCodeDisplayName>
+         <HarvardDRS:metsLabel xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">United States. Continental Congress. Commission of Noah Cooke, Jr., as chaplain in the Continental Army, signed by John Hancock, 1776 January 1. HUG 300 Cooke, Harvard University Archives.</HarvardDRS:metsLabel>
+         <HarvardDRS:lastModifiedDate xmlns="http://hul.harvard.edu/ois/xml/ns/HarvardDRS">2016-04-18T16:41:09.770Z</HarvardDRS:lastModifiedDate>
+      </HarvardDRS:DRSMetadata>
+   </extension>
+   <relatedItem otherType="HOLLIS record">
+      <location>
+         <url>http://id.lib.harvard.edu/aleph/008704078/catalog</url>
+      </location>
+   </relatedItem>
+   <extension>
+      <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <collection>
+            <type>collection</type>
+            <identifier>1</identifier>
+            <abstract />
+            <title>CNA</title>
+         </collection>
+      </collections:collections>
+   </extension>
+   <recordInfo>
+      <descriptionStandard>aacr</descriptionStandard>
+      <recordCreationDate encoding="marc">010808</recordCreationDate>
+      <recordChangeDate encoding="iso8601">20151201110834.0</recordChangeDate>
+      <recordIdentifier source="MH:ALEPH">008704078</recordIdentifier>
+      <recordOrigin>Converted from MARCXML to MODS version 3.5 using MARC21slim2MODS3-5.xsl (Revision 1.102 2014/08/12)</recordOrigin>
+   </recordInfo>
+</mods>

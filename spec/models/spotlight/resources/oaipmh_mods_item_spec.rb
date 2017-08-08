@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
   RSpec.describe Spotlight::Resources::OaipmhModsItem, type: :model do
     let(:exhibit) { FactoryGirl.create(:exhibit) }
     let(:converter) { Spotlight::Resources::OaipmhModsConverter.new('CNA', 'test-exhibit-name',File.dirname(__FILE__) + "/../../../fixtures/files/mapping_sample.yml")}
@@ -89,6 +90,6 @@ require 'spec_helper'
       end
     end
    end
-   
+
 
 end

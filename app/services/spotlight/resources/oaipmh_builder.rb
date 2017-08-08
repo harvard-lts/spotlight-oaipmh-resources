@@ -109,6 +109,23 @@ module Spotlight
                   item_solr[repository_field_name] = repo
                   item_sidecar["repository_ssim"] = repo
                 end
+              #if it exists, make sure it has unique values
+              else
+                repoarray = item_solr[repository_field_name].split("|")
+                repoarray = repoarray.uniq
+                repo = repoarray.join("|")
+                item_solr[repository_field_name] = repo
+                item_sidecar["repository_ssim"] = repo
+              end
+            end
+            
+            #If the collection title doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
+            coll_title_field_name = oai_mods_converter.get_spotlight_field_name("collection-title_ssim")
+            if (!item_solr.key?(coll_title_field_name) || item_solr[coll_title_field_name].blank?)
+              colltitle = item.get_collection_title
+              if (!colltitle.blank?)
+                item_solr[coll_title_field_name] = colltitle
+                item_sidecar["collection-title_ssim"] = colltitle
               end
             end
             
@@ -128,20 +145,7 @@ module Spotlight
               if (!Dir.exist?(Rails.root.join("public",item.itemurl.store_dir)))
                 item.remote_itemurl_url = thumburl
                 item.store_itemurl!
-                
-                if (!item.itemurl.nil? && !item.itemurl.file.nil? && !item.itemurl.file.file.nil?)
-                  fullimagefile = item.itemurl.file.file
-                  fullurl = item.itemurl.file.file
-                end
-                
-                if (!item.itemurl.nil? && !item.itemurl.thumb.nil? && !item.itemurl.thumb.file.nil?)
-                  thumb = item.itemurl.thumb.file.file
-                end
-                if (!item.itemurl.nil? && !item.itemurl.square.nil? && !item.itemurl.square.file.nil?)
-                  square = item.itemurl.square.file.file
-                end
-  
-              else
+              end
                 files = Dir.entries(Rails.root.join("public",item.itemurl.store_dir))
                 files.delete(".")
                 files.delete("..")
@@ -156,16 +160,16 @@ module Spotlight
                     fullimagefile = File.open(Rails.root.join("public",item.itemurl.store_dir,f))
                   end
                 end
-              end  
+              #end  
               item_solr = add_image_info(item_solr, fullurl, thumb, square)
               item_solr = add_image_dimensions(item_solr, fullimagefile)
             end
-             
+            
             #Add the sidecar info for editing
             sidecar ||= resource.document_model.new(id: item.id).sidecar(resource.exhibit)   
             sidecar.update(data: item_sidecar)
             yield base_doc.merge(item_solr) if item_solr.present?
-       
+           
           end
           harvests = resource.resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token

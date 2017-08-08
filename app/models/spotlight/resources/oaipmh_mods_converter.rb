@@ -33,6 +33,7 @@ module Spotlight::Resources
           end
           
         rescue NoMethodError => e
+          puts e.message
           puts e.backtrace
           puts  "The path " + item.mods_path.path + " does not exist\n"
         end
@@ -58,6 +59,7 @@ module Spotlight::Resources
           path_array[key] = RESERVED_WORDS[value]
         end
       end
+      
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
         if (!item.mods_path.delimiter.nil?)
@@ -80,24 +82,27 @@ module Spotlight::Resources
        values = Array.new
        
        node = parentnode
+
        #eg: subject
        path_array.each do |path|
          node = node.send(path) 
        end
        
        if (!subpaths.empty?)
-         #subnodes when paths are stored in subpaths in the mapping file
-         node.each do |subnode| 
-           subpathvalues = Array.new
-                        
-           value = find_node_value(subnode, subpaths,  [], 0) 
-           if (!value.empty?)
-             subpathvalues << value
-           end
-           if (!subpathvalues.empty?)
-             values << subpathvalues.join(sub_delimiter)
+          
+          #subnodes when paths are stored in subpaths in the mapping file
+          node.each do |subnode| 
+            if (check_attributes(subnode, item))
+              subpathvalues = Array.new
   
-           end
+              value = find_node_value(subnode, subpaths,  [], 0) 
+              if (!value.empty?)
+                subpathvalues << value
+                end
+               if (!subpathvalues.empty? && check_conditional_subpath(subnode, item, parentnode))
+                 values << subpathvalues.join(sub_delimiter)
+               end
+            end
          end
        else
    
@@ -115,10 +120,11 @@ module Spotlight::Resources
     def find_node_value(nodeset, subpaths, parentpathname, popcount) 
       values = []
       pathname = parentpathname
+
       nodeset.children.each do |node|
 
         nodename = node.name
-                    
+        
         if (RESERVED_WORDS.key?(nodename))
           nodename = RESERVED_WORDS[nodename]
         end
@@ -135,7 +141,7 @@ module Spotlight::Resources
               popcount = popcount - 1;
             end
           elsif (node.children.count > 1 || (node.children.first == 1 && !node.children.first.name.eql?('text')))
-            values += find_node_value(node, subpaths, pathname, popcount + 1)
+            values += find_node_value(node, subpaths, pathname, popcount+1)
             until (popcount == 0) do
               pathname.pop
               popcount = popcount - 1;
@@ -155,7 +161,7 @@ module Spotlight::Resources
         elsif (!item.mods_attribute[0].eql?("!"))
           if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !node[item.mods_attribute].eql?(item.mods_attribute_value.delete("!")))
             value_accepted = true
-          elsif (node[item.mods_attribute].eql?(item.mods_attribute_value))
+          elsif (!node[item.mods_attribute].nil? && node[item.mods_attribute].eql?(item.mods_attribute_value))
             value_accepted = true
           end
         end
@@ -178,7 +184,6 @@ module Spotlight::Resources
               path_array[key] = RESERVED_WORDS[value]
             end
           end
-          
           conditionalnode = parentnode
           path_array.each do |path|
             conditionalnode = conditionalnode.send(path)    
@@ -193,10 +198,39 @@ module Spotlight::Resources
       end
       value_accepted
     end
+    
+#Make sure the conditional path value matches (if supplied)
+    def check_conditional_subpath(node, item, parentnode)
+      value_accepted = false
+      if (!item.conditional_mods_value.blank?)
+          path_array = item.conditional_mods_path.split("/")
+          path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
+          path_array[0] = path_array[0].join("_").downcase
+          path_array.each_with_index do |value, key|
+            #The mods gem has special names for certain reserved words/paths
+            if (RESERVED_WORDS.key?(value))
+              path_array[key] = RESERVED_WORDS[value]
+            end
+          end
+          conditionalnode = node
+          path_array.each do |path|
+            conditionalnode = conditionalnode.send(path)     
+          end
+          
+          if (item.conditional_mods_value[0].eql?("!") && !conditionalnode.text.eql?(item.conditional_mods_value.delete("!")))
+            value_accepted = true
+          elsif (conditionalnode.text.eql?(item.conditional_mods_value))
+            value_accepted = true
+          end
+      else
+        value_accepted = true
+      end
+      value_accepted
+    end
 end
   
   class OaipmhModsConverter
-    RESERVED_PATHS = {'name/namePart'=> "personal_name/namePart", "name/role/roleTerm" => "personal_name/role/roleTerm"}
+    RESERVED_PATHS = {'name/namePart'=> "plain_name/namePart", "name/role/roleTerm" => "plain_name/role/roleTerm"}
     STANDARD_SPOTLIGHT_FIELDS = ['unique-id_tesim', 'full_title_tesim', 'spotlight_upload_description_tesim', 'thumbnail_url_ssm', 'full_image_url_ssm', 'spotlight_upload_date_tesim"', 'spotlight_upload_attribution_tesim']
     
     attr_accessor :sidecar_hash

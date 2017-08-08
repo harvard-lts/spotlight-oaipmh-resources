@@ -32,6 +32,8 @@ module Spotlight::Resources
           
       if (@modsrecord.mods_ng_xml.record_info && @modsrecord.mods_ng_xml.record_info.recordIdentifier)
         @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
+        #Strip out all of the decimals
+        @id = @id.gsub('.', '')
       end
       
       begin
@@ -56,8 +58,8 @@ module Spotlight::Resources
    #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
    def get_catalog_url()
      if (@catalog_url.nil?)
-       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['HOLLIS_RECORD_XPATH'])
-       if (!node.nil?)
+       node = @modsrecord.mods_ng_xml.xpath(@cna_config['HOLLIS_RECORD_XPATH'])
+       if (!node.blank?)
          @catalog_url = node.text
        else
          @catalog_url = ""
@@ -70,8 +72,8 @@ module Spotlight::Resources
   #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
   def get_finding_aid()
      if (@finding_aid_url.nil?)
-       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['FINDING_AID_XPATH'])
-       if (!node.nil?)
+       node = @modsrecord.mods_ng_xml.xpath(@cna_config['FINDING_AID_XPATH'])
+       if (!node.blank?)
          @finding_aid_url = node.text
        else
          @finding_aid_url = ""
@@ -85,7 +87,7 @@ module Spotlight::Resources
   def get_creator()
      if (@creator.nil?)
        node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['CREATOR_XPATH'])
-       if (!node.nil?)
+       if (!node.blank?)
          node.role.roleTerm.each do |roleTerm|
            if (roleTerm.text.eql?('creator'))
              @creator = node.namePart.text
@@ -103,13 +105,30 @@ module Spotlight::Resources
   def get_repository()
      if (@repository.nil?)
        node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['REPOSITORY_XPATH'])
-       if (!node.nil?)
+       if (!node.blank?)
          @repository = node.text
        else
          @repository = ""
        end
      end
      @repository
+   end
+   
+   #This pulls the collection title from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (nested related items)
+  def get_collection_title()
+     if (@collectiontitle.nil?)
+       titlenode = @modsrecord.mods_ng_xml.xpath(@cna_config['COLLECTION_TITLE_XPATH'])
+       datenode = @modsrecord.mods_ng_xml.xpath(@cna_config['COLLECTION_TITLE_DATE_XPATH'])
+       if (!titlenode.blank? && !datenode.blank?)
+         @collectiontitle = titlenode.text + " " + datenode.text
+       elsif (!titlenode.blank?)
+         @collectiontitle = titlenode.text
+       else
+         @collectiontitle = ""
+       end
+     end
+     @collectiontitle
    end
     
    # private
