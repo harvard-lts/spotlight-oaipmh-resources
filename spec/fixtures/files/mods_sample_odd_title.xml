@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <script />
+   <titleInfo>
+      <nonSort>A</nonSort>
+      <title>system of ethicks</title>
+      <subTitle>Of morall phylosophy in generall &amp; in speciall</subTitle>
+   </titleInfo>
+   <name type="personal">
+      <namePart>Williams, Ebenezer</namePart>
+      <namePart type="date">1690-1753</namePart>
+      <role>
+         <roleTerm type="text">creator</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>Morton, Charles</namePart>
+      <namePart type="date">1627-1698</namePart>
+   </name>
+   <name type="personal">
+      <namePart>Williams, Elisha</namePart>
+      <namePart type="date">1694-1755</namePart>
+      <role>
+         <roleTerm type="text">former owner.</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>Potter, Henry Staples</namePart>
+      <namePart type="date">1844-1919</namePart>
+      <role>
+         <roleTerm type="text">former owner.</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>Small, Carleton Potter</namePart>
+      <namePart type="date">1902-1972</namePart>
+      <role>
+         <roleTerm type="text">donor.</roleTerm>
+      </role>
+   </name>
+   <name type="personal">
+      <namePart>Giles, Alfred E. (Alfred Ellenwood)</namePart>
+      <namePart type="date">1819-1904</namePart>
+      <role>
+         <roleTerm type="text">former owner.</roleTerm>
+      </role>
+   </name>
+   <typeOfResource collection="yes" manuscript="yes">mixed material</typeOfResource>
+   <genre authority="local">Harvard students' notes.</genre>
+   <genre authority="local">Harvard textbooks.</genre>
+   <originInfo>
+      <place>
+         <placeTerm authority="marccountry" type="code">mau</placeTerm>
+      </place>
+      <dateCreated encoding="marc">1708</dateCreated>
+      <issuance>monographic</issuance>
+   </originInfo>
+   <language>
+      <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+   </language>
+   <physicalDescription>
+      <extent>0.1 cubic feet (1 volume)</extent>
+   </physicalDescription>
+   <abstract type="Scope and content">This hardcover volume contains manuscript copies of Charles Morton's "A System of Ethicks," "Pneumatics. Or a treatise of the Rev'd Mr. Charles Morton about ye Nature of Spirit," "Appendix of the Souls of Brutes," "Some Theological Questions Answd," and a one-page list "Texts of Scripture to prove if ye head of Christ &amp;c." copied by Harvard student Ebenezer Williams in February 1707/8.</abstract>
+   <note type="statement of responsibility">P.D. Carolum Morton. M.A.</note>
+   <note>Title copied from the first page of text.</note>
+   <note>The inside cover includes three inscriptions: the first: "Alfred E. Giles 1845 inherited this book from his grandfather Rev. Elisha S. Williams," the second: "and I on this 10th day of May 1898 present this family relique to my beloved nephew H. Staples Potter--Alfred E. Giles," and the third "Carleton Potter Small, March 1937."</note>
+   <note type="biographical/historical">Ebenezer Williams (1690-1753), a minister in Pomfret, Conn., was born in Roxbury, Mass. on August 12, 1690. He received an AB from Harvard in 1709 and an AM in 1712. Williams was ordained in October 1715 as the minister of Pomfret. He was elected as a trustee of Yale College in 1731. Williams died on March 28, 1753.</note>
+   <note type="biographical/historical">Charles Morton, an educator and Harvard's first vice-president, was born in 1627 in Cornwall, England. He received his first degree in 1649 from Oxford University and received an MA in 1652. Morton established the Newington Green Academy near London and began compiling â€œsystemsâ€ used as manuals for student study. He immigrated to Massachusetts in 1686 believing he would be appointed President of Harvard College. Though he was not appointed President, Morton taught as a fellow and the College began using his manuscript textbooks as part of the undergraduate course of study; Morton's Compendium Physicae was the College's official physics textbook into the 18th century. He was appointed a member of the Harvard Corporation and its first vice-president. He died in 1698.</note>
+   <note type="biographical/historical">The undergraduate students of Harvard College followed a structured program of study in the early 1700s. Certain key texts were adopted as textbooks at Harvard, and students often copied them into personal notebooks or paid professional copyists to copy them, in place of purchased books. Textbooks created by Harvard Tutors Henry Flynt and William Brattle, Instructor Judah Monis, and Fellow Charles Morton were among the earliest used in the colonies.</note>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard University</namePart>
+      </name>
+      <topic>Curricula</topic>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Education</topic>
+      <topic>Curricula</topic>
+      <geographic>Massachusetts</geographic>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Education, Higher</topic>
+      <geographic>Massachusetts</geographic>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Science</topic>
+      <topic>Study and teaching (Higher)</topic>
+      <geographic>Massachusetts</geographic>
+      <geographic>Cambridge</geographic>
+   </subject>
+   <subject authority="lcsh">
+      <topic>Books and reading</topic>
+      <geographic>United States</geographic>
+      <topic>History</topic>
+      <temporal>18th century</temporal>
+   </subject>
+   <subject authority="lcsh">
+      <geographic>United States</geographic>
+      <topic>Intellectual life</topic>
+      <temporal>18th century</temporal>
+   </subject>
+   <subject authority="LCC">
+      <topic>Geography. Anthropology. Recreation -- Recreation. Leisure -- Physical education and training -- Value of physical training in schools and colleges</topic>
+   </subject>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Collections of the Harvard University Archives</title>
+         <partName>Personal archives</partName>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Harvard in the Seventeenth and Eighteenth Centuries</title>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Colonial North American Project at Harvard University</title>
+      </titleInfo>
+   </relatedItem>
+   <location>
+      <physicalLocation type="repository">HUA</physicalLocation>
+      <shelfLocator>HUC 8707.394</shelfLocator>
+   </location>
+   <extension>
+      <originalDocument:originalDocument xmlns:originalDocument="http://lib.harvard.edu/TBD" xmlns="http://lib.harvard.edu/TBD" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://s3.amazonaws.com/harvard.librarycloud.marc.dev/012648168</originalDocument:originalDocument>
+   </extension>
+   <extension>
+      <usageData:usageData xmlns:usageData="http://lib.harvard.edu/usagedata" xmlns="http://lib.harvard.edu/usagedata" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <stackScore>1</stackScore>
+      </usageData:usageData>
+   </extension>
+   <extension>
+      <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <collection>
+            <type>collection</type>
+            <identifier>1</identifier>
+            <abstract />
+            <title>CNA</title>
+         </collection>
+      </collections:collections>
+   </extension>
+   <recordInfo>
+      <descriptionStandard>aacr</descriptionStandard>
+      <recordCreationDate encoding="marc">110103</recordCreationDate>
+      <recordChangeDate encoding="iso8601">20140422170022.0</recordChangeDate>
+      <recordIdentifier source="MH:ALEPH">012648168</recordIdentifier>
+      <recordOrigin>Converted from MARCXML to MODS version 3.5 using MARC21slim2MODS3-5.xsl (Revision 1.102 2014/08/12)</recordOrigin>
+   </recordInfo>
+</mods>
