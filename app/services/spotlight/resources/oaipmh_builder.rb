@@ -146,7 +146,40 @@ module Spotlight
               if (!Dir.exist?(dir))
                 item.remote_itemurl_url = thumburl
                 item.store_itemurl!
-              end
+                
+                if (!item.itemurl.nil? && !item.itemurl.file.nil? && !item.itemurl.file.file.nil?)
+                  filename = item.itemurl.file.file
+                  #strip off everything before the /uploads
+                  filenamearray = filename.split("/uploads")
+                  if (filenamearray.length == 2)
+                    filename = "/uploads" + filenamearray[1]
+                  end
+                  fullimagefile = item.itemurl.file.file
+                  fullurl = filename
+                end
+                
+                if (!item.itemurl.nil? && !item.itemurl.thumb.nil? && !item.itemurl.thumb.file.nil?)
+                  filename = item.itemurl.thumb.file.file
+                  #strip off everything before the /uploads
+                  filenamearray = filename.split("/uploads")
+                  if (filenamearray.length == 2)
+                    filename = "/uploads" + filenamearray[1]
+                  end
+                                    
+                  thumb = filename
+                end
+                if (!item.itemurl.nil? && !item.itemurl.square.nil? && !item.itemurl.square.file.nil?)
+                  filename = item.itemurl.square.file.file
+                  # strip off everything before the /uploads
+                  filenamearray = filename.split("/uploads")
+                  if (filenamearray.length == 2)
+                    filename = "/uploads" + filenamearray[1]
+                  end
+                                    
+                  square = filename
+                end
+  
+              else
                 files = Dir.entries(Rails.root.join("public",item.itemurl.store_dir))
                 files.delete(".")
                 files.delete("..")
@@ -161,7 +194,7 @@ module Spotlight
                     fullimagefile = File.open(Rails.root.join("public",item.itemurl.store_dir,f))
                   end
                 end
-              #end  
+              end  
               item_solr = add_image_info(item_solr, fullurl, thumb, square)
               item_solr = add_image_dimensions(item_solr, fullimagefile)
             end
