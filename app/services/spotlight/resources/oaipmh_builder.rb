@@ -67,6 +67,8 @@ module Spotlight
               ##CNA Specific - catalog
               if (item_solr.key?(catalog_url_item) && !item_solr[catalog_url_item].nil?)
                 item_solr[catalog_url_field_name] = cna_config['ALEPH_URL'] + item_solr[catalog_url_item] + "/catalog"
+                collection_id_tesim = oai_mods_converter.get_spotlight_field_name("collection_id_tesim")
+                item_solr[collection_id_tesim] = item_solr[catalog_url_item]
                 item_sidecar["collection_id_tesim"] = item_solr[catalog_url_item]
                 item_solr.delete(catalog_url_item)  
               end
