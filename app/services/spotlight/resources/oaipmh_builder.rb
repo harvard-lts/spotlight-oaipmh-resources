@@ -81,7 +81,7 @@ module Spotlight
                 catalog_url_array = catalog_url.split('/').last(2)
                 collection_id_tesim = oai_mods_converter.get_spotlight_field_name("collection_id_tesim")
                 item_solr[collection_id_tesim] = catalog_url_array[0]
-                item_sidecar["record-collection_id_tesim"] = catalog_url_array[0]
+                item_sidecar["collection_id_tesim"] = catalog_url_array[0]
               end
               
               finding_aid_url = item.get_finding_aid

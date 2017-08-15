@@ -90,6 +90,7 @@
       - path: physicalDescription/extent
 - spotlight-field: language_ssim
   default-value: eng
+  delimiter: "|"
   mods: 
       - path: language/languageTerm
 - spotlight-field: repository_ssim

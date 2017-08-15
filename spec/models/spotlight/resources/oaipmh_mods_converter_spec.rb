@@ -193,7 +193,8 @@ include OAI::XPath
          end
        end
      end  
-      
+     
+     
       describe 'parse mapping file' do
         context 'given a mapping file' do
           it 'verifies that no exception is thrown and that the converter_items has been populated' do
