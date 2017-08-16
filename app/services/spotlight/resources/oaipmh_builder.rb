@@ -53,7 +53,7 @@ module Spotlight
               uniquify_repos(repository_field_name)
               
               #Add the sidecar info for editing
-              sidecar ||= resource.document_model.new(id: item.id).sidecar(resource.exhibit)   
+              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)   
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
             rescue
@@ -168,7 +168,7 @@ private
         @item_sidecar["record-type_ssim"] = "item"
         
         ##CNA Specific
-        catalog_url = item.get_catalog_url
+        catalog_url = @item.get_catalog_url
         if (!catalog_url.blank?)
           @item_solr[catalog_url_field_name] = catalog_url
           #Extract the ALEPH ID from the URL
@@ -178,7 +178,7 @@ private
           @item_sidecar["collection_id_tesim"] = catalog_url_array[0]
         end
 
-        finding_aid_url = item.get_finding_aid
+        finding_aid_url = @item.get_finding_aid
         if (!finding_aid_url.blank?)
           finding_aid_url_field_name = @oai_mods_converter.get_spotlight_field_name("finding-aid_tesim")
           @item_solr[finding_aid_url_field_name] = finding_aid_url
@@ -188,7 +188,7 @@ private
         #If the creator doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
         creator_field_name = @oai_mods_converter.get_spotlight_field_name("creator_tesim")
         if (!@item_solr.key?(creator_field_name) || @item_solr[creator_field_name].blank?)
-          creator = item.get_creator
+          creator = @item.get_creator
           if (!creator.blank?)
             @item_solr[creator_field_name] = creator
             @item_sidecar["creator_tesim"] = creator
@@ -197,7 +197,7 @@ private
         
         #If the repository doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
         if (!@item_solr.key?(repository_field_name) || @item_solr[repository_field_name].blank?)
-          repo = item.get_repository
+          repo = @item.get_repository
           if (!repo.blank?)
             @item_solr[repository_field_name] = repo
             @item_sidecar["repository_ssim"] = repo
@@ -207,7 +207,7 @@ private
         #If the collection title doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
         coll_title_field_name = @oai_mods_converter.get_spotlight_field_name("collection-title_ssim")
         if (!@item_solr.key?(coll_title_field_name) || @item_solr[coll_title_field_name].blank?)
-          colltitle = item.get_collection_title
+          colltitle = @item.get_collection_title
           if (!colltitle.blank?)
             @item_solr[coll_title_field_name] = colltitle
             @item_sidecar["collection-title_ssim"] = colltitle
@@ -233,7 +233,7 @@ private
             @item.store_itemurl!
           
             if (!@item.itemurl.nil? && !@item.itemurl.file.nil? && !@item.itemurl.file.file.nil?)
-              filename = item.itemurl.file.file
+              filename = @item.itemurl.file.file
               #strip off everything before the /uploads
               filenamearray = filename.split("/uploads")
               if (filenamearray.length == 2)
@@ -287,11 +287,20 @@ private
 
  
       def uniquify_repos(repository_field_name)
+        
         #If the repository exists, make sure it has unique values
         if (@item_solr.key?(repository_field_name))
           repoarray = @item_solr[repository_field_name].split("|")
+          if (@item.id.eql?('000603974'))
+            Delayed::Worker.logger.add(Logger::ERROR, 'REPO FOR 000603974>>>>>>')
+            Delayed::Worker.logger.add(Logger::ERROR, @item_solr[repository_field_name])
+          end
           repoarray = repoarray.uniq
           repo = repoarray.join("|")
+          if (@item.id.eql?('000603974'))
+            Delayed::Worker.logger.add(Logger::ERROR, 'UNIQUE FOR 000603974>>>>>>')
+            Delayed::Worker.logger.add(Logger::ERROR, repo)
+          end
           @item_solr[repository_field_name] = repo
           @item_sidecar["repository_ssim"] = repo
         end
