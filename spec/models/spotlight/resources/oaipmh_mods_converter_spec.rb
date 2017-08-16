@@ -3,6 +3,7 @@ require 'yaml'
 require 'oai'
 require 'nokogiri'
 require 'language'
+require 'xml/libxml'
 
 include OAI::XPath
             
@@ -86,7 +87,7 @@ include OAI::XPath
             fixture_mapping_file = file_fixture("mapping_sample.yml")
             mapping_config = YAML.load_file(fixture_mapping_file)
             
-            require 'xml/libxml'
+            
             fixture_mods_file = file_fixture("mods_sample_single_item.xml")
             
             doc = LibXML::XML::Document.file(fixture_mods_file.to_s)
@@ -174,10 +175,11 @@ include OAI::XPath
            repoarray = repoarray.uniq
            repo = repoarray.join("|")
 
-           expect(repo).to eq("HUA")
+           expect(repo).to eq("Harvard University Archives")
          end
        end
      end 
+     
      
      describe 'parse cna mods sample item with irregular title' do
        context 'titles with irregular sort/non sort settings' do

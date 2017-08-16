@@ -110,43 +110,42 @@
       </titleInfo>
    </relatedItem>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.2</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.3f</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.187.2</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.207.2</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.207.3</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.271.2</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.283</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.294.2</shelfLocator>
    </location>
    <location>
-      <physicalLocation type="repository">HUA</physicalLocation>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
       <shelfLocator>UAV 327.353</shelfLocator>
    </location>
    <location>
-      <physicalLocation>NET</physicalLocation>
       <url note="Provides access to page images of UAV 327.3f, volume 1" access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:23162724</url>
       <url note="Provides access to page images of UAV 327.3f, volume 2" access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:22822781</url>
       <holdingSimple>
@@ -177,6 +176,6 @@
       <recordCreationDate encoding="marc">860304</recordCreationDate>
       <recordChangeDate encoding="iso8601">20160725090704.0</recordChangeDate>
       <recordIdentifier source="MH:ALEPH">000603974</recordIdentifier>
-      <recordOrigin>Converted from MARCXML to MODS version 3.5 using MARC21slim2MODS3-5.xsl (Revision 1.102 2014/08/12)</recordOrigin>
+      <recordOrigin>Converted from MARCXML to MODS version 3.6 using MARC21slim2MODS3-6.xsl (Revision 1.117 2017/02/14)</recordOrigin>
    </recordInfo>
 </mods>

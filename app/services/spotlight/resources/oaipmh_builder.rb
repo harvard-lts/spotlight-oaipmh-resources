@@ -58,7 +58,8 @@ module Spotlight
             
               
             #THIS IS SPECIFIC TO CNA   
-                              
+            repository_field_name = oai_mods_converter.get_spotlight_field_name("repository_ssim")
+                                
             #If the collection field is populated then it is a collection, otherwise it is an item.
             if (!item_solr[record_type_field_name].nil? && !item_solr[record_type_field_name].eql?("item"))
               item_solr[record_type_field_name] = "collection"
@@ -105,21 +106,21 @@ module Spotlight
               end
               
               #If the repository doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
-              repository_field_name = oai_mods_converter.get_spotlight_field_name("repository_ssim")
               if (!item_solr.key?(repository_field_name) || item_solr[repository_field_name].blank?)
                 repo = item.get_repository
                 if (!repo.blank?)
                   item_solr[repository_field_name] = repo
                   item_sidecar["repository_ssim"] = repo
                 end
-              #if it exists, make sure it has unique values
-              else
-                repoarray = item_solr[repository_field_name].split("|")
-                repoarray = repoarray.uniq
-                repo = repoarray.join("|")
-                item_solr[repository_field_name] = repo
-                item_sidecar["repository_ssim"] = repo
-              end
+            end
+            
+            #If the repository exists, make sure it has unique values
+            if (item_solr.key?(repository_field_name) && !item_solr[repository_field_name].blank?)
+              repoarray = item_solr[repository_field_name].split("|")
+              repoarray = repoarray.uniq
+              repo = repoarray.join("|")
+              item_solr[repository_field_name] = repo
+              item_sidecar["repository_ssim"] = repo
             end
             
             #If the collection title doesn't exist from the mapping, we have to extract it from the related items (b/c it is an EAD component)
