@@ -13,7 +13,7 @@ module Spotlight
           mapping_file = resource.data[:mapping_file]
         end
         
-        cna_config = YAML.load_file(Spotlight::Oaipmh::Resources::Engine.root + 'config/cna_config.yml')[Rails.env]
+        @cna_config = YAML.load_file(Spotlight::Oaipmh::Resources::Engine.root + 'config/cna_config.yml')[Rails.env]
         
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         
@@ -21,7 +21,7 @@ module Spotlight
         resumption_token = harvests.resumption_token
         until (resumption_token.nil?)
           harvests.each do |record|
-            @item = OaipmhModsItem.new(exhibit, @oai_mods_converter, cna_config)
+            @item = OaipmhModsItem.new(exhibit, @oai_mods_converter, @cna_config)
             
             @item.metadata = record.metadata
             @item.parse_mods_record()
@@ -56,8 +56,10 @@ module Spotlight
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)   
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
-            rescue
+            rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
+              Delayed::Worker.logger.add(Logger::ERROR, e.message)
+              Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
             end
           end
           harvests = resource.resumption_oaipmh_harvests(resumption_token)
@@ -143,7 +145,7 @@ private
         end
       end
       
-      def set_collection_specific_data()
+      def set_collection_specific_data(record_type_field_name)
         catalog_url_field_name = @oai_mods_converter.get_spotlight_field_name("catalog-url_tesim")
         catalog_url_item = @oai_mods_converter.get_spotlight_field_name("catalog-url_item_tesim")
                
@@ -152,7 +154,7 @@ private
           
         ##CNA Specific - catalog
         if (@item_solr.key?(catalog_url_item) && !@item_solr[catalog_url_item].nil?)
-          @item_solr[catalog_url_field_name] = cna_config['ALEPH_URL'] + @item_solr[catalog_url_item] + "/catalog"
+          @item_solr[catalog_url_field_name] = @cna_config['ALEPH_URL'] + @item_solr[catalog_url_item] + "/catalog"
           collection_id_tesim = @oai_mods_converter.get_spotlight_field_name("collection_id_tesim")
           @item_solr[collection_id_tesim] = @item_solr[catalog_url_item]
           @item_sidecar["collection_id_tesim"] = @item_solr[catalog_url_item]
@@ -160,10 +162,11 @@ private
         end
       end
       
-      def set_item_specific_data()
+      def set_item_specific_data(record_type_field_name)
         catalog_url_field_name = @oai_mods_converter.get_spotlight_field_name("catalog-url_tesim")
         catalog_url_item = @oai_mods_converter.get_spotlight_field_name("catalog-url_item_tesim")
-                
+        repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
+                         
         @item_solr[record_type_field_name] = "item"
         @item_sidecar["record-type_ssim"] = "item"
         
@@ -289,17 +292,17 @@ private
       def uniquify_repos(repository_field_name)
         
         #If the repository exists, make sure it has unique values
-        if (@item_solr.key?(repository_field_name))
+        if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
           repoarray = @item_solr[repository_field_name].split("|")
           if (@item.id.eql?('000603974'))
-            Delayed::Worker.logger.add(Logger::ERROR, 'REPO FOR 000603974>>>>>>')
-            Delayed::Worker.logger.add(Logger::ERROR, @item_solr[repository_field_name])
+            Delayed::Worker.logger.add(Logger::DEBUG, 'REPO FOR 000603974>>>>>>')
+            Delayed::Worker.logger.add(Logger::DEBUG, @item_solr[repository_field_name])
           end
           repoarray = repoarray.uniq
           repo = repoarray.join("|")
           if (@item.id.eql?('000603974'))
-            Delayed::Worker.logger.add(Logger::ERROR, 'UNIQUE FOR 000603974>>>>>>')
-            Delayed::Worker.logger.add(Logger::ERROR, repo)
+            Delayed::Worker.logger.add(Logger::DEBUG, 'UNIQUE FOR 000603974>>>>>>')
+            Delayed::Worker.logger.add(Logger::DEBUG, repo)
           end
           @item_solr[repository_field_name] = repo
           @item_sidecar["repository_ssim"] = repo
