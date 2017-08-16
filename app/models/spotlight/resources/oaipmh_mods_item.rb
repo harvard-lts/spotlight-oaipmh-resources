@@ -101,7 +101,7 @@ module Spotlight::Resources
    end
 
   #This pulls the repository from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
-  #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/name/namePart)
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (nested related items)
   def get_repository()
      if (@repository.nil?)
        node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['REPOSITORY_XPATH'])
