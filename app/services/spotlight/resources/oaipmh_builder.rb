@@ -32,6 +32,7 @@ module Spotlight
               #CNA Specific
               lookup_languages_and_origins()     
               parse_subjects()
+              calculate_year_ranges()
               
               record_type_field_name = @oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                  
@@ -145,6 +146,63 @@ private
         end
       end
       
+      def create_year_ranges()
+        start_date = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
+        end_date = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
+        range = "No date"
+        if (!start_date.blank? && !end_date.blank?)
+          #if it is a regular date, use the decades
+          if (is_date_int(start_date) && is_date_int(end_date))
+            range = calculate_ranges(start_date, end_date)
+          elsif (start_date.include?('u') || end_date.include('u'))
+            range = "Undetermined date"
+          end
+        end
+        year_range_field_name = @oai_mods_converter.get_spotlight_field_name("year-range_ssim")         
+                      
+        @item_solr[year_range_field_name] = range
+        @item_sidecar[year_range_field_name] = range
+      end
+      
+      def calculate_ranges(start_date, end_date)
+        range = ""
+        if (start_date.to_i > 1799)
+          range = "1800-present"
+        elsif (start_date.to_i < 1600 && end_date.to_i < 1600)
+          range = "pre-1600"
+        else
+          date_counter = 1600
+          end_value = end_date.to_i
+          if (end_value > 1799)
+            end_value = 1799
+          end
+          delimiter = ""
+          if (start_date.to_i < 1600)
+            range = "pre-1600"
+            delimiter = "|"
+          else
+            date_counter = (start_date/10.0).floor * 10
+          end
+          
+          while (date_counter <= end_value)
+            decade_end = date_counter + 9
+            range = range + delimiter + "#{date_counter}-#{decade_end}"
+            date_counter = date_counter + 10
+            delimiter = "|"
+          end
+          
+          if (end_date.to_i > 1799)
+            range = range + "|1800-present"
+          end
+        end
+        range
+      end
+      
+      def is_date_int(date)
+        true if Integer(date) rescue false
+      end
+      
+      
       def set_collection_specific_data(record_type_field_name)
         catalog_url_field_name = @oai_mods_converter.get_spotlight_field_name("catalog-url_tesim")
         catalog_url_item = @oai_mods_converter.get_spotlight_field_name("catalog-url_item_tesim")
@@ -161,6 +219,7 @@ private
           @item_solr.delete(catalog_url_item)  
         end
       end
+      
       
       def set_item_specific_data(record_type_field_name)
         catalog_url_field_name = @oai_mods_converter.get_spotlight_field_name("catalog-url_tesim")
