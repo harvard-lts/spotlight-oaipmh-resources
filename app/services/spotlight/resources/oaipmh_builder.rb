@@ -32,7 +32,7 @@ module Spotlight
               #CNA Specific
               lookup_languages_and_origins()     
               parse_subjects()
-              calculate_year_ranges()
+              create_year_ranges()
               
               record_type_field_name = @oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                  
@@ -161,7 +161,7 @@ private
         year_range_field_name = @oai_mods_converter.get_spotlight_field_name("year-range_ssim")         
                       
         @item_solr[year_range_field_name] = range
-        @item_sidecar[year_range_field_name] = range
+        @item_sidecar['year-range_ssim'] = range
       end
       
       def calculate_ranges(start_date, end_date)
