@@ -161,7 +161,7 @@ private
         year_range_field_name = @oai_mods_converter.get_spotlight_field_name("year-range_ssim")         
                       
         @item_solr[year_range_field_name] = range
-        @item_sidecar[year_range_field_name] = range
+        @item_sidecar['year-range_ssim'] = range
       end
       
       def calculate_ranges(start_date, end_date)
