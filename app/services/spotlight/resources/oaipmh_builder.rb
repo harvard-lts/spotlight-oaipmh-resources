@@ -32,7 +32,10 @@ module Spotlight
               #CNA Specific
               lookup_languages_and_origins()     
               parse_subjects()
+              parse_types()
+              uniquify_dates()
               create_year_ranges()
+              
               
               record_type_field_name = @oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                  
@@ -146,9 +149,22 @@ private
         end
       end
       
+      def parse_types()
+        ##CNA Specific - Subjects
+        type_field_name = @oai_mods_converter.get_spotlight_field_name("type_ssim")
+        if (@item_solr.key?(type_field_name) && !@item_solr[type_field_name].nil?)
+          #Split on |
+          types = @item_solr[type_field_name].split('|')
+          @item_solr[type_field_name] = types
+          @item_sidecar["type_ssim"] = types
+        end
+      end
+      
       def create_year_ranges()
-        start_date = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
-        end_date = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
+        start_date_name = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
+        end_date_name = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
+        start_date = @item_solr[start_date_name]
+        end_date = @item_solr[end_date_name]
         range = "No date"
         if (!start_date.blank? && !end_date.blank?)
           #if it is a regular date, use the decades
@@ -365,6 +381,25 @@ private
           end
           @item_solr[repository_field_name] = repo
           @item_sidecar["repository_ssim"] = repo
+        end
+      end
+      
+      def uniquify_dates()
+        start_date_name = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
+        end_date_name = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
+        start_date = @item_solr[start_date_name]
+        end_date = @item_solr[end_date_name]
+        if (!start_date.blank?)
+          datearray = @item_solr[start_date_name].split("|")
+          dates = datearray.join("|")
+          @item_solr[start_date_name] = dates
+          @item_sidecar["start-date_tesim"] = dates
+        end
+        if (!end_date.blank?)
+          datearray = @item_solr[end_date_name].split("|")
+          dates = datearray.join("|")
+          @item_solr[end_date_name] = dates
+          @item_sidecar["end-date_tesim"] = dates
         end
       end
 
