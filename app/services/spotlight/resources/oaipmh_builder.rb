@@ -199,6 +199,7 @@ private
             date_counter = (start_date.to_i/10.0).floor * 10
           end
           
+          
           while (date_counter <= end_value)
             decade_end = date_counter + 9
             range = range + delimiter + "#{date_counter}-#{decade_end}"
