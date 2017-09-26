@@ -56,11 +56,13 @@
 - spotlight-field: start-date_tesim
   mods:
       - path: originInfo/dateCreated
+        delimiter: "|"
         attribute: point
         attribute-value: start
 - spotlight-field: end-date_tesim
   mods:
       - path: originInfo/dateCreated
+        delimiter: "|"
         attribute: point
         attribute-value: end
 - spotlight-field: date_tesim
