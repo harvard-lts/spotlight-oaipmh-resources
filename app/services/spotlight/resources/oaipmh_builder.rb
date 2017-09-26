@@ -149,7 +149,7 @@ private
       end
       
       def parse_types()
-        ##CNA Specific - Subjects
+        ##CNA Specific - Types
         type_field_name = @oai_mods_converter.get_spotlight_field_name("type_ssim")
         if (@item_solr.key?(type_field_name) && !@item_solr[type_field_name].nil?)
           #Split on |
@@ -180,34 +180,32 @@ private
       end
       
       def calculate_ranges(start_date, end_date)
-        range = ""
+        range = []
         if (start_date.to_i > 1799)
-          range = "1800-present"
+          range.push("1800-present")
         elsif (start_date.to_i < 1600 && end_date.to_i < 1600)
-          range = "pre-1600"
+          range.push("pre-1600")
         else
           date_counter = 1600
           end_value = end_date.to_i
           if (end_value > 1799)
             end_value = 1799
           end
-          delimiter = ""
           if (start_date.to_i < 1600)
-            range = "pre-1600"
-            delimiter = "|"
+            range.push("pre-1600")
           else
             date_counter = (start_date.to_i/10.0).floor * 10
           end
           
+          
           while (date_counter <= end_value)
             decade_end = date_counter + 9
-            range = range + delimiter + "#{date_counter}-#{decade_end}"
+            range.push("#{date_counter}-#{decade_end}")
             date_counter = date_counter + 10
-            delimiter = "|"
           end
           
           if (end_date.to_i > 1799)
-            range = range + "|1800-present"
+            range.push("1800-present")
           end
         end
         range
