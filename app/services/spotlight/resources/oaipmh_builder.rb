@@ -36,7 +36,6 @@ module Spotlight
               uniquify_dates()
               create_year_ranges()
               
-              
               record_type_field_name = @oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                  
               ##CNA Specific - catalog
@@ -197,7 +196,7 @@ private
             range = "pre-1600"
             delimiter = "|"
           else
-            date_counter = (start_date/10.0).floor * 10
+            date_counter = (start_date.to_i/10.0).floor * 10
           end
           
           while (date_counter <= end_value)
