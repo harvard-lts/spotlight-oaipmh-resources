@@ -36,7 +36,6 @@ module Spotlight
               uniquify_dates()
               create_year_ranges()
               
-              
               record_type_field_name = @oai_mods_converter.get_spotlight_field_name("record-type_ssim")
                  
               ##CNA Specific - catalog
