@@ -179,6 +179,7 @@ private
         @item_sidecar['year-range_ssim'] = range
       end
       
+      
       def calculate_ranges(start_date, end_date)
         range = []
         if (start_date.to_i > 1799)
