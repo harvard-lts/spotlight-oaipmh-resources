@@ -44,7 +44,14 @@ module Spotlight
          
               #THIS IS SPECIFIC TO CNA   
               repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
-                                  
+              
+              #THIS IS SPECIFIC TO CNA   
+              funding_field_name = @oai_mods_converter.get_spotlight_field_name("funding_ssim")
+              if (!@item_solr[funding_field_name].nil? && @item_solr[funding_field_name].include?("Polonsky"))
+                  @item_solr[funding_field_name] = "The Polonsky Foundation"
+                  @item_sidecar["funding_ssim"] = "The Polonsky Foundation"
+              end
+                                                
               #If the collection field is populated then it is a collection, otherwise it is an item.
               if (!@item_solr[record_type_field_name].nil? && !@item_solr[record_type_field_name].eql?("item"))
                 set_collection_specific_data(record_type_field_name)
