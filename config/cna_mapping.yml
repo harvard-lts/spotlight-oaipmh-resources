@@ -158,6 +158,11 @@
       - path: note
         attribute: type
         attribute-value: publications
+- spotlight-field: funding_tesim
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: funding
 - spotlight-field: funding_ssim
   mods:
       - path: note
