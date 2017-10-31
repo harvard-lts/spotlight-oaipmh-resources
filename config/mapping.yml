@@ -5,73 +5,65 @@
 #    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
 #    mods:
 #        - path: xxx (repeatable - all path fields will be concatenated)
-#          attribute: xxx (optional)
-#          attribute-value: xxx (optional, use '!xxx' for exclusion - NOTE you have to put the value in quotes when using '!')
-#          conditional: (optional)
-#            - mods-attribute: xxx
-#              mods-attribute-value: xxx (mods-value/spotlight-value and mods-path/spotlight-value are repeatable)
-#              spotlight-value: xxx (defaults to path-text item if not present)
-#            - mods-path: xxx (you don't need both mods-value and mods-path but you can use both)
-#              value: xxx (optional, use !xxx for exclusion)
-#              spotlight-value: xxx (defaults to path-text item if not present)
+#          delimiter: " "
+#          attribute: displayLabel
+#          attribute-value: collection
+#          mods-path: xxx 
+#          mods-value: xx
+#          subpaths: 
+#            - subpath: xxx
+#            - subpath: xxx
 #
-
   # In CNA, this field has to append a urn if the record type is item - Michael may have to do this one
 - spotlight-field: unique-id_tesim
   mods:
       - path: recordInfo/recordIdentifier
-#- spotlight-field: record-type_ssim
-#  default-value: collection
-#  mods:
-#      - path: recordInfo/recordIdentifier
-#        conditional:
-#            mods-attribute: source
-#            mods-attribute-value: "MH:OASIS"
-#            spotlight-value: item
 - spotlight-field: full_title_tesim
+  delimiter: ": "
   mods:
       - path: titleInfo
-        delimiter: ": "
-        subpaths:
-          - subpath: title
-          - subpath: subTitle
-- spotlight-field: collection-title_ssim
-  mods:
-      - path: relatedItem
         delimiter: " "
-        attribute: displayLabel
-        attribute-value: collection
-        subpaths: 
-          - subpath: titleInfo/title
-          - subpath: originInfo/dateCreated
+        subpaths:
+          - subpath: nonSort
+          - subpath: title
+      - path: titleInfo/subTitle
 - spotlight-field: citation-title_tesim
   mods:
       - path: titleInfo/title
 - spotlight-field: creator_tesim
-  delimiter: " , "
   mods:
-      - path: name/namePart
-        mods-path: name/role/roleTerm
+      - path: plain_name
+        delimiter: " , "
+        mods-path: role/roleTerm
         mods-value: creator
+        subpaths:
+          - subpath: namePart
 - spotlight-field: start-date_tesim
   mods:
       - path: originInfo/dateCreated
+        delimiter: "|"
         attribute: point
         attribute-value: start
 - spotlight-field: end-date_tesim
   mods:
       - path: originInfo/dateCreated
+        delimiter: "|"
         attribute: point
         attribute-value: end
 - spotlight-field: date_tesim
   mods:
-      - path: originInfo/dateOther
+      - path: originInfo/dateCreated
+        attribute: '!point'
+        attribute-value: 
 - spotlight-field: contributer_tesim
   delimiter: " , "
   mods:
-      - path: name/namePart
-        mods-path: name/role/roleTerm
+      - path: plain_name
+        delimiter: " , "
+        mods-path: role/roleTerm
         mods-value: '!creator'
+        subpaths:
+          - subpath: namePart
 - spotlight-field: spotlight_upload_description_tesim
   delimiter: "|"
   mods: 
@@ -79,18 +71,17 @@
       - path: note
         attribute: type
         attribute-value: 
-- spotlight-field: finding-aid_tesim
-  mods:
-      - path: note  # this needs to be parsed
 - spotlight-field: format_tesim
   delimiter: "|"
   mods:
       - path: physicalDescription/extent
 - spotlight-field: language_ssim
-  default-value: eng
+  default-value: English
+  delimiter: "|"
   mods: 
       - path: language/languageTerm
 - spotlight-field: repository_ssim
+  delimiter: "|"
   mods:
       - path: location/physicalLocation
         attribute: type
@@ -108,6 +99,7 @@
         subpaths:
           - subpath: name/namePart
           - subpath: topic
+          - subpath: geographic
           - subpath: genre
 - spotlight-field: type_ssim
   delimiter: "|"
@@ -152,6 +144,22 @@
       - path: note
         attribute: type
         attribute-value: publications
-          
-        
-          
+- spotlight-field: funding_tesim
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: funding
+- spotlight-field: funding_ssim
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: funding
+- spotlight-field: thumbnail_url_ssm
+  mods:
+      - path: location/url
+        attribute: access
+        attribute-value: preview
+- spotlight-field: rights_tesim
+  mods:
+      - path: accessCondition
+         
