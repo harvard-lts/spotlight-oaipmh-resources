@@ -17,3 +17,13 @@ en:
               custom-mapping: "Custom Mapping File"
               custom-mapping-field:
                 help: "Upload an optional mapping file (YML format)."
+            performharvest:
+              success: "Successfully scheduled '%{set}' for harvesting."
+    harvesting_complete_mailer:
+       harvest_indexed:
+          title: "Your harvest has just finished being processed."
+          body: "The %{set} set has been indexed from the harvest and added to the exhibit %{title}."
+       harvest_failed:
+          title: "Your harvest has failed to import."
+          body: "The %{set} harvest for the exhibit %{title} has failed."
+        

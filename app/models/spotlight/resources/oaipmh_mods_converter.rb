@@ -11,7 +11,6 @@ module Spotlight::Resources
   class ConverterItem
     attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
-         #RESERVED_MODS_SHORTCUTS = {'full_title_tesim'=> "full_titles"}
         
     def initialize()
       delimiter = ", "
@@ -30,15 +29,13 @@ module Spotlight::Resources
             values << value
           elsif (!retvalues.empty?)
             value = retvalues.join(delimiter)
-            if (spotlight_field.eql?('spotlight_upload_description_tesim'))
-              puts 'DESCRIPTION>>>>>>>>>>>>'
-              puts retvalues.to_s
-            end
             values << value
           end
           
-        rescue NoMethodError
-          print  "The path " + item.mods_path.path + " does not exist\n"
+        rescue NoMethodError => e
+          puts e.message
+          puts e.backtrace
+          puts  "The path " + item.mods_path.path + " does not exist\n"
         end
       
       end
@@ -48,10 +45,14 @@ module Spotlight::Resources
     end
       
     
+    #Creates the proper path and subpath names to use since some words may be reserved.
+    #It then uses these paths to search for the value in the Mods::Record
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
-      path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
-      path_array[0] = path_array[0].join("_").downcase
+      if (!item.mods_path.path.eql?("accessCondition") && !item.mods_path.path.eql?("typeOfResource"))
+        path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
+        path_array[0] = path_array[0].join("_").downcase
+      end
       path_array.each_with_index do |value, key|
         #The mods gem has special names for certain reserved words/paths
         if (RESERVED_WORDS.key?(value))
@@ -61,10 +62,10 @@ module Spotlight::Resources
       
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
-         
         if (!item.mods_path.delimiter.nil?)
           sub_delimiter = item.mods_path.delimiter
         end
+        
         item.mods_path.subpaths.each do |subpath|
           subpath_array = subpath.split("/")
           subpath_array.each_with_index do |value, key|
@@ -72,7 +73,6 @@ module Spotlight::Resources
             if (RESERVED_WORDS.key?(value))
               subpath_array[key] = RESERVED_WORDS[value]
             end
-            
           end
 
           subpaths << subpath_array
@@ -82,61 +82,88 @@ module Spotlight::Resources
        values = Array.new
        
        node = parentnode
+
        #eg: subject
        path_array.each do |path|
-         node = node.send(path)    
+         node = node.send(path) 
        end
-if (spotlight_field.eql?('collection-title_ssim'))
-  puts "Collection Title"
-             puts node.to_s
-             end
-       #node.each do |subnode|
-         if (!subpaths.empty?)
-           #subpathvalues = Array.new
-           #subnodes when paths are stored in subpaths in the mapping file
-           node.each do |subnode| 
-             subpathvalues = Array.new
-             puts subnode.to_s 
-             puts subpaths.to_s
-             subpaths.each do |subpath_array|
-               tempval = subnode
-               
-               #eg. subject/name/namePart
-                subpath_array.each do |subpath|
-                  tempval = tempval.send(subpath)
+       
+       if (!subpaths.empty?)
+          
+          #subnodes when paths are stored in subpaths in the mapping file
+          node.each do |subnode| 
+            if (check_attributes(subnode, item))
+              subpathvalues = Array.new
+  
+              value = find_node_value(subnode, subpaths,  [], 0) 
+              if (!value.empty?)
+                subpathvalues << value
                 end
-                if (!tempval.text.empty?)
-                  subpathvalues << tempval.text
-                end
-              end
-             if (spotlight_field.eql?('collection-title_ssim'))
-             puts subpathvalues.to_s
-             end
-           if (!subpathvalues.empty?)
-             values << subpathvalues.join(sub_delimiter)
-
-           end
-           end
-         else
-     
-           node.each do |subnode|
-            if (!subnode.text.blank? && check_attributes(subnode, item) && check_conditional_path(subnode, item, parentnode))
-              values << subnode.text
+               if (!subpathvalues.empty? && check_conditional_subpath(subnode, item, parentnode))
+                 values << subpathvalues.join(sub_delimiter)
+               end
             end
-           end
          end
+       else
+   
+         node.each do |subnode|
+          if (!subnode.text.blank? && check_attributes(subnode, item) && check_conditional_path(subnode, item, parentnode))
+            values << subnode.text
+          end
+         end
+       end
 
-       #end
       values
     end
     
+    #Loops through the nodes to find the supplied subpaths.  It is done this way to preserve the mods order of the subpath values
+    def find_node_value(nodeset, subpaths, parentpathname, popcount) 
+      values = []
+      pathname = parentpathname
+
+      nodeset.children.each do |node|
+
+        nodename = node.name
+        
+        if (RESERVED_WORDS.key?(nodename))
+          nodename = RESERVED_WORDS[nodename]
+        end
+        if (!nodename.eql?('text'))
+          pathname << nodename
+          popcount = popcount + 1
+          if (subpaths.include?(pathname))
+            if (!node.text.blank?)
+              values << node.text
+            end
+            #If the paths have multiple levels, then we have to back out to the original nodepath.
+            until (popcount == 0) do
+              pathname.pop
+              popcount = popcount - 1;
+            end
+          elsif (node.children.count > 1 || (node.children.first == 1 && !node.children.first.name.eql?('text')))
+            values += find_node_value(node, subpaths, pathname, popcount+1)
+            until (popcount == 0) do
+              pathname.pop
+              popcount = popcount - 1;
+            end
+          end
+        end
+      end
+      values
+    end
+    
+    #Make sure that the attribute value matches (if supplied)
     def check_attributes(node, item)
-      if (!item.mods_attribute.blank?)
-        attribute = node[item.mods_attribute]
-        if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !attribute.eql?(item.mods_attribute_value.delete("!")))
+     value_accepted = false
+     if (!item.mods_attribute.blank?)
+        if (item.mods_attribute[0].eql?("!") && node[item.mods_attribute.delete("!")].blank?)
           value_accepted = true
-        elsif (attribute.eql?(item.mods_attribute_value))
-          value_accepted = true
+        elsif (!item.mods_attribute[0].eql?("!"))
+          if (!item.mods_attribute_value.blank? && item.mods_attribute_value[0].eql?("!") && !node[item.mods_attribute].eql?(item.mods_attribute_value.delete("!")))
+            value_accepted = true
+          elsif (!node[item.mods_attribute].nil? && node[item.mods_attribute].eql?(item.mods_attribute_value))
+            value_accepted = true
+          end
         end
       else
         value_accepted = true
@@ -144,6 +171,7 @@ if (spotlight_field.eql?('collection-title_ssim'))
       value_accepted
     end
     
+    #Make sure the conditional path value matches (if supplied)
     def check_conditional_path(node, item, parentnode)
       value_accepted = false
       if (!item.conditional_mods_value.blank?)
@@ -156,7 +184,6 @@ if (spotlight_field.eql?('collection-title_ssim'))
               path_array[key] = RESERVED_WORDS[value]
             end
           end
-          
           conditionalnode = parentnode
           path_array.each do |path|
             conditionalnode = conditionalnode.send(path)    
@@ -171,11 +198,42 @@ if (spotlight_field.eql?('collection-title_ssim'))
       end
       value_accepted
     end
+    
+#Make sure the conditional path value matches (if supplied)
+    def check_conditional_subpath(node, item, parentnode)
+      value_accepted = false
+      if (!item.conditional_mods_value.blank?)
+          path_array = item.conditional_mods_path.split("/")
+          path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
+          path_array[0] = path_array[0].join("_").downcase
+          path_array.each_with_index do |value, key|
+            #The mods gem has special names for certain reserved words/paths
+            if (RESERVED_WORDS.key?(value))
+              path_array[key] = RESERVED_WORDS[value]
+            end
+          end
+          conditionalnode = node
+          path_array.each do |path|
+            conditionalnode = conditionalnode.send(path)     
+          end
+          
+          if (item.conditional_mods_value[0].eql?("!") && !conditionalnode.text.eql?(item.conditional_mods_value.delete("!")))
+            value_accepted = true
+          elsif (conditionalnode.text.eql?(item.conditional_mods_value))
+            value_accepted = true
+          end
+      else
+        value_accepted = true
+      end
+      value_accepted
+    end
 end
   
   class OaipmhModsConverter
-    RESERVED_PATHS = {'name/namePart'=> "personal_name/namePart", "name/role/roleTerm" => "personal_name/role/roleTerm"}
+    RESERVED_PATHS = {'name/namePart'=> "plain_name/namePart", "name/role/roleTerm" => "plain_name/role/roleTerm"}
     STANDARD_SPOTLIGHT_FIELDS = ['unique-id_tesim', 'full_title_tesim', 'spotlight_upload_description_tesim', 'thumbnail_url_ssm', 'full_image_url_ssm', 'spotlight_upload_date_tesim"', 'spotlight_upload_attribution_tesim']
+    
+    attr_accessor :sidecar_hash
        
     #Initialize with the name of the set being converted
     def initialize(set, exhibitslug, mapping_file)
@@ -183,6 +241,7 @@ end
       @exhibitslug = exhibitslug
       @mapping_file = mapping_file   
       @converter_items = Array.new  
+      @sidecar_hash = {}
     end
     
     #Expects a Mods::Record parameter value
@@ -194,12 +253,15 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        solr_hash[get_spotligh_field_name(item.spotlight_field)] = item.extract_value(modsrecord)
+        value = item.extract_value(modsrecord)
+        solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
+        @sidecar_hash[item.spotlight_field] = value
       end
       solr_hash
     end
     
-    def get_spotligh_field_name(spotlight_field)      
+    #Some spotlight fields use the exhibit slug, others do not
+    def get_spotlight_field_name(spotlight_field)      
       if (!STANDARD_SPOTLIGHT_FIELDS.include?(spotlight_field))
         spotlight_field = 'exhibit_' + @exhibitslug + '_' + spotlight_field
       end
@@ -221,6 +283,7 @@ end
   
   #private
   
+   #parses the mapping file into a model
   def parse_mapping_file(file)
     
     mapping_config = YAML.load_file(file)

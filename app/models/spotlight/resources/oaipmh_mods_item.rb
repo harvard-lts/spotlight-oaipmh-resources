@@ -8,35 +8,36 @@ module Spotlight::Resources
   class OaipmhModsItem
     extend CarrierWave::Mount
     attr_reader :titles, :id
-    attr_accessor :metadata, :itemurl
+    attr_accessor :metadata, :itemurl, :sidecar_data
     mount_uploader :itemurl, Spotlight::ItemUploader
-    def initialize(exhibit, converter)
+    def initialize(exhibit, converter, cna_config)
       @solr_hash = {}
       @exhibit = exhibit
       @converter = converter
+      @catalog_url = nil
+      @finding_aid_url = nil
+      @creator = nil
+      @repository = nil
+      @cna_config = cna_config
     end
     
     def to_solr
       add_document_id
-      add_title
-#      add_thumbnail_url
-#      add_full_image_urls
-      add_manifest_url
       solr_hash
     end
     
     def parse_mods_record()
-      
-      modsonly = xpath_first(metadata, "*[local-name()='mods']")
-      #puts modsonly.to_s
-      modsrecord = Mods::Record.new.from_str(modsonly.to_s, false)
-      
-      if (modsrecord.mods_ng_xml.record_info && modsrecord.mods_ng_xml.record_info.recordIdentifier)
-        @id = modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
+        
+      @modsrecord = Mods::Record.new.from_str(metadata.elements.to_a[0].to_s, false)
+          
+      if (@modsrecord.mods_ng_xml.record_info && @modsrecord.mods_ng_xml.record_info.recordIdentifier)
+        @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
+        #Strip out all of the decimals
+        @id = @id.gsub('.', '')
       end
       
       begin
-        @titles = modsrecord.full_titles
+        @titles = @modsrecord.full_titles
       rescue NoMethodError
         @titles = nil
       end
@@ -49,46 +50,86 @@ module Spotlight::Resources
         raise InvalidModsRecord, "Mods record " + @titles[0] + "must have a title. This mods record was not updated in Spotlight."
       end  
       
-      @solr_hash = @converter.convert(modsrecord)
-               
+      @solr_hash = @converter.convert(@modsrecord)
+      @sidecar_data = @converter.sidecar_hash
+   end
+   
+   #This pulls the catalog url from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+   #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
+   def get_catalog_url()
+     if (@catalog_url.nil?)
+       node = @modsrecord.mods_ng_xml.xpath(@cna_config['HOLLIS_RECORD_XPATH'])
+       if (!node.blank?)
+         @catalog_url = node.text
+       else
+         @catalog_url = ""
+       end   
+     end
+     @catalog_url
+   end
+   
+  #This pulls the finding aid url from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/location/url)
+  def get_finding_aid()
+     if (@finding_aid_url.nil?)
+       node = @modsrecord.mods_ng_xml.xpath(@cna_config['FINDING_AID_XPATH'])
+       if (!node.blank?)
+         @finding_aid_url = node.text
+       else
+         @finding_aid_url = ""
+       end
+     end
+     @finding_aid_url
+   end
 
-#            @titles = modsrecord.short_titles
-#            #locations = modsrecord.mods_ng_xml.location.url
-#            @full_urls = Array.new
-#            @thumb_urls = Array.new
-#            @iiif_images = Array.new
-##            for location in locations
-##              access = location.get_attribute("access")
-##              @thumb_url = nil
-##              @full_url = nil
-##              if (access == "preview")
-##                @thumb_url = location.text
-##                @full_url = fetch_ids_uri(@thumb_url)
-##              end
-##              
-##              if (!@full_url.nil? && @full_url.include?("view"))
-##                @full_urls.push @full_url
-##                @thumb_urls.push @thumb_url
-##                iiif_image = transform_ids_uri_to_iiif_manifest(@full_url)
-##                @iiif_images.push iiif_image
-##              end
-##            end
-#            @id = modsrecord.mods_ng_xml.record_info.recordIdentifier.text  
-#            @subjects = modsrecord.mods_ng_xml.subject.topic.map { |n| n.text } 
-          end
+  #This pulls the creator from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (relatedItem/relatedItem/relatedItem/name/namePart)
+  def get_creator()
+     if (@creator.nil?)
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['CREATOR_XPATH'])
+       if (!node.blank?)
+         node.role.roleTerm.each do |roleTerm|
+           if (roleTerm.text.eql?('creator'))
+             @creator = node.namePart.text
+           end
+         end
+       else
+         @creator = ""
+       end
+     end
+     @creator
+   end
 
-#    def parse_mods_record(modsrecord)
-#      @titles = modsrecord.short_titles
-#      locations = modsrecord.mods_ng_xml.location.url
-#      for location in locations
-#        access = location.get_attribute("access")
-#        @thumb_url = location.text
-#        if (access == "preview")
-#          @full_url = fetch_ids_uri(@thumb_url)
-#          @manifest_url = transform_ids_uri_to_iiif_manifest(@full_url)
-#        end
-#      end
-#    end
+  #This pulls the repository from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (nested related items)
+  def get_repository()
+     if (@repository.nil?)
+       node = @modsrecord.mods_ng_xml.related_item.xpath(@cna_config['REPOSITORY_XPATH'])
+       if (!node.blank?)
+         @repository = node.text
+       else
+         @repository = ""
+       end
+     end
+     @repository
+   end
+   
+   #This pulls the collection title from the Mods::Record item for OASIS items.  Using the Mods::Record paths fail for this
+  #I suspect that the way the mods gem is written conflicts with the way we have our paths (nested related items)
+  def get_collection_title()
+     if (@collectiontitle.nil?)
+       titlenode = @modsrecord.mods_ng_xml.xpath(@cna_config['COLLECTION_TITLE_XPATH'])
+       datenode = @modsrecord.mods_ng_xml.xpath(@cna_config['COLLECTION_TITLE_DATE_XPATH'])
+       if (!titlenode.blank? && !datenode.blank?)
+         @collectiontitle = titlenode.text + " " + datenode.text
+       elsif (!titlenode.blank?)
+         @collectiontitle = titlenode.text
+       else
+         @collectiontitle = ""
+       end
+     end
+     @collectiontitle
+   end
     
    # private
     
@@ -115,47 +156,9 @@ module Spotlight::Resources
       uri = uri + "/info.json"
     end
     
-    def compound_id
-      Digest::MD5.hexdigest("#{exhibit.id}-#{url}")
-    end
-
     def add_document_id
       solr_hash[:id] = @id
     end
-          
-    def add_manifest_url
-      #solr_hash[:content_metadata_iiif_manifest_ssm] = @iiif_images
-    end
-
-    def add_thumbnail_url
-      #solr_hash[:thumbnail_url_ssm] = @full_urls
-      solr_hash[:thumbnail_url_ssm] = "/uploads/spotlight/resources/upload/url/187/thumb_danceparty.png"
-      solr_hash[:thumbnail_square_url_ssm] = "/uploads/spotlight/resources/upload/url/187/square_danceparty.png"
-    end
-
-    def add_full_image_urls
-      #solr_hash[:full_image_url_ssm] = @full_urls
-      solr_hash[:full_image_url_ssm] = '/uploads/spotlight/resources/upload/url/187/danceparty.png'
-      solr_hash[:spotlight_full_image_width_ssm] = "1800"
-      solr_hash[:spotlight_full_image_height_ssm] = "1800"
-    end
-
-    def add_title
-      #solr_hash[:full_title_tesim] = @titles[0]
-    end
-    
-#    def add_image_urls
-#      solr_hash[tile_source_field] = image_urls
-#    end
-#          
-#    def image_urls
-#        @image_urls ||= resources.map do |resource|
-#        next unless resource && !resource.service.empty?
-#        image_url = resource.service['@id']
-#        image_url << '/info.json' unless image_url.downcase.ends_with?('/info.json')
-#        image_url
-#      end
-#    end
-    
+  
   end
 end

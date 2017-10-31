@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <script />
+   <titleInfo>
+      <title>Records of the Society for the Promotion of Theological Education at Harvard University, 1788-1853 (inclusive), 1816-1853 (bulk)</title>
+   </titleInfo>
+   <name type="corporate">
+      <namePart>Society for the Promotion of Theological Education at Harvard University</namePart>
+      <role>
+         <roleTerm type="text">creator</roleTerm>
+      </role>
+   </name>
+   <name type="corporate">
+      <namePart>Society for Promoting Theological Education</namePart>
+   </name>
+   <typeOfResource collection="yes" manuscript="yes">mixed material</typeOfResource>
+   <originInfo>
+      <place>
+         <placeTerm authority="marccountry" type="code">mau</placeTerm>
+      </place>
+      <dateIssued encoding="marc" point="start">1788</dateIssued>
+      <dateIssued encoding="marc" point="end">1853</dateIssued>
+      <issuance>monographic</issuance>
+   </originInfo>
+   <language>
+      <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+   </language>
+   <physicalDescription>
+      <extent>10 containers</extent>
+   </physicalDescription>
+   <abstract type="Summary">Includes minutes and other records, 1816-1829, of the trustees of the Society and other correspondence relating to the founding of the Society; treasurer's reports, 1843-1844, of J.G. Palfrey; lists of beneficiaries, 1824- 1830; and subscription receipts, 1819-1823. Also records regarding subscriptions for a professorship, 1828, an extract from the will of J.D. Williams, and legal matters. For more detailed information about records, see Harvard Archives LOCATION below.</abstract>
+   <note>Access may be restricted. Details available at the repository.</note>
+   <note type="biographical/historical">The Society was founded in 1816 and governed the Harvard Divinity School through a board of members of the Corporation and five trustees of the Society. From 1824 to 1830 the Board oversaw finances. Another board, the Board of Directors, was responsible for administration of the Divinity School. After 1830, the Divinity School faculty assumed direction of the School. The Society as originally constituted dissolved in 1830 and was replaced by the Society for Promoting Theological Education which continued into the twentieth century.</note>
+   <note>Finding aid available in repository.</note>
+   <subject authority="lcsh">
+      <name type="personal">
+         <namePart>Williams, J. D. (John Davis)</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="personal">
+         <namePart>Palfrey, John Gorham</namePart>
+         <namePart type="date">1796-1881</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="personal">
+         <namePart>Parker, Francis Edward</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Society for the Promotion of Theological Education at Harvard University.</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Society for the Promotion of Theological Education at Harvard University</namePart>
+      </name>
+      <topic>History</topic>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Society for Promoting Theological Education.</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard University.</namePart>
+         <namePart>Corporation.</namePart>
+      </name>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard University</namePart>
+      </name>
+      <topic>Endowments</topic>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard University</namePart>
+      </name>
+      <topic>Finance</topic>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard University</namePart>
+      </name>
+      <topic>Administration</topic>
+   </subject>
+   <subject authority="lcsh">
+      <name type="corporate">
+         <namePart>Harvard Divinity School.</namePart>
+      </name>
+   </subject>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Collections of the Harvard University Archives</title>
+         <partName>Records of associated organizations</partName>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Harvard in the Seventeenth and Eighteenth Centuries</title>
+      </titleInfo>
+   </relatedItem>
+   <relatedItem type="series">
+      <titleInfo>
+         <title>Colonial North American Project at Harvard University</title>
+      </titleInfo>
+   </relatedItem>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.2</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.3f</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.187.2</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.207.2</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.207.3</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.271.2</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.283</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.294.2</shelfLocator>
+   </location>
+   <location>
+      <physicalLocation type="repository">Harvard University Archives</physicalLocation>
+      <shelfLocator>UAV 327.353</shelfLocator>
+   </location>
+   <location>
+      <url note="Provides access to page images of UAV 327.3f, volume 1" access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:23162724</url>
+      <url note="Provides access to page images of UAV 327.3f, volume 2" access="raw object">http://nrs.harvard.edu/urn-3:HUL.ARCH:22822781</url>
+      <holdingSimple>
+         <copyInformation>
+            <note type="reproduction">Electronic reproduction. Cambridge, Mass. : Harvard Library Preservation, 2015. (Colonial North American Project at Harvard University). Copy digitized: Harvard University Archives: UAV 327.3f.</note>
+         </copyInformation>
+      </holdingSimple>
+   </location>
+   <extension>
+      <originalDocument:originalDocument xmlns:originalDocument="http://lib.harvard.edu/TBD" xmlns="http://lib.harvard.edu/TBD" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://s3.amazonaws.com/harvard.librarycloud.marc.dev/000603974</originalDocument:originalDocument>
+   </extension>
+   <extension>
+      <usageData:usageData xmlns:usageData="http://lib.harvard.edu/usagedata" xmlns="http://lib.harvard.edu/usagedata" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <stackScore>1</stackScore>
+      </usageData:usageData>
+   </extension>
+   <extension>
+      <collections:collections xmlns:collections="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns="http://hul.harvard.edu/ois/xml/ns/libraryCloud" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:urlinfo="http://lib.harvard.edu/urlinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <collection>
+            <type>collection</type>
+            <identifier>1</identifier>
+            <abstract />
+            <title>CNA</title>
+         </collection>
+      </collections:collections>
+   </extension>
+   <recordInfo>
+      <recordCreationDate encoding="marc">860304</recordCreationDate>
+      <recordChangeDate encoding="iso8601">20160725090704.0</recordChangeDate>
+      <recordIdentifier source="MH:ALEPH">000603974</recordIdentifier>
+      <recordOrigin>Converted from MARCXML to MODS version 3.6 using MARC21slim2MODS3-6.xsl (Revision 1.117 2017/02/14)</recordOrigin>
+   </recordInfo>
+</mods>
