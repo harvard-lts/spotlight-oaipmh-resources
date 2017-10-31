@@ -9,16 +9,16 @@ include OAI::XPath
             
 
   RSpec.describe Spotlight::Resources::OaipmhModsConverter, type: :model do
-    subject { described_class.new('CNA', 'test-exhibit-name',File.dirname(__FILE__) + "/../../../fixtures/files/cna_mapping.yml") }
-    let(:abc_set) {described_class.new('ABC', 'test-exhibit-name',File.dirname(__FILE__) + "/../../../fixtures/files/mapping_sample.yml")}
+    subject { described_class.new('CNA', 'test-exhibit-name') }
+    let(:abc_set) {described_class.new('ABC', 'test-exhibit-name')}
       
-      describe 'cna_mapping_config_file_exists' do
+      describe 'mapping_config_file_exists' do
         context 'given a set name' do
           it 'verifies that the mapping file exists' do
             mapping_file = subject.mapping_file
             #expect(File.basename(mapping_file)).to eq('mapping.yml')
             print mapping_file + "\n"
-            expect(File.basename(mapping_file)).to match(/cna_mapping.yml/i)
+            expect(File.basename(mapping_file)).to match(/mapping.yml/i)
           end
         end
       end
