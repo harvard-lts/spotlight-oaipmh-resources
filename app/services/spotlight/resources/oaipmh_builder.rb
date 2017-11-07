@@ -20,7 +20,15 @@ module Spotlight
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         until (resumption_token.nil?)
-          harvests.each do |record|
+          analyze_harvests(base_doc, harvests)
+          harvests = resource.resumption_oaipmh_harvests(resumption_token)
+          resumption_token = harvests.resumption_token
+        end
+        analyze_harvests(base_doc, harvests)
+      end
+      
+      def analyse_harvests(base_doc, harvests)
+        harvests.each do |record|
             @item = OaipmhModsItem.new(exhibit, @oai_mods_converter, @cna_config)
             
             @item.metadata = record.metadata
@@ -72,9 +80,6 @@ module Spotlight
               Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
             end
           end
-          harvests = resource.resumption_oaipmh_harvests(resumption_token)
-          resumption_token = harvests.resumption_token
-        end
       end
    
       #Adds the solr image info
