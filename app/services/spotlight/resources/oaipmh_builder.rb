@@ -37,7 +37,9 @@ module Spotlight
               
               repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
               
-              process_image_data()
+              process_images()
+              
+              #process_image_data()
               
               uniquify_repos(repository_field_name)
               
@@ -103,6 +105,11 @@ private
           @item_solr[type_field_name] = types
           @item_sidecar["type_ssim"] = types
         end
+      end
+      
+      def process_images()
+        @item_solr['thumbnail_url_ssm'] ='http://ids.lib.harvard.edu/ids/iiif/52073159/full/180,/0/native.jpg'
+        @item_solr['full_image_url_ssm'] = 'http://idstest.lib.harvard.edu:9001/ids/view/760359?buttons=y'
       end
   
   

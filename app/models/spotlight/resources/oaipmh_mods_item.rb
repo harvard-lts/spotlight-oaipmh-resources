@@ -8,8 +8,9 @@ module Spotlight::Resources
   class OaipmhModsItem
     extend CarrierWave::Mount
     attr_reader :titles, :id
-    attr_accessor :metadata, :itemurl, :sidecar_data
-    mount_uploader :itemurl, Spotlight::ItemUploader
+    attr_accessor :metadata, :sidecar_data
+    #attr_accessor :metadata, :itemurl, :sidecar_data
+    #mount_uploader :itemurl, Spotlight::ItemUploader
     def initialize(exhibit, converter)
       @solr_hash = {}
       @exhibit = exhibit
@@ -75,7 +76,7 @@ module Spotlight::Resources
     end
     
     def add_document_id
-      solr_hash[:id] = @id
+      solr_hash[:id] = @exhibit.id.to_s + "-" + @id.to_s
     end
   
   end
