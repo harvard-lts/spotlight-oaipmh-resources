@@ -39,8 +39,6 @@ module Spotlight
               
               process_images()
               
-              #process_image_data()
-              
               uniquify_repos(repository_field_name)
               
               #Add the sidecar info for editing
@@ -108,81 +106,12 @@ private
       end
       
       def process_images()
-        @item_solr['thumbnail_url_ssm'] ='http://ids.lib.harvard.edu/ids/iiif/52073159/full/180,/0/native.jpg'
-        @item_solr['full_image_url_ssm'] = 'http://idstest.lib.harvard.edu:9001/ids/view/760359?buttons=y'
-      end
-  
-  
-      def process_image_data()
         if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))           
-          thumburl = @item_solr['thumbnail_url_ssm']
-          thumburl = thumburl.split('?')[0]
-            
-          thumb = nil
-          fullurl = nil
-          square = nil
-          fullimagefile = nil
-          
-          #If the images haven't been uploaded, then upload them.
-          #This is restricted to one time because it is time-consuming
-          dir = Rails.root.join("public",@item.itemurl.store_dir)
-          if (!Dir.exist?(dir))
-            @item.remote_itemurl_url = thumburl
-            @item.store_itemurl!
-          
-            if (!@item.itemurl.nil? && !@item.itemurl.file.nil? && !@item.itemurl.file.file.nil?)
-              filename = @item.itemurl.file.file
-              #strip off everything before the /uploads
-              filenamearray = filename.split("/uploads")
-              if (filenamearray.length == 2)
-                filename = "/uploads" + filenamearray[1]
-              end
-              fullimagefile = @item.itemurl.file.file
-              fullurl = filename
-            end
-            
-            if (!@item.itemurl.nil? && !@item.itemurl.thumb.nil? && !@item.itemurl.thumb.file.nil?)
-              filename = @item.itemurl.thumb.file.file
-              #strip off everything before the /uploads
-              filenamearray = filename.split("/uploads")
-              if (filenamearray.length == 2)
-                filename = "/uploads" + filenamearray[1]
-              end
-                                
-              thumb = filename
-            end
-            
-            if (!@item.itemurl.nil? && !@item.itemurl.square.nil? && !@item.itemurl.square.file.nil?)
-              filename = @item.itemurl.square.file.file
-              # strip off everything before the /uploads
-              filenamearray = filename.split("/uploads")
-              if (filenamearray.length == 2)
-                filename = "/uploads" + filenamearray[1]
-              end
-                                
-              square = filename
-            end 
-          else
-            files = Dir.entries(Rails.root.join("public",@item.itemurl.store_dir))
-            files.delete(".")
-            files.delete("..")
-            
-            files.each do |f|
-              if (f.start_with?('thumb'))
-                thumb = File.join("/",@item.itemurl.store_dir,f)                   
-              elsif (f.start_with?('square'))
-                square = File.join("/",@item.itemurl.store_dir,f)
-              else
-                fullurl = File.join("/",@item.itemurl.store_dir,f)
-                fullimagefile = File.open(Rails.root.join("public",@item.itemurl.store_dir,f))
-              end
-            end
-          end      
-          add_image_info(fullurl, thumb, square)
-          add_image_dimensions(fullimagefile)
+          thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
+          thumburl = transform_ids_uri_to_iiif(thumburl)
+          @item_solr['thumbnail_url_ssm'] =  thumburl
         end
       end
-
  
       def uniquify_repos(repository_field_name)
         
@@ -213,6 +142,27 @@ private
           @item_solr[end_date_name] = dates
           @item_sidecar["end-date_tesim"] = dates
         end
+      end
+      
+      #Resolves urn-3 uris
+      def fetch_ids_uri(uri_str)
+        if (uri_str =~ /urn-3/)
+          response = Net::HTTP.get_response(URI.parse(uri_str))['location']
+        elsif (uri_str.include?('?'))
+          uri_str = uri_str.slice(0..(uri_str.index('?')-1))
+        else
+          uri_str
+        end
+      end
+    
+      #Returns the uri for the iiif
+      def transform_ids_uri_to_iiif(ids_uri)
+        #Strip of parameters
+        uri = ids_uri.sub(/\?.+/, "")
+        #Change /view/ to /iiif/
+        uri = uri.sub(%r|/view/|, "/iiif/")
+        #Append /info.json to end
+        uri = uri + "/full/180,/0/native.jpg"
       end
 
     end

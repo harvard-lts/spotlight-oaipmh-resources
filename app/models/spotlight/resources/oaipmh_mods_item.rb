@@ -54,26 +54,7 @@ module Spotlight::Resources
     
     attr_reader :solr_hash, :exhibit
     
-    #Resolves urn-3 uris
-    def fetch_ids_uri(uri_str)
-      if (uri_str =~ /urn-3/)
-        response = Net::HTTP.get_response(URI.parse(uri_str))['location']
-      elsif (uri_str.include?('?'))
-        uri_str = uri_str.slice(0..(uri_str.index('?')-1))
-      else
-        uri_str
-      end
-    end
     
-    #Returns the uri for the iiif manifest
-    def transform_ids_uri_to_iiif_manifest(ids_uri)
-      #Strip of parameters
-      uri = ids_uri.sub(/\?.+/, "")
-      #Change /view/ to /iiif/
-      uri = uri.sub(%r|/view/|, "/iiif/")
-      #Append /info.json to end
-      uri = uri + "/info.json"
-    end
     
     def add_document_id
       solr_hash[:id] = @exhibit.id.to_s + "-" + @id.to_s
