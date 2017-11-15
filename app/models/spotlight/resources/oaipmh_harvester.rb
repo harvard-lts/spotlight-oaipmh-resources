@@ -30,5 +30,9 @@ module Spotlight::Resources
       files.insert(0, "Default Mapping File")
       files
     end
+    
+    def get_job_entry
+      self.data[:job_entry]
+    end
   end
 end
