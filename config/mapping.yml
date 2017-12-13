@@ -14,7 +14,6 @@
 #            - subpath: xxx
 #            - subpath: xxx
 #
-  # In CNA, this field has to append a urn if the record type is item - Michael may have to do this one
 - spotlight-field: unique-id_tesim
   mods:
       - path: recordInfo/recordIdentifier
