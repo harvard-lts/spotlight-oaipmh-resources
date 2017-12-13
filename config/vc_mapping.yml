@@ -49,13 +49,22 @@
         delimiter: "|"
         attribute: point
         attribute-value: end
+- spotlight-field: publisher_tesim
+  mods:
+      - path: originInfo/publisher
 - spotlight-field: date_tesim
   mods:
       - path: originInfo/dateCreated
         attribute: '!point'
         attribute-value: 
+- spotlight-field: classification_ssim
+  mods:
+      - path: classification
+- spotlight-field: classification_tesim
+  mods:
+      - path: classification
 - spotlight-field: contributer_tesim
-  delimiter: " , "
+  delimiter: "|"
   mods:
       - path: plain_name
         delimiter: " , "
@@ -67,14 +76,20 @@
   delimiter: "|"
   mods: 
       - path: abstract
-      - path: note
-        attribute: type
-        attribute-value: 
 - spotlight-field: format_tesim
   delimiter: "|"
   mods:
       - path: physicalDescription/extent
+- spotlight-field: physical-description_tesim
+  delimiter: "|"
+  mods:
+      - path: physicalDescription/note
 - spotlight-field: language_ssim
+  default-value: English
+  delimiter: "|"
+  mods: 
+      - path: language/languageTerm
+- spotlight-field: language_tesim
   default-value: English
   delimiter: "|"
   mods: 
@@ -85,12 +100,23 @@
       - path: location/physicalLocation
         attribute: type
         attribute-value: repository
-      - path: relatedItem
-        subpaths:
-          - subpath: location/physicalLocation
-        attribute: displayLabel
-        attribute-value: collection
+- spotlight-field: repository_tesim
+  delimiter: "|"
+  mods:
+      - path: location/physicalLocation
+        attribute: type
+        attribute-value: repository
 - spotlight-field: subjects_ssim
+  delimiter: "|"
+  mods:
+      - path: subject
+        delimiter: "--"
+        subpaths:
+          - subpath: name/namePart
+          - subpath: topic
+          - subpath: geographic
+          - subpath: genre
+- spotlight-field: subjects_tesim
   delimiter: "|"
   mods:
       - path: subject
@@ -104,55 +130,20 @@
   delimiter: "|"
   mods:
       - path: genre
+- spotlight-field: type_tesim
+  delimiter: "|"
+  mods:
+      - path: genre
 - spotlight-field: origin_ssim
   mods:
       - path: originInfo/place/placeTerm
-- spotlight-field: biography_tesim
+- spotlight-field: origin_tesim
+  mods:
+      - path: originInfo/place/placeTerm
+- spotlight-field: note_tesim
   delimiter: "|"
   mods:
       - path: note
-        attribute: type
-        attribute-value: biographical/historical
-- spotlight-field: statement-of-responsibility_tesim
-  delimiter: "|"
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: statement of responsibility
-- spotlight-field: citation_tesim
-  delimiter: "|"
-  mods:
-       - path: note
-         attribute: type
-         attribute-value: preferred citation
-- spotlight-field: physical-form_tesim
-  delimiter: "|"
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: additional physical form
-- spotlight-field: language-info_tesim
-  delimiter: "|"
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: language
-- spotlight-field: publications_tesim
-  delimiter: "|"
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: publications
-- spotlight-field: funding_tesim
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: funding
-- spotlight-field: funding_ssim
-  mods:
-      - path: note
-        attribute: type
-        attribute-value: funding
 - spotlight-field: thumbnail_url_ssm
   mods:
       - path: location/url
@@ -166,4 +157,17 @@
 - spotlight-field: rights_tesim
   mods:
       - path: accessCondition
+- spotlight-field: creation_date_tesim
+  mods:
+      - path: originInfo/dateIssued
+      - path: originInfo/dateCreated
+- spotlight-field: edition_tesim
+  mods:
+      - path: originInfo/edition
+- spotlight-field: identifier_tesim
+  delimiter: "|"
+  mods:
+      - path: identifier
+      - path: identifier
+      
          
