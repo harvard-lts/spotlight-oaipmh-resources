@@ -30,6 +30,7 @@ module Spotlight::Resources
         @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
         #Strip out all of the decimals
         @id = @id.gsub('.', '')
+        @id = @exhibit.id.to_s + "-" + @id.to_s
       end
       
       begin

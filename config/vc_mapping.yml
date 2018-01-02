@@ -168,6 +168,5 @@
   delimiter: "|"
   mods:
       - path: identifier
-      - path: identifier
       
          
