@@ -30,8 +30,7 @@ module Spotlight::Resources
         @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
         #Strip out all of the decimals
         @id = @id.gsub('.', '')
-        @id = @exhibit.id.to_s + "-" + @id.to_s
-      end
+       end
       
       begin
         @titles = @modsrecord.full_titles
@@ -58,7 +57,7 @@ module Spotlight::Resources
     
     
     def add_document_id
-      solr_hash[:id] = @exhibit.id.to_s + "-" + @id.to_s
+      solr_hash[:id] = @id.to_s
     end
   
   end
