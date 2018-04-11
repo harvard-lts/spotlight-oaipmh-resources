@@ -1,0 +1,9 @@
+RELEASE NOTES
+
+0.0.2 (04/11/2018) VC
+-- Updates to vulnerabilities:
+   -loofah (gemnasium bug CVE-2018-8048) XSS vulnerability
+   -nokogiri (gemnasium bug CVE-2017-15412) Denial of service; (gemnasium bug CVE-2017-16932) infinite recursion
+
+0.0.1 (01/02/2018) VC
+-- Initial release
