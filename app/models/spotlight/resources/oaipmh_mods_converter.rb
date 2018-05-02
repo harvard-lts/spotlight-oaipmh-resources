@@ -11,6 +11,18 @@ module Spotlight::Resources
   class ConverterItem
     attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
+    TOP_LEVEL_ELEMENTS_SIMPLE = [
+        'abstract',
+        'accessCondition',
+        'classification',
+        'extension',
+        'genre',
+        'identifier',
+        'note',
+        'tableOfContents',
+        'targetAudience',
+        'typeOfResource',
+        ]
         
     def initialize()
       delimiter = ", "
@@ -49,7 +61,8 @@ module Spotlight::Resources
     #It then uses these paths to search for the value in the Mods::Record
     def parse_paths(item, parentnode)
       path_array = item.mods_path.path.split("/")
-      if (!item.mods_path.path.eql?("accessCondition") && !item.mods_path.path.eql?("typeOfResource"))
+      #if (!item.mods_path.path.eql?("accessCondition") && !item.mods_path.path.eql?("typeOfResource"))
+      if (!TOP_LEVEL_ELEMENTS_SIMPLE.include?(item.mods_path.path))
         path_array[0] = path_array[0].split(/(?<!^)(?=[A-Z])/)
         path_array[0] = path_array[0].join("_").downcase
       end
