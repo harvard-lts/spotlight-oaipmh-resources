@@ -10,19 +10,20 @@ module Spotlight::Resources
   end
   class ConverterItem
     attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath
+    
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
     TOP_LEVEL_ELEMENTS_SIMPLE = [
-            'abstract',
-            'accessCondition',
-            'classification',
-            'extension',
-            'genre',
-            'identifier',
-            'note',
-            'tableOfContents',
-            'targetAudience',
-            'typeOfResource',
-            ]
+        'abstract',
+        'accessCondition',
+        'classification',
+        'extension',
+        'genre',
+        'identifier',
+        'note',
+        'tableOfContents',
+        'targetAudience',
+        'typeOfResource',
+        ]
         
     def initialize()
       delimiter = ", "
@@ -38,7 +39,10 @@ module Spotlight::Resources
           #xpath usage
           if (!item.xpath.nil?)
             retnodes = node.xpath(item.xpath)
-            if (!retnodes.blank?)
+            if (retnodes.empty? && !default_value.blank?)
+              value = default_value
+              values << value
+            elsif (!retnodes.empty?)
               retnodes.each do |retnode|
                 values << retnode.text
               end
@@ -369,6 +373,7 @@ end
           if (mods_field.key?('delimiter'))
             modsitem.mods_path.delimiter = mods_field['delimiter']
           end
+          modsitem.conditional_mods_value = mods_field['mods-value']
                 
           if (mods_field.key?('attribute'))
             if (!mods_field.key?('attribute-value'))
