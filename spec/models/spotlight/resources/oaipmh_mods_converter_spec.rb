@@ -9,7 +9,7 @@ include OAI::XPath
             
 
   RSpec.describe Spotlight::Resources::OaipmhModsConverter, type: :model do
-    subject { described_class.new('CNA', 'test-exhibit-name') }
+    subject { described_class.new('CNA', 'test-exhibit-name', file_fixture("mapping_sample.yml")) }
     let(:abc_set) {described_class.new('ABC', 'test-exhibit-name')}
       
       describe 'mapping_config_file_exists' do
@@ -18,7 +18,7 @@ include OAI::XPath
             mapping_file = subject.mapping_file
             #expect(File.basename(mapping_file)).to eq('mapping.yml')
             print mapping_file + "\n"
-            expect(File.basename(mapping_file)).to match(/mapping.yml/i)
+            expect(File.basename(mapping_file)).to match(/mapping_sample.yml/i)
           end
         end
       end
