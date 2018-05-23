@@ -9,7 +9,7 @@ module Spotlight::Resources
     attr_accessor :mods_path, :mods_attribute, :mods_attribute_value, :conditional_mods_value, :conditional_mods_path
   end
   class ConverterItem
-    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath
+    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string
     
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
     TOP_LEVEL_ELEMENTS_SIMPLE = [
@@ -37,8 +37,8 @@ module Spotlight::Resources
         begin
           node = modsrecord.mods_ng_xml
           #xpath usage
-          if (!item.xpath.nil?)
-            retnodes = node.xpath(item.xpath)
+          if (!item.xpath_string.nil?)
+            retnodes = node.xpath(item.xpath_string)
             if (retnodes.empty? && !default_value.blank?)
               value = default_value
               values << value
@@ -342,7 +342,7 @@ end
       
       #if using xpath, then add the values from xpath
       if (field.key?('xpath'))
-        item.xpath = field['xpath']
+        item.xpath_string = field['xpath']
       #otherwise use mods
       else
         item.mods_items = Array.new
