@@ -36,27 +36,14 @@ module Spotlight::Resources
         #Throw error if path value fails
         begin
           node = modsrecord.mods_ng_xml
-          #xpath usage
-          if (!item.xpath_string.nil?)
-            retnodes = node.xpath(item.xpath_string)
-            if (retnodes.empty? && !default_value.blank?)
-              value = default_value
-              values << value
-            elsif (!retnodes.empty?)
-              retnodes.each do |retnode|
-                values << retnode.text
-              end
-            end
-          #mods usage
-          else
-            retvalues = parse_paths(item, node)
-            if (retvalues.empty? && !default_value.blank?)
-              value = default_value
-              values << value
-            elsif (!retvalues.empty?)
-              value = retvalues.join(delimiter)
-              values << value
-            end
+          
+          retvalues = parse_paths(item, node)
+          if (retvalues.empty? && !default_value.blank?)
+            value = default_value
+            values << value
+          elsif (!retvalues.empty?)
+            value = retvalues.join(delimiter)
+            values << value
           end
           
         rescue NoMethodError => e
@@ -280,9 +267,29 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        value = item.extract_value(modsrecord)
-        solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
-        @sidecar_hash[item.spotlight_field] = value
+        node = modsrecord.mods_ng_xml
+        value = nil
+        if (!item.xpath_string.nil?)
+          values = Array.new
+          retnodes = node.xpath(item.xpath_string)
+          if (retnodes.empty? && !item.default_value.blank?)
+            value = item.default_value
+            values << value
+          elsif (!retnodes.empty?)
+            retnodes.each do |retnode|
+              values << retnode.text
+            end
+          end
+          if (!values.empty?)
+            value = values.join(item.delimiter)
+          end
+        else
+          value = item.extract_value(modsrecord)
+        end
+        if (!value.nil? && !value.empty?)
+          solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
+          @sidecar_hash[item.spotlight_field] = value
+        end
       end
       solr_hash
     end
