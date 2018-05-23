@@ -331,7 +331,7 @@ end
       end
       
       #must have a mods or xpath 
-      if (!field.key?("mods") || (!field.key?('xpath') && field['xpath'].blank?))
+      if (!field.key?("mods") && (!field.key?('xpath') || field['xpath'].blank?))
         raise InvalidMappingFile, "mods or xpath is required for each entry"
       end
       
@@ -341,7 +341,7 @@ end
       end
       
       #if using xpath, then add the values from xpath
-      if (field.key('xpath'))
+      if (field.key?('xpath'))
         item.xpath = field['xpath']
       #otherwise use mods
       else
