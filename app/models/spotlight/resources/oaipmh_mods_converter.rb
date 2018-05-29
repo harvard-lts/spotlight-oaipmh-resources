@@ -9,7 +9,7 @@ module Spotlight::Resources
     attr_accessor :mods_path, :mods_attribute, :mods_attribute_value, :conditional_mods_value, :conditional_mods_path
   end
   class ConverterItem
-    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string
+    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string, :xpath_namespace_def, :xpath_namespace_prefix
     
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
     TOP_LEVEL_ELEMENTS_SIMPLE = [
@@ -271,7 +271,11 @@ end
         value = nil
         if (!item.xpath_string.nil?)
           values = Array.new
-          retnodes = node.xpath(item.xpath_string)
+          if (!item.xpath_namespace_def.nil?)
+            retnodes = node.xpath(item.xpath_string, item.xpath_namespace_prefix => item.xpath_namespace_def)
+          else
+            retnodes = node.xpath(item.xpath_string)
+          end
           if (retnodes.empty? && !item.default_value.blank?)
             value = item.default_value
             values << value
@@ -283,6 +287,10 @@ end
           if (!values.empty?)
             value = values.join(item.delimiter)
           end
+          puts 'delimiter'
+          puts item.delimiter
+          puts 'value'
+          puts value
         else
           value = item.extract_value(modsrecord)
         end
@@ -350,6 +358,10 @@ end
       #if using xpath, then add the values from xpath
       if (field.key?('xpath'))
         item.xpath_string = field['xpath']
+        if (field.key?('xpath_namespace_prefix') && field.key?('xpath_namespace_def'))
+          item.xpath_namespace_def = field['xpath_namespace_def']
+          item.xpath_namespace_prefix = field['xpath_namespace_prefix']
+        end
       #otherwise use mods
       else
         item.mods_items = Array.new
