@@ -58,7 +58,11 @@ module Spotlight::Resources
         rescue NoMethodError => e
           puts e.message
           puts e.backtrace
-          puts  "The path " + item.mods_path.path + " does not exist\n"
+          if (!item.xpath.nil?)
+            puts  "The path " + item.xpath + " does not exist\n"
+          else
+            puts  "The path " + item.mods_path.path + " does not exist\n"
+          end
         end
       
       end
