@@ -192,7 +192,7 @@
   mods:
       - path: tableOfContents
 - spotlight-field: xpath-test_ssim
-  xpath: "//relatedItem[@type='host']/location/physicalLocation[@type='repository']"
+  xpath: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
 - spotlight-field: xpath-test-harvard-namespace_ssim
   xpath: "//HarvardDRS:DRSMetadata/HarvardDRS:metsLabel"
   xpath_namespace_prefix: "HarvardDRS"
