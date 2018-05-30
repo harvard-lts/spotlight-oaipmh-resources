@@ -359,7 +359,7 @@ end
           item.xpath_namespace_prefix = field['xpath_namespace_prefix']
         end
       #otherwise use mods
-      else
+        else
         item.mods_items = Array.new
         field['mods'].each do |mods_field|
           modsitem = ModsItem.new

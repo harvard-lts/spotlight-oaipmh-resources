@@ -4,7 +4,6 @@ module Spotlight
     class OaipmhBuilder < Spotlight::SolrDocumentBuilder
       
       def to_solr
-        begin
         return to_enum(:to_solr) { 0 } unless block_given?
 
         base_doc = super
@@ -16,7 +15,6 @@ module Spotlight
         
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         
-        count = 0
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
@@ -47,10 +45,6 @@ module Spotlight
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)   
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
-              count = count + 1
-              curtime = Time.zone.now
-              resource.get_job_entry.update(job_item_count: count, end_time: curtime)
-
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)
@@ -62,11 +56,6 @@ module Spotlight
             resumption_token = harvests.resumption_token
           end
         end
-        rescue
-          resource.get_job_entry.failed!
-          raise
-        end
-        resource.get_job_entry.succeeded!
       end
    
       #Adds the solr image info
