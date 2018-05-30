@@ -13,6 +13,13 @@
 #          subpaths: 
 #            - subpath: xxx
 #            - subpath: xxx
+#    xpath: xxx
+#    xpath_namespace_prefix: xxx
+#    xpath_namespace_def: xxx
+#
+# TODO: update structure
+# TODO: indicate how to create the spotlight field name (dash, not underscore)
+# TODO: indicate hard coded Spotlight fields
 #
 - spotlight-field: unique-id_tesim
   mods:
@@ -157,10 +164,18 @@
 - spotlight-field: rights_tesim
   mods:
       - path: accessCondition
-- spotlight-field: creation_date_tesim
+- spotlight-field: creation-date_ssim
   mods:
       - path: originInfo/dateIssued
       - path: originInfo/dateCreated
+        attribute: '!point'
+        attribute-value: 
+- spotlight-field: creation-date_tesim
+  mods:
+      - path: originInfo/dateIssued
+      - path: originInfo/dateCreated
+        attribute: point
+        attribute-value: start
 - spotlight-field: edition_tesim
   mods:
       - path: originInfo/edition
@@ -168,5 +183,18 @@
   delimiter: "|"
   mods:
       - path: identifier
-      
+- spotlight-field: contents_tesim
+  delimiter: "|"
+  mods:
+      - path: tableOfContents
+- spotlight-field: contents_ssim
+  delimiter: "|"
+  mods:
+      - path: tableOfContents
+- spotlight-field: xpath-test_ssim
+  xpath: "//relatedItem[@type='host']/location/physicalLocation[@type='repository']"
+- spotlight-field: xpath-test-harvard-namespace_ssim
+  xpath: "//HarvardDRS:DRSMetadata/HarvardDRS:metsLabel"
+  xpath_namespace_prefix: "HarvardDRS"
+  xpath_namespace_def: "http://hul.harvard.edu/ois/xml/ns/HarvardDRS"
          

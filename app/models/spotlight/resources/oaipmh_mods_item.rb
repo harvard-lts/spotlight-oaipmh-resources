@@ -24,7 +24,7 @@ module Spotlight::Resources
     
     def parse_mods_record()
         
-      @modsrecord = Mods::Record.new.from_str(metadata.elements.to_a[0].to_s, false)
+      @modsrecord = Mods::Record.new.from_str(metadata.elements.to_a[0].to_s)
           
       if (@modsrecord.mods_ng_xml.record_info && @modsrecord.mods_ng_xml.record_info.recordIdentifier)
         @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 

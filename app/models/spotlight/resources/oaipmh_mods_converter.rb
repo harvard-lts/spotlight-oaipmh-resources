@@ -287,10 +287,6 @@ end
           if (!values.empty?)
             value = values.join(item.delimiter)
           end
-          puts 'delimiter'
-          puts item.delimiter
-          puts 'value'
-          puts value
         else
           value = item.extract_value(modsrecord)
         end
