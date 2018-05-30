@@ -40,4 +40,4 @@ else
 end
 # END ENGINE_CART BLOCK
 
-gem 'blacklight-spotlight', github: 'harvard-library/spotlight', :branch => 'log_entries'
+gem 'blacklight-spotlight', github: 'projectblacklight/spotlight'
