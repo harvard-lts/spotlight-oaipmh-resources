@@ -8,7 +8,8 @@ module Spotlight
         return to_enum(:to_solr) { 0 } unless block_given?
 
         base_doc = super
-                
+          
+           
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
@@ -34,19 +35,17 @@ module Spotlight
               @item_solr = @item.to_solr
               @item_sidecar = @item.sidecar_data
               
-              parse_subjects()
-              parse_types()
-              
               repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
               
               process_images()
-              
+
               uniquify_repos(repository_field_name)
               
               #Add the sidecar info for editing
-              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)   
+              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit) 
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
+              
               count = count + 1
               curtime = Time.zone.now
               resource.get_job_entry.update(job_item_count: count, end_time: curtime)
@@ -68,53 +67,9 @@ module Spotlight
         end
         resource.get_job_entry.succeeded!
       end
-   
-      #Adds the solr image info
-      def add_image_info(fullurl, thumb, square)
-          if (!thumb.nil?)
-            @item_solr[:thumbnail_url_ssm] = thumb
-          end
-        
-          if (!fullurl.nil?)
-            if (!square.nil?)
-              square = File.dirname(fullurl) + '/square_' + File.basename(fullurl)
-            end
-            @item_solr[:thumbnail_square_url_ssm] = square
-            @item_solr[:full_image_url_ssm] = fullurl
-          end
-                
-      end
-      
-      #Adds the solr image dimensions
-      def add_image_dimensions(file)
-        if (!file.nil?)
-          dimensions = ::MiniMagick::Image.open(file)[:dimensions]
-          @item_solr[:spotlight_full_image_width_ssm] = dimensions.first
-          @item_solr[:spotlight_full_image_height_ssm] = dimensions.last
-        end
-      end
 
 private   
 
-      def parse_subjects()
-        subject_field_name = @oai_mods_converter.get_spotlight_field_name("subjects_ssim")
-        if (@item_solr.key?(subject_field_name) && !@item_solr[subject_field_name].nil?)
-          #Split on |
-          subjects = @item_solr[subject_field_name].split('|')
-          @item_solr[subject_field_name] = subjects
-          @item_sidecar["subjects_ssim"] = subjects
-        end
-      end
-      
-      def parse_types()
-        type_field_name = @oai_mods_converter.get_spotlight_field_name("type_ssim")
-        if (@item_solr.key?(type_field_name) && !@item_solr[type_field_name].nil?)
-          #Split on |
-          types = @item_solr[type_field_name].split('|')
-          @item_solr[type_field_name] = types
-          @item_sidecar["type_ssim"] = types
-        end
-      end
       
       def process_images()
         if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))           
@@ -135,25 +90,7 @@ private
           @item_sidecar["repository_ssim"] = repo
         end
       end
-      
-      def uniquify_dates()
-        start_date_name = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
-        end_date_name = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
-        start_date = @item_solr[start_date_name]
-        end_date = @item_solr[end_date_name]
-        if (!start_date.blank?)
-          datearray = @item_solr[start_date_name].split("|")
-          dates = datearray.join("|")
-          @item_solr[start_date_name] = dates
-          @item_sidecar["start-date_tesim"] = dates
-        end
-        if (!end_date.blank?)
-          datearray = @item_solr[end_date_name].split("|")
-          dates = datearray.join("|")
-          @item_solr[end_date_name] = dates
-          @item_sidecar["end-date_tesim"] = dates
-        end
-      end
+
       
       #Resolves urn-3 uris
       def fetch_ids_uri(uri_str)

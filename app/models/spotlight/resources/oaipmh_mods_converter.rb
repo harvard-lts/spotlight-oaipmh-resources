@@ -9,7 +9,7 @@ module Spotlight::Resources
     attr_accessor :mods_path, :mods_attribute, :mods_attribute_value, :conditional_mods_value, :conditional_mods_path
   end
   class ConverterItem
-    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string, :xpath_namespace_def, :xpath_namespace_prefix
+    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string, :xpath_namespace_def, :xpath_namespace_prefix, :multivalue_facets
     
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
     TOP_LEVEL_ELEMENTS_SIMPLE = [
@@ -29,7 +29,7 @@ module Spotlight::Resources
       delimiter = ", "
     end
     
-    def extract_value(modsrecord)
+    def extract_value(modsrecord, multivalue_faceting)
       values = Array.new
               
       mods_items.each do |item|
@@ -42,8 +42,7 @@ module Spotlight::Resources
             value = default_value
             values << value
           elsif (!retvalues.empty?)
-            value = retvalues.join(delimiter)
-            values << value
+            values = retvalues
           end
           
         rescue NoMethodError => e
@@ -53,9 +52,16 @@ module Spotlight::Resources
         end
       
       end
+      finalvalue = nil
       if (!values.empty?)
-        values.join(delimiter) 
+        #if multiple values, allow for faceting on each item by leaving the value as an array
+        if (multivalue_faceting)
+          finalvalue = values
+        else
+          finalvalue = values.join(delimiter) 
+        end
       end
+      finalvalue
     end
 
     
@@ -74,6 +80,7 @@ module Spotlight::Resources
         end
       end
       
+            
       subpaths = Array.new
       if (!item.mods_path.subpaths.blank?)
         if (!item.mods_path.delimiter.nil?)
@@ -126,7 +133,6 @@ module Spotlight::Resources
           end
          end
        end
-
       values
     end
     
@@ -272,7 +278,7 @@ end
         if (!item.xpath_string.nil?)
           values = Array.new
           if (!item.xpath_namespace_def.nil?)
-          retnodes = node.xpath(item.xpath_string, {item.xpath_namespace_prefix => item.xpath_namespace_def})
+            retnodes = node.xpath(item.xpath_string, {item.xpath_namespace_prefix => item.xpath_namespace_def})
           else
             retnodes = node.xpath(item.xpath_string)
           end
@@ -285,15 +291,22 @@ end
             end
           end
           if (!values.empty?)
-            value = values.join(item.delimiter)
+            #if multiple values, allow for faceting on each item by keeping it as an array
+            if (!item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
+              value = values;
+            else
+              value = values.join(item.delimiter)
+            end
           end
         else
-          value = item.extract_value(modsrecord)
+          value = item.extract_value(modsrecord, !item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
+
         end
-        if (!value.nil? && !value.empty?)
-          solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
-          @sidecar_hash[item.spotlight_field] = value
-        end
+      #Not sure why but if a value isn't assigned, the last existing value for the field gets
+      #placed in all non-existing values
+       solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
+       @sidecar_hash[item.spotlight_field] = value
+
       end
       solr_hash
     end
@@ -339,6 +352,10 @@ end
       end
       if (field.key?("default-value"))
         item.default_value = field["default-value"]
+      end
+
+      if (field.key?("multivalue-facets"))
+        item.multivalue_facets = field["multivalue-facets"]
       end
       
       #must have a mods or xpath 

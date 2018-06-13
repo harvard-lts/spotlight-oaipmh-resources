@@ -114,6 +114,7 @@
         attribute: type
         attribute-value: repository
 - spotlight-field: subjects_ssim
+  multivalue-facets: "yes"
   delimiter: "|"
   mods:
       - path: subject
@@ -197,4 +198,6 @@
   xpath: "//HarvardDRS:DRSMetadata/HarvardDRS:metsLabel"
   xpath_namespace_prefix: "HarvardDRS"
   xpath_namespace_def: "http://hul.harvard.edu/ois/xml/ns/HarvardDRS"
+  
+  
          
