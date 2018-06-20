@@ -1,7 +1,9 @@
 include Spotlight::Resources::Exceptions
 module Spotlight::Resources
   
-
+  class XPathEntry
+     attr_accessor :xpath_string, :xpath_ns_prefix, :xpath_ns_def
+   end
   class ModsPath
     attr_accessor :path, :subpaths, :delimiter
   end
@@ -9,7 +11,7 @@ module Spotlight::Resources
     attr_accessor :mods_path, :mods_attribute, :mods_attribute_value, :conditional_mods_value, :conditional_mods_path
   end
   class ConverterItem
-    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_string, :xpath_namespace_def, :xpath_namespace_prefix, :multivalue_facets
+    attr_accessor :spotlight_field, :mods_items, :default_value, :delimiter, :xpath_items, :multivalue_facets
     
     RESERVED_WORDS = {'name'=> "name_el", 'description' => 'description_el', 'type' => 'type_at'}
     TOP_LEVEL_ELEMENTS_SIMPLE = [
@@ -29,39 +31,80 @@ module Spotlight::Resources
       delimiter = ", "
     end
     
-    def extract_value(modsrecord, multivalue_faceting)
-      values = Array.new
-              
-      mods_items.each do |item|
-        #Throw error if path value fails
-        begin
-          node = modsrecord.mods_ng_xml
-          
-          retvalues = parse_paths(item, node)
-          if (retvalues.empty? && !default_value.blank?)
-            value = default_value
-            values << value
-          elsif (!retvalues.empty?)
-            values = retvalues
-          end
-          
-        rescue NoMethodError => e
-          puts e.message
-          puts e.backtrace
-          puts  "The path " + item.mods_path.path + " does not exist\n"
-        end
-      
+    def extract_values(modsrecord, multivalue_faceting)
+      xpath_values = extract_xpath_values(modsrecord)
+      mods_values = extract_mods_values(modsrecord)
+      if (spotlight_field.eql?('xpath-mods-test_ssim'))
+        Delayed::Worker.logger.add(Logger::INFO, 'xpath')
+        Delayed::Worker.logger.add(Logger::INFO, xpath_values)
+        Delayed::Worker.logger.add(Logger::INFO, 'mods')
+        Delayed::Worker.logger.add(Logger::INFO, mods_values)
       end
+      values = xpath_values.concat(mods_values)
+      
       finalvalue = nil
       if (!values.empty?)
-        #if multiple values, allow for faceting on each item by leaving the value as an array
+        #if multiple values, allow for faceting on each item by keeping it as an array
         if (multivalue_faceting)
-          finalvalue = values
+          finalvalue = values;
         else
-          finalvalue = values.join(delimiter) 
+          finalvalue = values.join(delimiter)
+        end
+      end 
+      finalvalue
+    end
+    
+private
+    
+    def extract_xpath_values(modsrecord)
+      values = Array.new
+      if (!xpath_items.nil?)
+        xpath_items.each do |item|
+          node = modsrecord.mods_ng_xml
+          if (!item.xpath_ns_def.nil?)
+            retnodes = node.xpath(item.xpath_string, {item.xpath_ns_prefix => item.xpath_ns_def})
+          else
+            retnodes = node.xpath(item.xpath_string)
+          end
+        
+          if (retnodes.empty? && !default_value.blank?)
+            value = default_value
+            values << value
+          elsif (!retnodes.empty?)
+            retnodes.each do |retnode|
+              values << retnode.text
+            end
+          end
         end
       end
-      finalvalue
+      values
+    end
+    
+    def extract_mods_values(modsrecord)
+      values = Array.new
+      if (!mods_items.nil?)    
+        mods_items.each do |item|
+          #Throw error if path value fails
+          begin
+            node = modsrecord.mods_ng_xml
+            
+            retvalues = parse_paths(item, node)
+            if (retvalues.empty? && !default_value.blank?)
+              value = default_value
+              values << value
+            elsif (!retvalues.empty?)
+              values = retvalues
+            end
+            
+          rescue NoMethodError => e
+            puts e.message
+            puts e.backtrace
+            puts  "The path " + item.mods_path.path + " does not exist\n"
+          end
+        
+        end
+      end
+      values
     end
 
     
@@ -273,35 +316,8 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        node = modsrecord.mods_ng_xml
-        value = nil
-        if (!item.xpath_string.nil?)
-          values = Array.new
-          if (!item.xpath_namespace_def.nil?)
-            retnodes = node.xpath(item.xpath_string, {item.xpath_namespace_prefix => item.xpath_namespace_def})
-          else
-            retnodes = node.xpath(item.xpath_string)
-          end
-          if (retnodes.empty? && !item.default_value.blank?)
-            value = item.default_value
-            values << value
-          elsif (!retnodes.empty?)
-            retnodes.each do |retnode|
-              values << retnode.text
-            end
-          end
-          if (!values.empty?)
-            #if multiple values, allow for faceting on each item by keeping it as an array
-            if (!item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
-              value = values;
-            else
-              value = values.join(item.delimiter)
-            end
-          end
-        else
-          value = item.extract_value(modsrecord, !item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
-
-        end
+        value = item.extract_values(modsrecord, !item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
+          
       #Not sure why but if a value isn't assigned, the last existing value for the field gets
       #placed in all non-existing values
        solr_hash[get_spotlight_field_name(item.spotlight_field)] = value
@@ -370,13 +386,22 @@ end
       
       #if using xpath, then add the values from xpath
       if (field.key?('xpath'))
-        item.xpath_string = field['xpath']
-        if (field.key?('xpath_namespace_prefix') && field.key?('xpath_namespace_def'))
-          item.xpath_namespace_def = field['xpath_namespace_def']
-          item.xpath_namespace_prefix = field['xpath_namespace_prefix']
+        item.xpath_items = Array.new
+        field['xpath'].each do |xpath_field|
+          if (!xpath_field.key?("xpath-value") || xpath_field['xpath-value'].blank?)
+            raise InvalidMappingFile, "xpath_value is required for each xpath entry"
+          end
+          xpathitem = XPathEntry.new
+          xpathitem.xpath_string = xpath_field['xpath-value']
+          if (xpath_field.key?('xpath-namespace-prefix') && xpath_field.key?('xpath-namespace-def'))
+            xpathitem.xpath_ns_def = xpath_field['xpath-namespace-def']
+            xpathitem.xpath_ns_prefix = xpath_field['xpath-namespace-prefix']
+          end
+          item.xpath_items << xpathitem
         end
+      end
       #otherwise use mods
-      else
+      if (field.key?('mods'))
         item.mods_items = Array.new
         field['mods'].each do |mods_field|
           modsitem = ModsItem.new
