@@ -34,12 +34,6 @@ module Spotlight::Resources
     def extract_values(modsrecord, multivalue_faceting)
       xpath_values = extract_xpath_values(modsrecord)
       mods_values = extract_mods_values(modsrecord)
-      if (spotlight_field.eql?('xpath-mods-test_ssim'))
-        Delayed::Worker.logger.add(Logger::INFO, 'xpath')
-        Delayed::Worker.logger.add(Logger::INFO, xpath_values)
-        Delayed::Worker.logger.add(Logger::INFO, 'mods')
-        Delayed::Worker.logger.add(Logger::INFO, mods_values)
-      end
       values = xpath_values.concat(mods_values)
       
       finalvalue = nil

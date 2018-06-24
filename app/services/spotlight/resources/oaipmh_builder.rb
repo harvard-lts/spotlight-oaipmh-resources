@@ -39,7 +39,7 @@ module Spotlight
               
               process_images()
 
-              uniquify_repos(repository_field_name)
+              #uniquify_repos(repository_field_name)
               
               #Add the sidecar info for editing
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit) 
@@ -79,17 +79,17 @@ private
         end
       end
  
-      def uniquify_repos(repository_field_name)
-        
-        #If the repository exists, make sure it has unique values
-        if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
-          repoarray = @item_solr[repository_field_name].split("|")
-          repoarray = repoarray.uniq
-          repo = repoarray.join("|")
-          @item_solr[repository_field_name] = repo
-          @item_sidecar["repository_ssim"] = repo
-        end
-      end
+#      def uniquify_repos(repository_field_name)
+#        
+#        #If the repository exists, make sure it has unique values
+#        if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
+#          repoarray = @item_solr[repository_field_name].split("|")
+#          repoarray = repoarray.uniq
+#          repo = repoarray.join("|")
+#          @item_solr[repository_field_name] = repo
+#          @item_sidecar["repository_ssim"] = repo
+#        end
+#      end
 
       
       #Resolves urn-3 uris
