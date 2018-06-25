@@ -31,15 +31,18 @@ module Spotlight::Resources
       delimiter = ", "
     end
     
-    def extract_values(modsrecord, multivalue_faceting)
+    def extract_values(modsrecord)
+      
       xpath_values = extract_xpath_values(modsrecord)
       mods_values = extract_mods_values(modsrecord)
+      
       values = xpath_values.concat(mods_values)
       
       finalvalue = nil
       if (!values.empty?)
         #if multiple values, allow for faceting on each item by keeping it as an array
-        if (multivalue_faceting)
+        if (!multivalue_facets.nil? && (multivalue_facets.eql?("yes") || multivalue_facets))
+          
           finalvalue = values;
         else
           finalvalue = values.join(delimiter)
@@ -76,7 +79,7 @@ private
     
     def extract_mods_values(modsrecord)
       values = Array.new
-      if (!mods_items.nil?)    
+      if (!mods_items.nil?)   
         mods_items.each do |item|
           #Throw error if path value fails
           begin
@@ -87,7 +90,10 @@ private
               value = default_value
               values << value
             elsif (!retvalues.empty?)
-              values = retvalues
+              retvalues.each do |retnode|
+                values << retnode
+              end
+              #values << retvalues
             end
             
           rescue NoMethodError => e
@@ -310,7 +316,7 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        value = item.extract_values(modsrecord, !item.multivalue_facets.nil? && (item.multivalue_facets.eql?("yes") || item.multivalue_facets))
+        value = item.extract_values(modsrecord)
           
       #Not sure why but if a value isn't assigned, the last existing value for the field gets
       #placed in all non-existing values
