@@ -29,11 +29,35 @@
   delimiter: ": "
   mods:
       - path: titleInfo
+        attribute: type
+        attribute-value: '!uniform' 
         delimiter: " "
         subpaths:
           - subpath: nonSort
           - subpath: title
+          - subpath: partNumber
+          - subpath: partName 
       - path: titleInfo/subTitle
+      - path: relatedItem
+        attribute: type
+        attribute-value: constituent
+        subpaths:
+          - subpath: titleInfo/title
+#  the path below picks up one level of hierarchy, e.g.,
+#  /relatedItem[@type="host"]/titleInfo/title, NOT
+#  //relatedItem[@type="host"]/titleInfo/title
+      - path: relatedItem
+        attribute: type
+        attribute-value: host
+        subpaths:
+          - subpath: titleInfo/title
+#  The path below did not work, even when I removed the type=host path above.
+      - path: relatedItem/relatedItem
+        attribute: displayLabel
+        attribute-value: collection
+        subpaths:
+          - subpath: titleInfo/title
+          
 - spotlight-field: citation-title_tesim
   mods:
       - path: titleInfo/title
@@ -103,12 +127,12 @@
   delimiter: "|"
   mods: 
       - path: language/languageTerm
-- spotlight-field: repository_ssim
-  delimiter: "|"
-  mods:
-      - path: location/physicalLocation
-        attribute: type
-        attribute-value: repository
+#- spotlight-field: repository_ssim
+#  delimiter: "|"
+#  mods:
+#      - path: location/physicalLocation
+#        attribute: type
+#        attribute-value: repository
 - spotlight-field: repository_tesim
   delimiter: "|"
   mods:
@@ -215,4 +239,13 @@
         attribute-value: repository
   xpath:
       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
+- spotlight-field: repository_ssim
+  multivalue-facets: "yes"
+  xpath: 
+       - xpath-value: "//mods:location/mods:physicalLocation[@type='repository']"
+       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
+       - xpath-value: "//mods:relatedItem[@type='constituent']/mods:location/mods:physicalLocation[@type='repository']"
+- spotlight-field: hollis-record_tesim
+  xpath:
+       - xpath-value: "//mods:relatedItem[@otherType='HOLLIS record' or @otherType='HOLLIS Images record']/mods:location/mods:url"
          
