@@ -1,5 +1,9 @@
 RELEASE NOTES
 
+0.1.1 (07/16/2018) VC
+-- Ability to add a 'multivalue-breaks' field to the YAML which separates fields with more than one value into individual values
+-- Uniquify multivalue fields
+
 0.1.0 (05/30/2018) VC
 -- Adding the ability to use XPath logic in the YAML file
    
