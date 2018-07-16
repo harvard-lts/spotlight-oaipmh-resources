@@ -370,8 +370,8 @@ end
         item.default_value = field["default-value"]
       end
 
-      if (field.key?("multivalue-facets"))
-        item.multivalue_facets = field["multivalue-facets"]
+      if (field.key?("multivalue-breaks"))
+        item.multivalue_facets = field["multivalue-breaks"]
       end
       
       #must have a mods or xpath 

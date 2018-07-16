@@ -1,7 +1,7 @@
 #Structure:
 #
 #  - spotlight-field: xxx (field names should be separated with dashes except for the suffix: firstpart-secondpart_ssim or _tesim)
-#    multivalue-facets: "yes" (optional) - use this for splitting out multiple values to be faceted individually (ex - subjects)
+#    multivalue-breaks: "yes" (optional) - use this for splitting out multiple values to be broken on (and faceted on) individually (ex - subjects)
 #    default-value: xxx (optional)
 #    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
 #    mods:
@@ -140,7 +140,7 @@
         attribute: type
         attribute-value: repository
 - spotlight-field: subjects_ssim
-  multivalue-facets: "yes"
+  multivalue-breaks: "yes"
   delimiter: "|"
   mods:
       - path: subject
@@ -219,12 +219,12 @@
   mods:
       - path: tableOfContents
 - spotlight-field: xpath-test_ssim
-  multivalue-facets: "yes"
+  multivalue-breaks: "yes"
   xpath: 
       - xpath-value: "//mods:location/mods:physicalLocation[@type='repository']"
       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
 - spotlight-field: xpath-test-harvard-namespace_ssim
-  multivalue-facets: "yes"
+  multivalue-breaks: "yes"
   xpath: 
       - xpath-value: "//HarvardDRS:DRSMetadata/HarvardDRS:metsLabel"
         xpath-namespace-prefix: "HarvardDRS"
@@ -240,7 +240,7 @@
   xpath:
       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
 - spotlight-field: repository_ssim
-  multivalue-facets: "yes"
+  multivalue-breaks: "yes"
   xpath: 
        - xpath-value: "//mods:location/mods:physicalLocation[@type='repository']"
        - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
