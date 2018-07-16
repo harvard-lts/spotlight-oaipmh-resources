@@ -38,6 +38,9 @@ module Spotlight::Resources
       
       values = xpath_values.concat(mods_values)
       
+      #Remove duplicates
+      values = values.uniq
+      
       finalvalue = nil
       if (!values.empty?)
         #if multiple values, allow for faceting on each item by keeping it as an array
