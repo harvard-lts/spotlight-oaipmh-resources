@@ -1,5 +1,9 @@
 RELEASE NOTES
 
+0.1.2 (08/13/2018) VC
+-- Transforms IDS uri thumbs to IIIF when necessary
+-- Adds ?buttons=y to all IDS full images to trigger Mirador
+
 0.1.1 (07/16/2018) VC
 -- Ability to add a 'multivalue-breaks' field to the YAML which separates fields with more than one value into individual values
 -- Uniquifies multivalue fields

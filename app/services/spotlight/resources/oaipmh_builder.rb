@@ -77,19 +77,15 @@ private
           thumburl = transform_ids_uri_to_iiif(thumburl)
           @item_solr['thumbnail_url_ssm'] =  thumburl
         end
+        if (@item_solr.key?('full_image_url_ssm') && !@item_solr['full_image_url_ssm'].blank? && !@item_solr['full_image_url_ssm'].eql?('null'))           
+          fullurl = fetch_ids_uri(@item_solr['full_image_url_ssm'])
+          #if it is IDS, then add ?buttons=y so that mirador works
+          if (fullurl.include?('https://ids'))
+            fullurl = fullurl + '?buttons=y'
+            @item_solr['full_image_url_ssm'] =  fullurl
+          end         
+        end
       end
- 
-#      def uniquify_repos(repository_field_name)
-#        
-#        #If the repository exists, make sure it has unique values
-#        if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
-#          repoarray = @item_solr[repository_field_name].split("|")
-#          repoarray = repoarray.uniq
-#          repo = repoarray.join("|")
-#          @item_solr[repository_field_name] = repo
-#          @item_sidecar["repository_ssim"] = repo
-#        end
-#      end
 
       
       #Resolves urn-3 uris
@@ -109,8 +105,10 @@ private
         uri = ids_uri.sub(/\?.+/, "")
         #Change /view/ to /iiif/
         uri = uri.sub(%r|/view/|, "/iiif/")
-        #Append /info.json to end
-        uri = uri + "/full/180,/0/native.jpg"
+        #Append /native.jpg to end if it doesn't exist
+        if (!uri.include?('native.jpg'))
+          uri = uri + "/full/180,/0/native.jpg"
+        end    
       end
 
     end
