@@ -109,6 +109,7 @@ private
         if (!uri.include?('native.jpg'))
           uri = uri + "/full/180,/0/native.jpg"
         end    
+        uri
       end
 
     end
