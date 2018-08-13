@@ -108,7 +108,10 @@ private
         #Append /native.jpg to end if it doesn't exist
         if (!uri.include?('native.jpg'))
           uri = uri + "/full/180,/0/native.jpg"
+        elsif (uri.include?("full/,150/"))
+          uri = uri.sub(/full\/,150\//,"full/180,/")
         end    
+        uri
       end
 
     end
