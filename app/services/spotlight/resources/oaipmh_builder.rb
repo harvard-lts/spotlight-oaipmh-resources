@@ -18,7 +18,7 @@ module Spotlight
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         
         count = 0
-        harvests = resource.oaipmh_harvests
+        harvests = resource.harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
         until (resumption_token.nil? && last_page_evaluated)
@@ -57,7 +57,7 @@ module Spotlight
             end
           end
           if (!resumption_token.nil?)
-            harvests = resource.resumption_oaipmh_harvests(resumption_token)
+            harvests = resource.paginate(resumption_token)
             resumption_token = harvests.resumption_token
           end
         end
