@@ -2,7 +2,7 @@ require 'spotlight/engine'
 
 module Spotlight::Oaipmh::Resources
   class Engine < ::Rails::Engine
-    Spotlight::Oaipmh::Resources::Engine.config.resource_partial = 'spotlight/resources/oaipmh_harvester/form'
+    Spotlight::Oaipmh::Resources::Engine.config.resource_partial = 'spotlight/resources/harvester/form'
     
     initializer 'spotlight.oaipmh.initialize' do
       Spotlight::Engine.config.external_resources_partials ||= []

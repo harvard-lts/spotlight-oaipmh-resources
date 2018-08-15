@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  # s.add_dependency 'blacklight-spotlight', github: 'harvard-library/spotlight', :branch => 'log_entries'
   s.add_dependency 'oai'
   s.add_dependency 'mods'
   s.add_development_dependency "bundler"
@@ -28,5 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'database_cleaner', '~> 1.3'
   s.add_development_dependency 'blacklight-gallery'
   s.add_development_dependency 'sitemap_generator'
-
+  
 end
