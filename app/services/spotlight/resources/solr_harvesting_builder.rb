@@ -17,7 +17,7 @@ module Spotlight
         @solr_converter = SolrConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
                           
         count = 0
-        page = 0
+        page = 1
         harvests = resource.harvests
         last_page_evaluated = false
         until (last_page_evaluated || harvests['response']['docs'].blank?)
