@@ -15,7 +15,13 @@ module Spotlight
         end
         
         @solr_converter = SolrConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
-                          
+        @solr_converter.parse_mapping_file(@solr_converter.mapping_file) 
+
+        unique_id_field = nil 
+        if (!@solr_converter.get_unique_id_field.nil?)
+          unique_id_field = @solr_converter.get_unique_id_field
+        end
+                 
         count = 0
         page = 1
         harvests = resource.harvests
@@ -27,7 +33,7 @@ module Spotlight
             @item = SolrHarvestingItem.new(exhibit, @solr_converter)
             
             @item.metadata = record
-            @item.parse_record()
+            @item.parse_record(unique_id_field)
             begin
               @item_solr = @item.to_solr
               @item_sidecar = @item.sidecar_data
@@ -60,6 +66,15 @@ module Spotlight
           raise
         end
         resource.get_job_entry.succeeded!
+      end
+      
+      def get_unique_id_field_name(mapping_file)
+        mapping_config = YAML.load_file(mapping_file)
+        mapping_config.each do |field|
+          if (!field.key?("spotlight-field") || field['spotlight-field'].blank?)
+            raise InvalidMappingFile, "spotlight-field is required for each entry"
+          end
+        end
       end
 
     end

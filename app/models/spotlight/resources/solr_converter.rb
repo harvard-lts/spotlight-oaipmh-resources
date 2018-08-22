@@ -152,11 +152,29 @@ end
 
         end
       end
+      
+      #If it is the unique field, set it
+      if (field['spotlight-field'].eql?("unique-id_tesim"))
+        delimiter = ""
+        if (!field["delimiter"].blank?)
+          delimiter = field["delimiter"]
+        end
+        
+        fields = Array.new
+        item.solr_items.each do |solr_item|
+          fields << solr_item.solr_field
+        end
+        @unique_id_field = fields.join(delimiter)
+      end
+      
       @converter_items << item
     end
     @converter_items
   end
   
+  def get_unique_id_field()
+    @unique_id_field
+  end
   
   end
 end

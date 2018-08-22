@@ -7,9 +7,13 @@
 #    solr-field:
 #        - field-name: xxx (repeatable - all path fields will be concatenated)
 #
+# Make sure to set unique-id_tesim if you want to choose an identifier for your record.
+# Otherwise, reharvesting will result in the addition of more records rather than overwriting
+# existing records.
+
 - spotlight-field: unique-id_tesim
   solr-field:
-     - field-name: "_id"
+     - field-name: "hashKey"
      
 - spotlight-field: full_title_tesim
   solr-field:

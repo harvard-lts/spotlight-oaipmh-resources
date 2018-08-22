@@ -15,10 +15,14 @@ module Spotlight::Resources
       solr_hash
     end
     
-    def parse_record()
+    def parse_record(unique_id_field)
+      if (!metadata[unique_id_field].blank?)
+        if (metadata[unique_id_field].kind_of?(Array))
+          @id = metadata[unique_id_field][0]
+        else
+          @id = metadata[unique_id_field] 
+        end
         
-      if (!metadata['_id'].empty?)
-        @id = metadata['_id'] 
         #Strip out all of the decimals
         @id = @id.gsub('.', '')
         @id = @exhibit.id.to_s + "-" + @id.to_s
@@ -34,7 +38,12 @@ module Spotlight::Resources
 
     
     def add_document_id
-      solr_hash[:id] = @id.to_s
+      if (!@id.blank?)
+        solr_hash[:id] = @id.to_s
+      else
+        #Generate a random number if no unique id is supplied.
+        solr_hash[:id] = rand.to_s[2..11] 
+      end
     end
   
   end
