@@ -1,5 +1,8 @@
 RELEASE NOTES
 
+0.2.0 (08/24/2018) VC
+-- Solr mapping ability
+
 0.1.2 (08/13/2018) VC
 -- Transforms IDS uri thumbs to IIIF when necessary
 -- Adds ?buttons=y to all IDS full images to trigger Mirador
