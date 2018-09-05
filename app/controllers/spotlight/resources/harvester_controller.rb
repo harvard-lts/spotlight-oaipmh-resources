@@ -1,6 +1,6 @@
 
 module Spotlight::Resources
-  class OaipmhHarvesterController < Spotlight::ApplicationController
+  class HarvesterController < Spotlight::ApplicationController
     
     load_and_authorize_resource :exhibit, class: Spotlight::Exhibit
     
@@ -15,11 +15,15 @@ module Spotlight::Resources
         my_params.delete(:custom_mapping)
       end
       mapping_file = resource_params[:mapping_file]
-      if (resource_params.has_key?(:custom_mapping))
-              mapping_file = resource_params[:custom_mapping].original_filename
+      if (resource_params[:type]  == Spotlight::Resources::HarvestType::SOLR)
+        mapping_file = resource_params[:solr_mapping_file]
       end
-      Spotlight::Resources::PerformHarvestsJob.perform_later(resource_params[:url], resource_params[:set], mapping_file, current_exhibit, current_user, new_job_log_entry)
-      flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
+      if (resource_params.has_key?(:custom_mapping))
+        mapping_file = resource_params[:custom_mapping].original_filename
+      end
+      
+      Spotlight::Resources::PerformHarvestsJob.perform_later(resource_params[:type], resource_params[:url], resource_params[:set], mapping_file, current_exhibit, current_user, new_job_log_entry)
+      flash[:notice] = t('spotlight.resources.harvester.performharvest.success', set: resource_params[:set])
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
     
@@ -29,6 +33,9 @@ module Spotlight::Resources
       name = resource_params[:custom_mapping].original_filename
       Dir.mkdir("public/uploads") unless Dir.exist?("public/uploads")  
       dir = "public/uploads/modsmapping"
+      if (resource_params[:type]  == Spotlight::Resources::HarvestType::SOLR)
+        dir = "public/uploads/solrmapping"
+      end
       Dir.mkdir(dir) unless Dir.exist?(dir)
       
       path = File.join(dir, name)
@@ -37,7 +44,7 @@ module Spotlight::Resources
 
 
     def resource_params
-      params.require(:resources_oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
+      params.require(:resources_harvester).permit(:type, :url, :set, :mapping_file, :solr_mapping_file, :custom_mapping)
     end
     
     #Set the job status so users can view
