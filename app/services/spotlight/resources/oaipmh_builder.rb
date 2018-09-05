@@ -79,11 +79,16 @@ private
         end
         if (@item_solr.key?('full_image_url_ssm') && !@item_solr['full_image_url_ssm'].blank? && !@item_solr['full_image_url_ssm'].eql?('null'))           
           fullurl = fetch_ids_uri(@item_solr['full_image_url_ssm'])
+          #If it is http, make it https
+          if ((fullurl.include?('http://')))
+            fullurl = fullurl.sub(/http:\/\//, "https://")
+            @item_solr['full_image_url_ssm'] =  fullurl
+          end
           #if it is IDS, then add ?buttons=y so that mirador works
           if (fullurl.include?('https://ids') && !fullurl.include?('?buttons=y'))
             fullurl = fullurl + '?buttons=y'
             @item_solr['full_image_url_ssm'] =  fullurl
-          end         
+          end
         end
       end
 
