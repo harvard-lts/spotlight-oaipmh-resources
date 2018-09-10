@@ -28,14 +28,15 @@ module Spotlight::Resources
       Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
     end
 
-    def perform(harvest_type, url, set, mapping_file, exhibit, _user, job_entry)
+    def perform(harvest_type, url, set, mapping_file, exhibit, _user, job_entry, cursor = nil)
         harvester = Spotlight::Resources::Harvester.create(
           url: url,
           data: {base_url: url,
                 set: set,
                 mapping_file: mapping_file,
                 job_entry: job_entry,
-                type: harvest_type},
+                type: harvest_type,
+                cursor: cursor},
           exhibit: exhibit)
       if !harvester.save_and_index
         raise HarvestingFailedException

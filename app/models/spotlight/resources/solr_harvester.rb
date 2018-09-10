@@ -17,6 +17,9 @@ module Spotlight::Resources
     end
     
     def paginate (page)
+      if (@solr_connection.nil?)
+        @solr_connection = RSolr.connect :url => @url  
+      end
       response = @solr_connection.paginate page, ROW_COUNT, 'select', :params => {:q => '*:*', :wt => 'json'}
     end
     

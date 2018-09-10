@@ -15,11 +15,22 @@ module Spotlight
           mapping_file = resource.data[:mapping_file]
         end
         
+        max_batch_count = -1
+        harvester_properties = YAML.load_file('config/harvester_properties.yml')
+        if (harvester_properties['oai_harvest_batch_max'])
+          max_batch_count = harvester_properties['oai_harvest_batch_max']
+        end
+        
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         
         count = 0
         harvests = resource.harvests
-        resumption_token = harvests.resumption_token
+        #If the resumption token was stored, begin there.
+        if (resource.data.include?(:cursor) && !resource.data[:cursor].blank?)
+          resumption_token = resource.data[:cursor]
+        else
+          resumption_token = harvests.resumption_token
+        end
         last_page_evaluated = false
         until (resumption_token.nil? && last_page_evaluated)
           #once we reach the last page
@@ -39,8 +50,6 @@ module Spotlight
               
               process_images()
 
-              #uniquify_repos(repository_field_name)
-              
               #Add the sidecar info for editing
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit) 
               sidecar.update(data: @item_sidecar)
@@ -60,15 +69,29 @@ module Spotlight
             harvests = resource.paginate(resumption_token)
             resumption_token = harvests.resumption_token
           end
+          
+          #Stop harvesting if the batch has reached the maximum allowed value
+          if (max_batch_count != -1 && count >= max_batch_count)
+            schedule_next_batch(resumption_token)
+            break
+          end
         end
         rescue
           resource.get_job_entry.failed!
           raise
         end
-        resource.get_job_entry.succeeded!
+        if (last_page_evaluated)
+          resource.get_job_entry.succeeded!
+        end
+        
       end
 
 private   
+
+      def schedule_next_batch(cursor)
+        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, nil, resource.data[:job_entry], cursor)
+              
+      end
 
       
       def process_images()
