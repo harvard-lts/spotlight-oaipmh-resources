@@ -13,12 +13,7 @@ module Spotlight
         if (!resource.data[:solr_mapping_file].eql?("Default Mapping File") && !resource.data[:solr_mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
         end
-        
-        max_batch_count = -1
-        harvester_properties = YAML.load_file('config/harvester_properties.yml')
-        if (harvester_properties['solr_harvest_batch_max'])
-          max_batch_count = harvester_properties['solr_harvest_batch_max']
-        end
+
         
         @solr_converter = SolrConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         @solr_converter.parse_mapping_file(@solr_converter.mapping_file) 
@@ -31,13 +26,9 @@ module Spotlight
         count = 0
         
         #If the resumption token was stored, begin there.
-        if (resource.data.include?(:cursor) && !resource.data[:cursor].blank?)
-          page = resource.data[:cursor]
-          harvests = resource.paginate(page)
-        else
-          page = 1
-          harvests = resource.harvests
-        end
+        page = 1
+        harvests = resource.harvests
+
         last_page_evaluated = false
         until (last_page_evaluated || harvests['response']['docs'].blank?)
           #once we reach the last page
@@ -68,11 +59,6 @@ module Spotlight
           end #End of each loop
 
           page = page + 1
-          #Stop harvesting if the batch has reached the maximum allowed value
-          if (max_batch_count != -1 && count >= max_batch_count)
-            schedule_next_batch(page)
-            break
-          end
           
           harvests = resource.paginate(page)  
           #Terminate the loop if it is empty        
@@ -84,9 +70,8 @@ module Spotlight
           resource.get_job_entry.failed!
           raise
         end
-        if (last_page_evaluated)
-          resource.get_job_entry.succeeded!
-        end
+        resource.get_job_entry.succeeded!
+
       end
       
       def get_unique_id_field_name(mapping_file)
@@ -96,10 +81,6 @@ module Spotlight
             raise InvalidMappingFile, "spotlight-field is required for each entry"
           end
         end
-      end
-      
-      def schedule_next_batch(cursor)
-        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, nil, resource.data[:job_entry], cursor)
       end
 
 

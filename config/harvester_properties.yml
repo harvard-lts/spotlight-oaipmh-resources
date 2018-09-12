@@ -1,9 +1,0 @@
-# Set specific harvester properties here.
-
-#The maximum number of records to harvest in one batch using OAI
-#Use -1 to set no boundary
-oai_harvest_batch_max = 10000
-
-#The maximum number of records to harvest in one batch using Solr
-#Use -1 to set no boundary
-solr_harvest_batch_max = 5000
