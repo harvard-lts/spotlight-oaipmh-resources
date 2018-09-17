@@ -31,7 +31,7 @@ module Spotlight::Resources
       delimiter = ", "
     end
     
-    def extract_values(modsrecord)
+    def extract_all_values(modsrecord)
       
       xpath_values = extract_xpath_values(modsrecord)
       mods_values = extract_mods_values(modsrecord)
@@ -319,7 +319,7 @@ end
       solr_hash = {}
         
       @converter_items.each do |item|
-        value = item.extract_values(modsrecord)
+        value = item.extract_all_values(modsrecord)
           
       #Not sure why but if a value isn't assigned, the last existing value for the field gets
       #placed in all non-existing values
