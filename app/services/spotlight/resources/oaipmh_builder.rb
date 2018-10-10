@@ -14,22 +14,36 @@ module Spotlight
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
         end
-        
-        
+ 
+        max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.oai_harvest_batch_max
+                   
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         
         count = 0
-        harvests = resource.harvests
-        resumption_token = harvests.resumption_token
+        totalrecords = 0
+
+    		#If the resumption token was stored, begin there.
+        if (resource.data.include?(:cursor) && !resource.data[:cursor].blank?)
+          cursor = resource.data[:cursor]
+          harvests = resource.paginate(cursor)
+          
+   			else
+          harvests = resource.harvests
+        end
+     		
+     		resumption_token = harvests.resumption_token
+     		
+     		if (resource.data.include?(:count) && !resource.data[:count].blank?)
+          totalrecords = resource.data[:count]
+        end
+        
         last_page_evaluated = false
-        until (resumption_token.nil? && last_page_evaluated)
-          #once we reach the last page
+        while (!last_page_evaluated)
           if (resumption_token.nil?)
             last_page_evaluated = true
           end
           harvests.each do |record|
             @item = OaipmhModsItem.new(exhibit, @oai_mods_converter)
-            
             @item.metadata = record.metadata
             @item.parse_mods_record()
             begin
@@ -46,8 +60,9 @@ module Spotlight
               yield base_doc.merge(@item_solr) if @item_solr.present?
               
               count = count + 1
+              totalrecords = totalrecords + 1
               curtime = Time.zone.now
-              resource.get_job_entry.update(job_item_count: count, end_time: curtime)
+              resource.get_job_entry.update(job_item_count: totalrecords, end_time: curtime)
 
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
@@ -55,21 +70,33 @@ module Spotlight
               Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
             end
           end
-          if (!resumption_token.nil?)
-            harvests = resource.paginate(resumption_token)
-            resumption_token = harvests.resumption_token
-          end
 
+          #Stop harvesting if the batch has reached the maximum allowed value
+          if (!resumption_token.nil?) 
+        		if (max_batch_count != -1 && count >= max_batch_count)
+              schedule_next_batch(resumption_token, totalrecords)
+        		  break
+        		else
+             harvests = resource.paginate(resumption_token)
+             resumption_token = harvests.resumption_token
+            end
+          end
+        
         end
         rescue
           resource.get_job_entry.failed!
           raise
         end
-        resource.get_job_entry.succeeded!
+        if (last_page_evaluated)
+        	resource.get_job_entry.succeeded!
+       	end
       end
 
 private   
-      
+      def schedule_next_batch(cursor, count)
+        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, resource.data[:user], resource.data[:job_entry], cursor, count)
+      end
+            
       def process_images()
         if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))           
           thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
@@ -77,16 +104,20 @@ private
           @item_solr['thumbnail_url_ssm'] =  thumburl
         end
         if (@item_solr.key?('full_image_url_ssm') && !@item_solr['full_image_url_ssm'].blank? && !@item_solr['full_image_url_ssm'].eql?('null'))           
+          
           fullurl = fetch_ids_uri(@item_solr['full_image_url_ssm'])
-          #If it is http, make it https            
-          if ((fullurl.include?('http://')))
-            fullurl = fullurl.sub(/http:\/\//, "https://")
+          if (!fullurl.blank?)
+
+            #If it is http, make it https            
+            if (fullurl.include?('http://'))
+              fullurl = fullurl.sub(/http:\/\//, "https://")
+            end
+            #if it is IDS, then add ?buttons=y so that mirador works
+            if (fullurl.include?('https://ids') && !fullurl.include?('?buttons=y'))
+              fullurl = fullurl + '?buttons=y'
+            end
+            @item_solr['full_image_url_ssm'] =  fullurl
           end
-          #if it is IDS, then add ?buttons=y so that mirador works
-          if (fullurl.include?('https://ids') && !fullurl.include?('?buttons=y'))
-            fullurl = fullurl + '?buttons=y'
-          end
-          @item_solr['full_image_url_ssm'] =  fullurl
         end
       end
 
