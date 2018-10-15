@@ -1,5 +1,8 @@
 RELEASE NOTES
 
+0.2.1 (10/15/2018) VC
+-- Internal pagination so harvesting paginates in chunks rather than relying on Spotlight 
+
 0.2.1 (09/17/2018) VC
 -- Fix to harvester for OAI harvesting in prod
 
