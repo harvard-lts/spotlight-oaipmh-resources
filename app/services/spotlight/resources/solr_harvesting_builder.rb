@@ -14,6 +14,7 @@ module Spotlight
           mapping_file = resource.data[:mapping_file]
         end
 
+        max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
         
         @solr_converter = SolrConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
         @solr_converter.parse_mapping_file(@solr_converter.mapping_file) 
@@ -24,15 +25,26 @@ module Spotlight
         end
                  
         count = 0
+        totalrecords = 0
         
         #If the resumption token was stored, begin there.
-        page = 1
-        harvests = resource.harvests
+        if (resource.data.include?(:cursor) && !resource.data[:cursor].blank?)
+          page = resource.data[:cursor]
+          harvests = resource.paginate(page)
+        else
+          page = 1
+          harvests = resource.harvests
+        end
+          Delayed::Worker.logger.add(Logger::INFO, 'Harvesting page')
+          Delayed::Worker.logger.add(Logger::INFO, page)
+        if (resource.data.include?(:count) && !resource.data[:count].blank?)
+          totalrecords = resource.data[:count]
+        end
+          Delayed::Worker.logger.add(Logger::INFO, 'COUNT')
+                    Delayed::Worker.logger.add(Logger::INFO, totalrecords)
+        last_page_evaluated = harvests['response']['docs'].blank?
 
-        last_page_evaluated = false
-        until (last_page_evaluated || harvests['response']['docs'].blank?)
-          #once we reach the last page
-
+        while (!last_page_evaluated)
           harvests['response']['docs'].each do |record|
             @item = SolrHarvestingItem.new(exhibit, @solr_converter)
             
@@ -46,10 +58,14 @@ module Spotlight
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit) 
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
-              
+              #if (totalrecords > 635 || totalrecords < 10 || (totalrecords > 99 && totalrecords < 110))
+                Delayed::Worker.logger.add(Logger::INFO, @item_solr['unique-id_tesim'])
+                Delayed::Worker.logger.add(Logger::INFO, totalrecords)
+              #end
               count = count + 1
+              totalrecords = totalrecords + 1
               curtime = Time.zone.now
-              resource.get_job_entry.update(job_item_count: count, end_time: curtime)
+              resource.get_job_entry.update(job_item_count: totalrecords, end_time: curtime)
 
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
@@ -57,20 +73,31 @@ module Spotlight
               Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
             end
           end #End of each loop
-
           page = page + 1
+          #Stop harvesting if the batch has reached the maximum allowed value
+          if (!last_page_evaluated) 
+            if (max_batch_count != -1 && count >= max_batch_count)
+              schedule_next_batch(page, totalrecords)
+              break
+            else
+             harvests = resource.paginate(page)
+             
+            end
+          end
           
-          harvests = resource.paginate(page)  
+                    
           #Terminate the loop if it is empty        
           if (harvests['response']['docs'].blank?)
             last_page_evaluated = true
           end
-        end #End of until loop
+        end #End of while loop
         rescue
           resource.get_job_entry.failed!
           raise
         end
-        resource.get_job_entry.succeeded!
+        if (last_page_evaluated)
+          resource.get_job_entry.succeeded!
+        end
 
       end
       
@@ -81,6 +108,12 @@ module Spotlight
             raise InvalidMappingFile, "spotlight-field is required for each entry"
           end
         end
+      end
+      
+      def schedule_next_batch(cursor, count)
+        Delayed::Worker.logger.add(Logger::INFO, 'SCHEDULING NEW BATCH for page')
+        Delayed::Worker.logger.add(Logger::INFO, cursor)
+        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, resource.data[:user], resource.data[:job_entry], cursor, count)
       end
 
 
