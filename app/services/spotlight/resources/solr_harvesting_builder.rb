@@ -35,13 +35,11 @@ module Spotlight
           page = 1
           harvests = resource.harvests
         end
-          Delayed::Worker.logger.add(Logger::INFO, 'Harvesting page')
-          Delayed::Worker.logger.add(Logger::INFO, page)
+
         if (resource.data.include?(:count) && !resource.data[:count].blank?)
           totalrecords = resource.data[:count]
         end
-          Delayed::Worker.logger.add(Logger::INFO, 'COUNT')
-                    Delayed::Worker.logger.add(Logger::INFO, totalrecords)
+
         last_page_evaluated = harvests['response']['docs'].blank?
 
         while (!last_page_evaluated)
@@ -58,10 +56,7 @@ module Spotlight
               sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit) 
               sidecar.update(data: @item_sidecar)
               yield base_doc.merge(@item_solr) if @item_solr.present?
-              #if (totalrecords > 635 || totalrecords < 10 || (totalrecords > 99 && totalrecords < 110))
-                Delayed::Worker.logger.add(Logger::INFO, @item_solr['unique-id_tesim'])
-                Delayed::Worker.logger.add(Logger::INFO, totalrecords)
-              #end
+
               count = count + 1
               totalrecords = totalrecords + 1
               curtime = Time.zone.now
@@ -111,8 +106,6 @@ module Spotlight
       end
       
       def schedule_next_batch(cursor, count)
-        Delayed::Worker.logger.add(Logger::INFO, 'SCHEDULING NEW BATCH for page')
-        Delayed::Worker.logger.add(Logger::INFO, cursor)
         Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, resource.data[:user], resource.data[:job_entry], cursor, count)
       end
 
