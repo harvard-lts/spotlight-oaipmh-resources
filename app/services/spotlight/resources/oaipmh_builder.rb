@@ -90,13 +90,13 @@ module Spotlight
         end
         rescue
           resource.get_job_entry.failed!
-          Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
+          Spotlight::HarvestingCompleteMailer.harvest_failed(resource.data[:set], resource.exhibit, resource.data[:user]).deliver_now
           raise
         end
         if (last_page_evaluated)
         	resource.get_job_entry.succeeded!
         	#Send job message
-          Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user, failed_items).deliver_now
+          Spotlight::HarvestingCompleteMailer.harvest_indexed(resource.data[:set], resource.exhibit, resource.data[:user], failed_items).deliver_now
        	end
       end
 
