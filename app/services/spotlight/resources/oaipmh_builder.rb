@@ -21,6 +21,7 @@ module Spotlight
         
         count = 0
         totalrecords = 0
+        failed_items = nil
 
     		#If the resumption token was stored, begin there.
         if (resource.data.include?(:cursor) && !resource.data[:cursor].blank?)
@@ -68,13 +69,17 @@ module Spotlight
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)
               Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+              if (failed_items.nil?)
+                failed_items = Array.new
+              end
+              failed_items << @item.id
             end
           end
 
           #Stop harvesting if the batch has reached the maximum allowed value
           if (!resumption_token.nil?) 
         		if (max_batch_count != -1 && count >= max_batch_count)
-              schedule_next_batch(resumption_token, totalrecords)
+              schedule_next_batch(resumption_token, totalrecords, failed_items)
         		  break
         		else
              harvests = resource.paginate(resumption_token)
@@ -85,16 +90,19 @@ module Spotlight
         end
         rescue
           resource.get_job_entry.failed!
+          Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
           raise
         end
         if (last_page_evaluated)
         	resource.get_job_entry.succeeded!
+        	#Send job message
+          Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user, failed_items).deliver_now
        	end
       end
 
 private   
-      def schedule_next_batch(cursor, count)
-        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, resource.data[:user], resource.data[:job_entry], cursor, count)
+      def schedule_next_batch(cursor, count, failed_items)
+        Spotlight::Resources::PerformHarvestsJob.perform_later(resource.data[:type], resource.data[:base_url], resource.data[:set], resource.data[:mapping_file], resource.exhibit, resource.data[:user], resource.data[:job_entry], cursor, count, failed_items)
       end
             
       def process_images()

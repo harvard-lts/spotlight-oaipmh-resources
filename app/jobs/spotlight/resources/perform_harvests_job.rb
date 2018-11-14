@@ -16,19 +16,19 @@ module Spotlight::Resources
     end
          
     #This happens when the job starts or is enqueued, not after it finishes.  Why?
-    after_perform do |job|
-      harvest_type, url, set, mapping, exhibit, user, cursor = job.arguments
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' +set)
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now
-    end
-    
-    rescue_from(HarvestingFailedException) do |exception|
-      harvest_type, url, set, mapping, exhibit, user, cursor = job.arguments
-      Delayed::Worker.logger.add(Logger::ERROR, 'Harvesting Failed for set ' +set)
-      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
-    end
+#    after_perform do |job|
+#      harvest_type, url, set, mapping, exhibit, user, cursor = job.arguments
+#      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' +set)
+#      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now
+#    end
+#    
+#    rescue_from(HarvestingFailedException) do |exception|
+#      harvest_type, url, set, mapping, exhibit, user, cursor = job.arguments
+#      Delayed::Worker.logger.add(Logger::ERROR, 'Harvesting Failed for set ' +set)
+#      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
+#    end
 
-    def perform(harvest_type, url, set, mapping_file, exhibit, _user, job_entry, cursor = nil, count = 0)
+    def perform(harvest_type, url, set, mapping_file, exhibit, _user, job_entry, cursor = nil, count = 0, failed_items = nil)
         harvester = Spotlight::Resources::Harvester.create(
           url: url,
           data: {base_url: url,
@@ -38,7 +38,8 @@ module Spotlight::Resources
                 type: harvest_type,
                 user: _user,
                 cursor: cursor,
-                count: count},
+                count: count,
+                failed_items: failed_items},
           exhibit: exhibit)
       if !harvester.save_and_index
         raise HarvestingFailedException
