@@ -88,9 +88,12 @@ module Spotlight
           end
         
         end
-        rescue
+        rescue Exception => e
           resource.get_job_entry.failed!
-          Spotlight::HarvestingCompleteMailer.harvest_failed(resource.data[:set], resource.exhibit, resource.data[:user]).deliver_now
+          Delayed::Worker.logger.add(Logger::ERROR, resource.data[:set] + ' harvest failed')
+          Delayed::Worker.logger.add(Logger::ERROR, e.message)
+          Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+          Spotlight::HarvestingCompleteMailer.harvest_failed(resource.data[:set], resource.exhibit, resource.data[:user], e.message).deliver_now
           raise
         end
         if (last_page_evaluated)

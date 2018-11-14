@@ -10,9 +10,10 @@ module Spotlight
       mail(to: user.email, from: 'oaiharvester@noreply.com', subject: 'Harvest indexing complete for '+ set)
     end
     
-    def harvest_failed(set, exhibit, user)
+    def harvest_failed(set, exhibit, user, message)
       @set = set
       @exhibit = exhibit
+      @message = message
       mail(to: user.email, from: 'oaiharvester@noreply.com', subject: 'The harvest failed for '+ set)
     end
   end
