@@ -1,4 +1,11 @@
 RELEASE NOTES
+0.3.2 (04/29/2019) VC
+-- Updated vulnerabilities
+   - devise (CVE-2019-5421)
+   - railities (CVE-2019-5420)
+   - actionview (CVE-2019-5418)
+   - bootstrap-sass (CVE-2019-8331)
+
 0.3.1 (04/17/2019) VC
 -- Changed set name to set spec in labeling (DCP-326) 
 
