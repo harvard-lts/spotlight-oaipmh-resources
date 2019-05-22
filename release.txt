@@ -1,4 +1,7 @@
 RELEASE NOTES
+0.3.3 (05/22/2019) VC
+-- Fixed bug to prevent thumbnail from harvesting if it doesn't exist.
+
 0.3.2 (04/29/2019) VC
 -- Updated vulnerabilities
    - devise (CVE-2019-5421)
