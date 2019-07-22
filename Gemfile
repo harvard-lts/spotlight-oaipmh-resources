@@ -6,8 +6,8 @@ gem 'mods'
 gem 'oai'
 
 # BEGIN ENGINE_CART BLOCK
-# engine_cart: 0.10.0
-# engine_cart stanza: 0.10.0
+# engine_cart: 2.2.1
+# engine_cart stanza: 2.2.1
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
 if File.exist?(file)
@@ -40,4 +40,4 @@ else
 end
 # END ENGINE_CART BLOCK
 
-gem 'blacklight-spotlight', github: 'harvard-library/spotlight', :branch => 'harvard_development'
+gem 'blacklight-spotlight', github: 'harvard-library/spotlight', :branch => 'harvard_master'
