@@ -152,9 +152,9 @@ private
         uri = ids_uri.sub(/\?.+/, "")
         #Change /view/ to /iiif/
         uri = uri.sub(%r|/view/|, "/iiif/")
-        #Append /native.jpg to end if it doesn't exist
-        if (!uri.include?('native.jpg'))
-          uri = uri + "/full/180,/0/native.jpg"
+        #Append /default.jpg to end if it doesn't exist
+        if (!uri.include?('default.jpg') && !uri.include('native.jpg'))
+          uri = uri + "/full/180,/0/default.jpg"
         elsif (uri.include?("full/,150/"))
           uri = uri.sub(/full\/,150\//,"full/180,/")
         end    
