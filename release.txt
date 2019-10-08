@@ -1,5 +1,9 @@
 RELEASE NOTES
 
+0.1.3 (10/08/2019) VC
+-- Updated vulnerability for devise (CVE-2019-16109)
+-- Updated vulnerability for nokogiri (CVE-2019-5477)
+
 0.1.2 (07/22/2019) VC
 -- Updated vulnerability for mini_magick (CVE-2019-13574)
 
