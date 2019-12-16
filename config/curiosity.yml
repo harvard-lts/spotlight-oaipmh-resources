@@ -1,3 +1,4 @@
+#  2019-12-13: Changed the full_title_tesim delimiter to a semicolon and added it to the two full_title_tesim relatedItems (VV)
 #  2019-01-04: Changed permalink xpaths for crimes and dag (RKW)
 #  2018-11-27: Restrict subject terms to those from preferred thesauri; add series title (RKW)
 #  2018-11-19: Corrected digitalFormat entries; Fixed error in style-period_tesim. (RKW)
@@ -61,7 +62,7 @@
       - path: recordInfo/recordIdentifier
     
 - spotlight-field: full_title_tesim
-  delimiter: ": "
+  delimiter: " ; "
   mods:
       - path: titleInfo
         attribute: type
@@ -76,11 +77,13 @@
       - path: relatedItem
         attribute: type
         attribute-value: constituent
+        delimiter: " ; "
         subpaths:
           - subpath: titleInfo/title
       - path: relatedItem
         attribute: type
         attribute-value: host
+        delimiter: " ; "
         subpaths:
           - subpath: titleInfo/title
 
@@ -737,7 +740,3 @@
 - spotlight-field: permalink-buttons_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Political Buttons']"  
-
-
-
-      
