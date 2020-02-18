@@ -1,3 +1,4 @@
+#  2020-02-14: Added permalink xpaths for ham, dcp, and franceinamerica (VV)
 #  2019-12-13: Changed the full_title_tesim delimiter to a semicolon and added it to the two full_title_tesim relatedItems (VV)
 #  2019-01-04: Changed permalink xpaths for crimes and dag (RKW)
 #  2018-11-27: Restrict subject terms to those from preferred thesauri; add series title (RKW)
@@ -665,10 +666,26 @@
 #  xpath:
 #      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
 
+- spotlight-field: permalink-botanicals_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Botanical Illustrations']"  
+      
+- spotlight-field: permalink-buttons_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Political Buttons']"  
+
+- spotlight-field: permalink-channing_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='The William Ellery Channing Collection']"  
+
 - spotlight-field: permalink-contagion_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Contagion: Historical Views of Diseases and Epidemics']" 
       
+- spotlight-field: permalink-crb_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Chinese Rare Books']"  
+
 - spotlight-field: permalink-crimes_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='English Crime and Execution Broadsides']"  
@@ -677,10 +694,22 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Daguerreotypes at Harvard']"
 
+- spotlight-field: permalink-dcp_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
+
 - spotlight-field: permalink-exp_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Expeditions and Discoveries: Sponsored Exploration and Scientific Discovery in the Modern Age']"
       
+- spotlight-field: permalink-franceinamerica_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='France in the Americas']"
+
+- spotlight-field: permalink-ham_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Harvard Art Museums']"
+
 - spotlight-field: permalink-ihp_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Islamic Heritage Project']" 
@@ -724,19 +753,3 @@
 - spotlight-field: permalink-ww_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Women Working, 1800-1930']"  
-
-- spotlight-field: permalink-crb_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='Chinese Rare Books']"  
-
-- spotlight-field: permalink-channing_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='The William Ellery Channing Collection']"  
-
-- spotlight-field: permalink-botanicals_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='Botanical Illustrations']"  
-      
-- spotlight-field: permalink-buttons_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='Political Buttons']"  
