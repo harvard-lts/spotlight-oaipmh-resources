@@ -1,3 +1,7 @@
+#  2020-05-07: Removed physicalLocation with the type="container" from appearing under the Places fields. (VV)
+#              Added new Container field for physicalLocation with the type="container" (VV)
+#              Added new Cite As field for notes with the type="preferred citation" and removed them from appearing under the Notes field. (VV)
+#              Added peralink xpaths for currency and urban (VV)
 #  2020-02-14: Added permalink xpaths for ham, dcp, and franceinamerica (VV)
 #  2019-12-13: Changed the full_title_tesim delimiter to a semicolon and added it to the two full_title_tesim relatedItems (VV)
 #  2019-01-04: Changed permalink xpaths for crimes and dag (RKW)
@@ -143,7 +147,14 @@
   multivalue-breaks: "yes"
   mods:
       - path: originInfo/publisher
-   
+
+- spotlight-field: container_tesim
+  delimiter: ", " 
+  mods:
+      - path: location/physicalLocation
+        attribute: type
+        attribute-value: container
+
 - spotlight-field: place-of-origin_tesim
   multivalue-breaks: "yes" 
   mods:
@@ -153,7 +164,6 @@
 
 - spotlight-field: place-of-origin_ssim
   multivalue-breaks: "yes"
-
   mods:
       - path: originInfo/place/placeTerm
         attribute: type
@@ -536,10 +546,10 @@
       - path: location/physicalLocation
         delimiter: "--"
         attribute: type
-        attribute-value: '!repository'
+        attribute-value: ('!repository' OR '!container')
 
 - spotlight-field: places_ssim
-  multivalue-breaks: yes
+  multivalue-breaks: "yes"
   mods:
       - path: subject/hierarchicalGeographic
         delimiter: "--"
@@ -558,7 +568,7 @@
       - path: location/physicalLocation
         delimiter: "--"
         attribute: type
-        attribute-value: '!repository'
+        attribute-value: ('!repository' OR '!container')
         
 - spotlight-field: attribution_tesim
   multivalue-breaks: "yes"
@@ -577,10 +587,17 @@
   xpath:
       - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:titleInfo/mods:title" 
 
+- spotlight-field: cite-as_tesim
+  multivalue-breaks: "yes"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: preferred citation
+
 - spotlight-field: note_tesim
   multivalue-breaks: "yes"
   xpath:
-      - xpath-value: "//mods:note[not(@type='statement of responsibility' or @type='organization')]"
+      - xpath-value: "//mods:note[not(@type='statement of responsibility' or @type='organization' or @type='preferred citation')]"
 
 - spotlight-field: thumbnail_url_ssm
   xpath:
@@ -666,6 +683,10 @@
 #  xpath:
 #      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
 
+- spotlight-field: permalink-currency_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='American Currency']"
+
 - spotlight-field: permalink-botanicals_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Botanical Illustrations']"  
@@ -745,6 +766,10 @@
 - spotlight-field: permalink-scores_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Digital Scores and Libretti']"
+
+- spotlight-field: permalink-citymaps_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='City Maps and Urban Environments']"
 
 - spotlight-field: permalink-ward_tesim
   xpath:

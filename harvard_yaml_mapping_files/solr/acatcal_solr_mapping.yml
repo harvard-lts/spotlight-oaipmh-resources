@@ -1,0 +1,26 @@
+#Structure:
+#
+#  - spotlight-field: xxx (field names should be separated with dashes except for the suffix: firstpart-secondpart_ssim or _tesim)
+#    multivalue-breaks: "yes" (optional) - use this for splitting out multiple values to be broken on (and faceted on) individually (ex - subjects)
+#    default-value: xxx (optional)
+#    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
+#    solr-field:
+#        - field-name: xxx (repeatable - all path fields will be concatenated)
+#
+- spotlight-field: unique-id_tesim
+  solr-field:
+     - field-name: "hashKey"
+
+- spotlight-field: full_title_tesim
+  delimiter: "-"
+  solr-field:
+     - field-name: "semester"
+     - field-name: "year"
+         
+- spotlight-field: semester_tesim
+  solr-field:
+     - field-name: "semester"
+     
+- spotlight-field: year_tesim
+  solr-field:
+     - field-name: "year"
