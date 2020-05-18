@@ -1,0 +1,240 @@
+# 2018-12-04: Added thumbnail block (RKW)
+# 2018-11-13: Added digitalFormat segments and collection-specific permalink, changed date type to be pulled from a mods:note element (RKW) 
+# 2018-10-03: 1st draft (RKW) 
+#  -- Consider limiting full_title to titleInfo without attributes and adding separate fields for titleInfo elements with attributes. 
+#  -- How to handle dateOther @type values?
+#
+# Structure:
+#  - spotlight-field: xxx
+#    multivalue-breaks: "yes" (optional) - if you want repeatable values for a given field to be 
+#        handled separately in a facet or to be displayed on separate lines in a record display.
+#    default-value: xxx (optional)
+#    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
+#    mods:
+#        - path: xxx (repeatable - all path fields will be concatenated)
+#          delimiter: " " (optional)
+#          attribute: xxx (optional) - attribute, attribute-value, and mods-path+mods-value supply 
+#             conditions which must be met for the spotlight-field to be created.
+#             E.g., only create field if MODS element has @displayLabel where value = "collection".)
+#          attribute-value: xxx (optional, but only used with attribute)
+#          mods-path: xxx (optional)
+#          mods-value: xxx (optional)
+#          subpaths: (optional)
+#            - subpath: xxx
+#            - subpath: xxx
+#    xpath: 
+#        - xpath-value: xxx (repeatable)
+#          xpath-namespace-prefix: xxx (optional)
+#          xpath-namespace-def: xxx (optional)
+#   
+#  Documentation at https://github.com/harvard-library/spotlight-oaipmh-resources/wiki
+#  
+#  Multiterm field names need terms separated with dash, not underscore. Underscore is used 
+#  1) by Stanford-defined baked-in fields and 2) for ssim, tesim, ssm suffixes, etc.   
+#
+#  Spotlight field names in YAML may not contain capital letters.
+#
+#  xPaths with multiple namespaces cannot be mapped. 
+#  xPaths that address the a namespace within a mods:extension without including MODS will work, e.g., 
+#  //cdwalite:cultureWrap/cdwalite:culture, //cdwalite:styleWrap/cdwalite:style, //cdwalite:indexingMaterialsTechSet/cdwalite:termMaterialsTech
+#  
+#  YML structure sensitive to the exact number of leading spaces.
+#  Tabs will cause the ingest to fail.
+#
+- spotlight-field: unique-id_tesim
+  mods:
+      - path: recordInfo/recordIdentifier
+
+- spotlight-field: full_title_tesim
+  multivalue-breaks: "yes"
+  delimiter: ": "
+  mods:
+      - path: titleInfo
+        attribute: type
+        attribute-value: '!alternative' 
+        delimiter: ", "
+        subpaths:
+          - subpath: title
+
+- spotlight-field: alternative-titles_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:titleInfo[@type='alternative']/mods:title"
+
+- spotlight-field: singer_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Singer']/mods:namePart" 
+
+- spotlight-field: singer_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Singer']/mods:namePart" 
+      
+- spotlight-field: biographical-note_tesim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: biographical/historical
+
+- spotlight-field: date_tesim
+  xpath:
+      - xpath-value: "//mods:dateOther[not(@point)]"
+ 
+- spotlight-field: date_ssim
+  xpath:
+      - xpath-value: "//mods:dateOther[not(@point)]"
+      
+- spotlight-field: start-date_tesim
+  xpath:
+      - xpath-value: "//mods:dateOther[@point='start']"
+ 
+- spotlight-field: start-date_ssim
+  xpath:
+      - xpath-value: "//mods:dateOther[@point='start']"
+
+- spotlight-field: end-date_tesim
+  xpath:
+      - xpath-value: "//mods:dateOther[@point='end']"
+ 
+- spotlight-field: end-date_ssim
+  xpath:
+      - xpath-value: "//mods:dateOther[@point='end']"
+ 
+- spotlight-field: date-type_tesim
+  xpath:
+      - xpath-value: "//mods:note[@type='date type']"
+
+- spotlight-field: date-type_ssim
+  xpath:
+      - xpath-value: "//mods:note[@type='date type']"
+
+- spotlight-field: location_tesim
+  xpath:
+      - xpath-value: "//mods:placeTerm"
+      
+- spotlight-field: location_ssim
+  xpath:
+      - xpath-value: "//mods:placeTerm"
+            
+- spotlight-field: language_tesim
+  xpath:
+      - xpath-value: "//mods:languageTerm"        
+        
+- spotlight-field: language_ssim
+  xpath:
+      - xpath-value: "//mods:languageTerm"
+      
+- spotlight-field: collection-method_tesim
+  xpath:
+      - xpath-value: "//mods:note[@type='Collection Method']"        
+        
+- spotlight-field: collection-method_ssim
+  xpath:
+      - xpath-value: "//mods:note[@type='Collection Method']"   
+      
+- spotlight-field: collection_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='collection']/mods:titleInfo/mods:title"        
+        
+- spotlight-field: collection_ssim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='collection']/mods:titleInfo/mods:title"   
+
+- spotlight-field: item-number_tesim
+  xpath:
+      - xpath-value: "//mods:identifier[@displayLabel='Item Number']" 
+     
+- spotlight-field: recording-number_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Audio']/mods:identifier[@displayLabel='Recording Number']" 
+
+- spotlight-field: physical-medium_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Audio']/mods:physicalDescription/mods:form"
+
+- spotlight-field: playing-time_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Audio']/mods:physicalDescription/mods:extent"
+
+- spotlight-field: audio_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Audio']/mods:location/mods:url[@access='raw object']"
+
+- spotlight-field: full_image_url_ssm
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@displayLabel='Text'])[1]/mods:location/mods:url[@access='raw object']"
+
+- spotlight-field: thumbnail_url_ssm
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@displayLabel='Text'])[1]/mods:location/mods:url[@access='preview']"
+
+- spotlight-field: additional-form-of-text_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@displayLabel='Text'])[2]/mods:location/mods:url[@access='raw object']"
+
+#- spotlight-field: typescript_tesim
+#  xpath:
+#      - xpath-value: "//mods:relatedItem[mods:physicalDescription/mods:form='typescript']/mods:location/mods:url[@access='raw object']"
+
+- spotlight-field: type-of-text_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Text']/mods:physicalDescription/mods:form"
+
+- spotlight-field: type-of-text_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Text']/mods:physicalDescription/mods:form"
+
+- spotlight-field: number-of-lines_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Text']/mods:physicalDescription/mods:extent"
+
+- spotlight-field: transcriber_tesim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Transcriber']/mods:namePart" 
+
+- spotlight-field: transcriber_ssim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Transcriber']/mods:namePart"
+      
+- spotlight-field: dictated-to_tesim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Dictated To']/mods:namePart" 
+
+- spotlight-field: dictated-to_ssim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Dictated To']/mods:namePart"
+      
+- spotlight-field: repository_ssim
+  xpath:
+      - xpath-value: "//mods:location/mods:physicalLocation[@type='repository']"
+
+- spotlight-field: repository_tesim
+  xpath:
+      - xpath-value: "//mods:location/mods:physicalLocation[@type='repository']"
+    
+- spotlight-field: permalink_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Milman Parry Collection of Oral Literature']"
+
+- spotlight-field: digital-formats_ssim
+  multivalue-breaks: "yes"
+  xpath: 
+      - xpath-value: "//librarycloud:digitalFormat"
+        xpath-namespace-prefix: "librarycloud"
+        xpath-namespace-def: "http://hul.harvard.edu/ois/xml/ns/librarycloud"
+
+- spotlight-field: digital-formats_tesim
+  multivalue-breaks: "yes"
+  xpath: 
+      - xpath-value: "//librarycloud:digitalFormat"
+        xpath-namespace-prefix: "librarycloud"
+        xpath-namespace-def: "http://hul.harvard.edu/ois/xml/ns/librarycloud"
+
+- spotlight-field: record-id_tesim
+  mods:
+      - path: recordInfo/recordIdentifier
