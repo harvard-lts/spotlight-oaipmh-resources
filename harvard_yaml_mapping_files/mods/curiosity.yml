@@ -1,3 +1,4 @@
+#  2020-08-05: Added permalink xpaths for epj, horblit, and ssb (VV)
 #  2020-05-07: Removed physicalLocation with the type="container" from appearing under the Places fields. (VV)
 #              Added new Container field for physicalLocation with the type="container" (VV)
 #              Added new Cite As field for notes with the type="preferred citation" and removed them from appearing under the Notes field. (VV)
@@ -683,10 +684,6 @@
 #  xpath:
 #      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
 
-- spotlight-field: permalink-currency_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='American Currency']"
-
 - spotlight-field: permalink-botanicals_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Botanical Illustrations']"  
@@ -699,6 +696,10 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='The William Ellery Channing Collection']"  
 
+- spotlight-field: permalink-citymaps_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='City Maps and Urban Environments']"
+
 - spotlight-field: permalink-contagion_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Contagion: Historical Views of Diseases and Epidemics']" 
@@ -709,7 +710,11 @@
 
 - spotlight-field: permalink-crimes_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='English Crime and Execution Broadsides']"  
+      - xpath-value: "//mods:url[@displayLabel='English Crime and Execution Broadsides']"
+
+- spotlight-field: permalink-currency_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='American Currency']"  
 
 - spotlight-field: permalink-dag_tesim
   xpath:
@@ -718,6 +723,10 @@
 - spotlight-field: permalink-dcp_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
+
+- spotlight-field: permalink-epj_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Early Photography of Japan']"
 
 - spotlight-field: permalink-exp_tesim
   xpath:
@@ -730,6 +739,10 @@
 - spotlight-field: permalink-ham_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Harvard Art Museums']"
+
+- spotlight-field: permalink-horblit_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Harrison D. Horblit Collection of Early Photography']"
 
 - spotlight-field: permalink-ihp_tesim
   xpath:
@@ -767,9 +780,9 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Digital Scores and Libretti']"
 
-- spotlight-field: permalink-citymaps_tesim
+- spotlight-field: permalink-ssb_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='City Maps and Urban Environments']"
+      - xpath-value: "//mods:url[@displayLabel='The South Sea Bubble']"
 
 - spotlight-field: permalink-ward_tesim
   xpath:
