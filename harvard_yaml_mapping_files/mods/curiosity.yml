@@ -1,3 +1,4 @@
+#  2020-10-05: Updated title for ssb permalink. (VV)
 #  2020-08-05: Added permalink xpaths for epj, horblit, and ssb (VV)
 #  2020-05-07: Removed physicalLocation with the type="container" from appearing under the Places fields. (VV)
 #              Added new Container field for physicalLocation with the type="container" (VV)
@@ -782,7 +783,7 @@
 
 - spotlight-field: permalink-ssb_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='The South Sea Bubble']"
+      - xpath-value: "//mods:url[@displayLabel='The South Sea Bubble, 1720']"
 
 - spotlight-field: permalink-ward_tesim
   xpath:
