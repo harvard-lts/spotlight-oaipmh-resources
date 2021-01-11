@@ -1,3 +1,5 @@
+#  2021-01-08: Added permalink xpath for bac (VV)
+#  2020-12-01: Added shelf-location_tesim field mapping to enable EPJ to create browse categories for albums
 #  2020-10-05: Updated title for ssb permalink. (VV)
 #  2020-08-05: Added permalink xpaths for epj, horblit, and ssb (VV)
 #  2020-05-07: Removed physicalLocation with the type="container" from appearing under the Places fields. (VV)
@@ -333,7 +335,13 @@
       - xpath-value: "/mods:mods/mods:location/mods:physicalLocation[@type='repository']"  
       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
       - xpath-value: "//mods:relatedItem[@type='constituent']/mods:location/mods:physicalLocation[@type='repository']"
-        
+
+# Added to pull in album number for Early Photography of Japan, currently not displayed in any other site        
+- spotlight-field: shelf-location_tesim
+  multivalue-breaks: "yes"
+  mods: 
+      - path: location/shelfLocator
+
 - spotlight-field: subjects_ssim
   multivalue-breaks: "yes"
   mods:
@@ -684,6 +692,10 @@
 #- spotlight-field: permalink-dcp_tesim
 #  xpath:
 #      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
+
+- spotlight-field: permalink-bac_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Berenson Art Collection']"  
 
 - spotlight-field: permalink-botanicals_tesim
   xpath:
