@@ -1,3 +1,4 @@
+#  2021-03-31: Added permalink xpath for story (VV)
 #  2021-01-08: Added permalink xpath for bac (VV)
 #  2020-12-01: Added shelf-location_tesim field mapping to enable EPJ to create browse categories for albums
 #  2020-10-05: Updated title for ssb permalink. (VV)
@@ -796,6 +797,10 @@
 - spotlight-field: permalink-ssb_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='The South Sea Bubble, 1720']"
+
+- spotlight-field: permalink-story_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Joseph Story: Manuscripts, Correspondence, and Visual Materials']"
 
 - spotlight-field: permalink-ward_tesim
   xpath:
