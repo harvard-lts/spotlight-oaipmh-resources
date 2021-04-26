@@ -1,4 +1,8 @@
 RELEASE NOTES
+0.3.6 (10/08/2019) VC
+-- Vulnerability updates (numerous0
+-- Spotlight referernce update
+
 0.3.5 (10/08/2019) VC
 -- Fix for IIIF2.0 thumbnail url (changed native to devault) (DCP-547)
 -- Updated vulnerability for devise (CVE-2019-16109)
