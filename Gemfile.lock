@@ -1,7 +1,7 @@
 GIT
-  remote: git@github.huit.harvard.edu:LTS/harvard_spotlight.git
+  remote: https://github.com/harvard-library/spotlight.git
   revision: 8367415a767f61f0dc9fb328767d4231d9cd3ffb
-  branch: harvard_master
+  branch: harvard_main
   specs:
     blacklight-spotlight (2.7.0)
       acts-as-taggable-on (>= 5.0, < 7)
@@ -43,7 +43,7 @@ GIT
 PATH
   remote: .
   specs:
-    spotlight-oaipmh-resources (0.3.4)
+    spotlight-oaipmh-resources (0.3.6)
       mods
       oai
 
