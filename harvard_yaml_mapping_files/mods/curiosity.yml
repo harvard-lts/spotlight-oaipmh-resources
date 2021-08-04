@@ -1,3 +1,4 @@
+#  2021-05-13: Added relatedItem/name xpaths to creator/contributor fields to pick up names associated with collections in finding aid components (VV & RW)
 #  2021-03-31: Added permalink xpath for story (VV)
 #  2021-01-08: Added permalink xpath for bac (VV)
 #  2020-12-01: Added shelf-location_tesim field mapping to enable EPJ to create browse categories for albums
@@ -133,6 +134,8 @@
         subpaths:
           - subpath: namePart
           - subpath: role/roleTerm
+  xpath:
+    - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
         
 - spotlight-field: creators-contributors_ssim
   multivalue-breaks: "yes"
@@ -142,6 +145,8 @@
         delimiter: ", "
         subpaths:
           - subpath: namePart
+  xpath:
+    - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
          
 - spotlight-field: publisher_tesim
   delimiter: "|"  
