@@ -1,3 +1,4 @@
+#  2021-10-19: Added permalink xpath for saef (VV)
 #  2021-05-13: Added relatedItem/name xpaths to creator/contributor fields to pick up names associated with collections in finding aid components (VV & RW)
 #  2021-03-31: Added permalink xpath for story (VV)
 #  2021-01-08: Added permalink xpath for bac (VV)
@@ -791,6 +792,10 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Chinese Rubbings Collection']"  
       
+- spotlight-field: permalink-saef_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Slavery, Abolition, Emancipation and Freedom: Primary Sources from Houghton Library']"
+
 - spotlight-field: permalink-scarlet_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Studies in Scarlet: Marriage and Sexuality in the U.S. & U.K., 1815-1914']"  
