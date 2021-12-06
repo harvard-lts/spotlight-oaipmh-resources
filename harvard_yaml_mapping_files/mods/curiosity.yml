@@ -1,3 +1,4 @@
+#  2021-11-17: Added new field for the finding aid component link: finding-aid-component_tesim
 #  2021-10-19: Added permalink xpath for saef (VV)
 #  2021-05-13: Added relatedItem/name xpaths to creator/contributor fields to pick up names associated with collections in finding aid components (VV & RW)
 #  2021-03-31: Added permalink xpath for story (VV)
@@ -325,6 +326,10 @@
 - spotlight-field: finding-aid_tesim
   xpath:
       - xpath-value: "//mods:relatedItem[@otherType='Finding Aid']/mods:location/mods:url"
+
+- spotlight-field: finding-aid-component_tesim
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='HOLLIS for Archival Discovery record']/mods:location/mods:url"
       
 - spotlight-field: repository_ssim
   multivalue-breaks: "yes"
