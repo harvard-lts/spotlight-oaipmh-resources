@@ -22,7 +22,7 @@ else
 
   if ENV['RAILS_VERSION']
     if ENV['RAILS_VERSION'] == 'edge'
-      gem 'rails', github: 'rails/rails'
+      gem 'rails', git: 'https://github.com/rails/rails'
       ENV['ENGINE_CART_RAILS_OPTIONS'] = '--edge --skip-turbolinks'
     else
       gem 'rails', ENV['RAILS_VERSION']
@@ -40,4 +40,4 @@ else
 end
 # END ENGINE_CART BLOCK
 
-gem 'blacklight-spotlight', github: 'harvard-library/spotlight', :branch => 'harvard_main'
+gem 'blacklight-spotlight', git: 'https://github.com/harvard-library/Curiosity', :branch => 'harvard_main'
