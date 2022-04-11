@@ -1,3 +1,5 @@
+#  2022-03-31: Added permalink xpath for wave (AVS)
+#  2022-02-17: Added permalink xpath for hedda (VV)
 #  2021-11-17: Added new field for the finding aid component link: finding-aid-component_tesim
 #  2021-10-19: Added permalink xpath for saef (VV)
 #  2021-05-13: Added relatedItem/name xpaths to creator/contributor fields to pick up names associated with collections in finding aid components (VV & RW)
@@ -765,6 +767,10 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Harvard Art Museums']"
 
+- spotlight-field: permalink-hedda_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Hedda Morrison Photographs of China']"      
+
 - spotlight-field: permalink-horblit_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Harrison D. Horblit Collection of Early Photography']"
@@ -821,6 +827,10 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Artemas Ward House and Its Collections']"
       
+- spotlight-field: permalink-wave_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Catching the Wave']"
+
 - spotlight-field: permalink-ww_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Women Working, 1800-1930']"  
