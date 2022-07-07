@@ -1,7 +1,12 @@
 module Spotlight
   module Resources
     # transforms a OaipmhHarvester into solr documents
-    class OaipmhBuilder < Spotlight::SolrDocumentBuilder
+    class OaipmhBuilder
+      attr_reader :resource
+
+      def initialize(resource)
+        @resource = resource
+      end
       
       def to_solr
         return to_enum(:to_solr) { 0 } unless block_given?
