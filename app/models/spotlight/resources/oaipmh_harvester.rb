@@ -10,7 +10,7 @@ module Spotlight::Resources
         # if, say, you wanted to feed the transform with multiple source documents (here, by calling the `#iiif_manifest` method on the DlmeJson instance); previously, the #to_solr method of the document builder would have done this extraction
         # pipeline.sources = [Spotlight::Etl::Sources::SourceMethodSource(:iiif_manifests)]
         pipeline.transforms = [
-          ->(data, p) { data.merge(OaipmhBuilder.new(p.context.resoure).to_solr) }
+          ->(data, p) { data.merge(OaipmhBuilder.new(p.context.resource).to_solr) }
         ]
       end
     end
