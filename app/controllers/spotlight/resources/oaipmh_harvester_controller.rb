@@ -18,7 +18,16 @@ module Spotlight::Resources
       if (resource_params.has_key?(:custom_mapping))
               mapping_file = resource_params[:custom_mapping].original_filename
       end
-      Spotlight::Resources::PerformHarvestsJob.perform_later(resource_params[:url], resource_params[:set], mapping_file, current_exhibit, current_user)
+
+      harvester = OaipmhHarvester.create(
+        url: resource_params[:url],
+        data: { base_url: resource_params[:url],
+              set: resource_params[:set],
+              mapping_file: mapping_file },
+        exhibit: current_exhibit
+      )
+
+      PerformHarvestsJob.perform_later(harvester, current_user)
       flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
