@@ -5,12 +5,16 @@ require 'uri'
 module Spotlight::Resources
   class OaipmhHarvester < Spotlight::Resource
     attr_accessor :set, :base_url, :mapping_file
+
+
+
+
     def self.indexing_pipeline
       @indexing_pipeline ||= super.dup.tap do |pipeline|
         # if, say, you wanted to feed the transform with multiple source documents (here, by calling the `#iiif_manifest` method on the DlmeJson instance); previously, the #to_solr method of the document builder would have done this extraction
         # pipeline.sources = [Spotlight::Etl::Sources::SourceMethodSource(:iiif_manifests)]
         pipeline.transforms = [
-          ->(data, p) { data.merge(OaipmhBuilder.new(p.context.resoure).to_solr) }
+          ->(data, p) { OaipmhBuilder.new(p.context.resource).to_solr }
         ]
       end
     end

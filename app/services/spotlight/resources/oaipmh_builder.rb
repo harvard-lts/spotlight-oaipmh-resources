@@ -10,8 +10,8 @@ module Spotlight
       
       def to_solr
         return to_enum(:to_solr) { 0 } unless block_given?
-
-        base_doc = super
+        debugger
+        # base_doc = super
                 
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
@@ -23,33 +23,42 @@ module Spotlight
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
+        start = 0
         until (resumption_token.nil? && last_page_evaluated)
           #once we reach the last page
           if (resumption_token.nil?)
             last_page_evaluated = true
           end
+
           harvests.each do |record|
-            @item = OaipmhModsItem.new(exhibit, @oai_mods_converter)
+            @item = OaipmhModsItem.new(resource.exhibit, @oai_mods_converter)
             
             @item.metadata = record.metadata
             @item.parse_mods_record()
             begin
               @item_solr = @item.to_solr
               @item_sidecar = @item.sidecar_data
-              
+
               parse_subjects()
               parse_types()
-              
+
               repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
-              
+
               process_images()
               
               uniquify_repos(repository_field_name)
-              
+
               #Add the sidecar info for editing
-              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)   
-              sidecar.update(data: @item_sidecar)
-              yield base_doc.merge(@item_solr) if @item_solr.present?
+              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)
+              sidecar.update(data: {"configured_fields" => @item_sidecar})
+              # make this find or create
+              new_resource = Spotlight::Resources::Upload.create(exhibit: resource.exhibit, data: sidecar.data["configured_fields"])
+              new_resource.solr_document_sidecars = [sidecar]
+              new_resource.save
+              debugger if start < 5
+              start += 1
+              new_resource.reindex_later
+              # yield base_doc.merge(@item_solr) if @item_solr.present?
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)

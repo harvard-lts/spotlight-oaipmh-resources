@@ -28,7 +28,7 @@ module Spotlight::Resources
               set: set,
               mapping_file: mapping_file},
         exhibit: exhibit)
-        
+
       if !harvester.save_and_index
         raise HarvestingFailedException
       end 
