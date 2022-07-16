@@ -10,7 +10,6 @@ module Spotlight
       
       def to_solr
         return to_enum(:to_solr) { 0 } unless block_given?
-        debugger
         # base_doc = super
                 
         mapping_file = nil
@@ -49,14 +48,13 @@ module Spotlight
               uniquify_repos(repository_field_name)
 
               #Add the sidecar info for editing
-              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)
-              sidecar.update(data: {"configured_fields" => @item_sidecar})
+              # sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)
+              # sidecar.update(data: {"configured_fields" => @item_sidecar})
               # make this find or create
-              new_resource = Spotlight::Resources::Upload.create(exhibit: resource.exhibit, data: sidecar.data["configured_fields"])
-              new_resource.solr_document_sidecars = [sidecar]
+              new_resource = Spotlight::Resources::Upload.create(exhibit: resource.exhibit, data: @item_sidecar)
+              # new_resource.solr_document_sidecars = [sidecar]
               new_resource.save
-              debugger if start < 5
-              start += 1
+              #new_resource.send(:reindex)
               new_resource.reindex_later
               # yield base_doc.merge(@item_solr) if @item_solr.present?
             rescue Exception => e
