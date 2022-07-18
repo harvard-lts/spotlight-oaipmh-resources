@@ -9,10 +9,12 @@ module Spotlight
       end
       
       def to_solr
-        return to_enum(:to_solr) { 0 } unless block_given?
-        debugger
-        # base_doc = super
-                
+        attributes
+      end
+
+      def create_or_update_items
+        return to_enum(:create_or_update_items) { 0 } unless block_given?
+
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
@@ -49,16 +51,11 @@ module Spotlight
               uniquify_repos(repository_field_name)
 
               #Add the sidecar info for editing
-              sidecar ||= resource.document_model.new(id: @item.id).sidecar(resource.exhibit)
-              sidecar.update(data: {"configured_fields" => @item_sidecar})
-              # make this find or create
-              new_resource = Spotlight::Resources::Upload.create(exhibit: resource.exhibit, data: sidecar.data["configured_fields"])
-              new_resource.solr_document_sidecars = [sidecar]
-              new_resource.save
-              debugger if start < 5
-              start += 1
+              # TODO make more OO. remove direct reference to OaiUpload
+              new_resource = OaiUpload.find_or_create_by(exhibit: resource.exhibit, external_id: @item.id) do |new_r|
+                new_r.data = @item_sidecar
+              end
               new_resource.reindex_later
-              # yield base_doc.merge(@item_solr) if @item_solr.present?
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)

@@ -10,35 +10,29 @@ module Spotlight::Resources
   class PerformHarvestsJob < ActiveJob::Base
     include Spotlight::JobTracking
 
-    queue_as :default
+    queue_as :import
     with_job_tracking(resource: ->(job) { job.arguments.first })
 
-    attr_reader :harvester, :exhibit, :set, :user
+    def perform(url: nil, set: nil, mapping_file: nil, exhibit: nil, harvester: nil, user: nil)
+      harvester ||= Spotlight::Resources::OaipmhHarvester.create(
+        url: url,
+        data: {base_url: url,
+              set: set,
+              mapping_file: mapping_file},
+        exhibit: exhibit)
 
-    after_perform do |job|
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
+      raise HarvestingFailedException if !OaipmhBuilder.new(harvester).create_or_update_items&.first
+
+      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
       # TODO: where do "progress" and "@errors" come from?
-      job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{@errors} errors)")
+      job_tracker.append_log_entry(type: :info, exhibit: harvester.exhibit, message: "#{progress.progress} of #{progress.total} (#{@errors} errors)")
 
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now
-    end
-
-    rescue_from(HarvestingFailedException) do |exception|
-      job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: exception.to_s)
+      Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now
+    rescue HarvestingFailedException => e
+      job_tracker.append_log_entry(type: :error, exhibit: harvester.exhibit, message: e.to_s)
       mark_job_as_failed!
 
-      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
-    end
-
-    def perform(harvester, user)
-      @harvester = harvester
-      @exhibit = harvester.exhibit
-      @set = harvester.data[:set]
-      @user = user
-
-      if !harvester.save_and_index
-        raise HarvestingFailedException
-      end 
+      Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
     end
   end
 end
