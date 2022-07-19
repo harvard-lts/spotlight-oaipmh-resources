@@ -19,7 +19,6 @@ module Spotlight
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
-        start = 0
         until (resumption_token.nil? && last_page_evaluated)
           #once we reach the last page
           if (resumption_token.nil?)
