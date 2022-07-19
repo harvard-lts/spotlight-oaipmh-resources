@@ -7,19 +7,21 @@ module Spotlight
       def initialize(resource)
         @resource = resource
       end
-      
+
       def to_solr
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
         end
-        
+
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
-        
+
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
-        start = 0
+        total_items = 0
+        total_errors = 0
+        errored_ids = []
         until (resumption_token.nil? && last_page_evaluated)
           #once we reach the last page
           if (resumption_token.nil?)
@@ -49,10 +51,13 @@ module Spotlight
                 new_r.data = @item_sidecar
               end
               new_resource.reindex_later
+              total_items += 1
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)
               Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+              total_errors += 1
+              errored_ids << @item.id
             end
           end
           if (!resumption_token.nil?)
@@ -60,8 +65,9 @@ module Spotlight
             resumption_token = harvests.resumption_token
           end
         end
+        { total_items: total_items, total_errors: total_errors, errored_ids: errored_ids }
       end
-   
+
       #Adds the solr image info
       def add_image_info(fullurl, thumb, square)
           if (!thumb.nil?)
