@@ -9,6 +9,7 @@ module Spotlight::Resources
   # Process a CSV upload into new Spotlight::Resource::Upload objects
   class PerformHarvestsJob < ActiveJob::Base
     include Spotlight::JobTracking
+    queue_as :default
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first },
