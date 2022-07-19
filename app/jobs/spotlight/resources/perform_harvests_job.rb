@@ -18,7 +18,7 @@ module Spotlight::Resources
     )
 
     def perform(harvester, user)
-      harvest_result = OaipmhBuilder.new(harvester).to_solr
+      harvest_result = harvest(harvester)
       raise HarvestingFailedException if harvest_result[:total_errors].positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
@@ -32,6 +32,66 @@ module Spotlight::Resources
       end
 
       Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
+    end
+
+    def harvest(harvester)
+      mapping_file = nil
+      if (!harvester.data[:mapping_file].eql?("Default Mapping File") && !harvester.data[:mapping_file].eql?("New Mapping File"))
+        mapping_file = harvester.data[:mapping_file]
+      end
+
+      @oai_mods_converter = OaipmhModsConverter.new(harvester.data[:set], harvester.exhibit.slug, mapping_file)
+
+      harvests = harvester.oaipmh_harvests
+      resumption_token = harvests.resumption_token
+      last_page_evaluated = false
+      total_items = 0
+      total_errors = 0
+      errored_ids = []
+      until (resumption_token.nil? && last_page_evaluated)
+        #once we reach the last page
+        if (resumption_token.nil?)
+          last_page_evaluated = true
+        end
+
+        harvests.each do |record|
+          @item = OaipmhModsItem.new(harvester.exhibit, @oai_mods_converter)
+
+          @item.metadata = record.metadata
+          @item.parse_mods_record()
+          begin
+            @item_solr = @item.to_solr
+            @item_sidecar = @item.sidecar_data
+
+            parse_subjects()
+            parse_types()
+
+            repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
+
+            process_images()
+
+            uniquify_repos(repository_field_name)
+
+            # Add clean resource for editing
+            new_resource = OaiUpload.find_or_create_by(exhibit: harvester.exhibit, external_id: @item.id) do |new_r|
+              new_r.data = @item_sidecar
+            end
+            new_resource.reindex_later
+            total_items += 1
+          rescue Exception => e
+            Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
+            Delayed::Worker.logger.add(Logger::ERROR, e.message)
+            Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+            total_errors += 1
+            errored_ids << @item.id
+          end
+        end
+        if (!resumption_token.nil?)
+          harvests = harvester.resumption_oaipmh_harvests(resumption_token)
+          resumption_token = harvests.resumption_token
+        end
+      end
+      { total_items: total_items, total_errors: total_errors, errored_ids: errored_ids }
     end
   end
 end
