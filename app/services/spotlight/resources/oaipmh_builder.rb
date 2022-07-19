@@ -172,7 +172,7 @@ private
         #Change /view/ to /iiif/
         uri = uri.sub(%r|/view/|, "/iiif/")
         #Append /info.json to end
-        uri = uri + "/full/180,/0/native.jpg"
+        uri = uri + "/full/300,/0/native.jpg"
       end
 
     end
