@@ -58,19 +58,16 @@ module Spotlight::Resources
           @item = OaipmhModsItem.new(harvester.exhibit, @oai_mods_converter)
 
           @item.metadata = record.metadata
-          @item.parse_mods_record()
+          @item.parse_mods_record
           begin
             @item_solr = @item.to_solr
             @item_sidecar = @item.sidecar_data
 
-            parse_subjects()
-            parse_types()
-
+            @item.parse_subjects
+            @item.parse_types
             repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
-
-            process_images()
-
-            uniquify_repos(repository_field_name)
+            @item.process_images
+            @item.uniquify_repos(repository_field_name)
 
             # Add clean resource for editing
             new_resource = OaiUpload.find_or_create_by(exhibit: harvester.exhibit, external_id: @item.id) do |new_r|
