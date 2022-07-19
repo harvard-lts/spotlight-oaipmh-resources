@@ -8,7 +8,7 @@ module Spotlight::Resources
   ##
   # Process a CSV upload into new Spotlight::Resource::Upload objects
   class PerformHarvestsJob < ActiveJob::Base
-    queue_as :import
+    queue_as :default
 
     def perform(url: nil, set: nil, mapping_file: nil, exhibit: nil, harvester: nil, user: nil)
       harvester ||= Spotlight::Resources::OaipmhHarvester.create(
@@ -18,13 +18,12 @@ module Spotlight::Resources
               mapping_file: mapping_file},
         exhibit: exhibit)
 
-      raise HarvestingFailedException if !OaipmhBuilder.new(harvester).create_or_update_items&.first
+      raise HarvestingFailedException if !OaipmhBuilder.new(harvester).to_solr
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
       Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now
     rescue HarvestingFailedException
       Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
     end
-end
-
+  end
 end

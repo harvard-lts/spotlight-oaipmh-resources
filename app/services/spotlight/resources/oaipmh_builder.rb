@@ -9,12 +9,6 @@ module Spotlight
       end
       
       def to_solr
-        attributes
-      end
-
-      def create_or_update_items
-        return to_enum(:create_or_update_items) { 0 } unless block_given?
-
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
@@ -34,7 +28,7 @@ module Spotlight
 
           harvests.each do |record|
             @item = OaipmhModsItem.new(resource.exhibit, @oai_mods_converter)
-            
+
             @item.metadata = record.metadata
             @item.parse_mods_record()
             begin
@@ -50,8 +44,7 @@ module Spotlight
               
               uniquify_repos(repository_field_name)
 
-              #Add the sidecar info for editing
-              # TODO make more OO. remove direct reference to OaiUpload
+              #Add clean resource for editing
               new_resource = OaiUpload.find_or_create_by(exhibit: resource.exhibit, external_id: @item.id) do |new_r|
                 new_r.data = @item_sidecar
               end
