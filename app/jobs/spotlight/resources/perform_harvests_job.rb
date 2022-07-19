@@ -21,18 +21,19 @@ module Spotlight::Resources
       @set = harvester.data[:set]
       @user = user
 
-      raise HarvestingFailedException if !OaipmhBuilder.new(harvester).create_or_update_items&.first
+      raise HarvestingFailedException if !OaipmhBuilder.new(harvester).to_solr
 
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
+      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
       # TODO: where do "progress" and "@errors" come from?
-      job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{@errors} errors)")
+      # job_tracker.append_log_entry(type: :info, exhibit: harvester.exhibit, message: "#{progress.progress} of #{progress.total} (#{@errors} errors)")
 
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now
+      Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now
     rescue HarvestingFailedException => e
-      job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: e.to_s)
+      job_tracker.append_log_entry(type: :error, exhibit: harvester.exhibit, message: e.to_s)
       mark_job_as_failed!
 
-      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now
+      Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
+      CompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
     end
   end
 end
