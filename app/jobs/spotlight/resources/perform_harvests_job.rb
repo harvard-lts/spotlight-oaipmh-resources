@@ -10,7 +10,11 @@ module Spotlight::Resources
   class PerformHarvestsJob < ActiveJob::Base
     include Spotlight::JobTracking
 
-    with_job_tracking(resource: ->(job) { job.arguments.first }, user: ->(job) { job.arguments.second })
+    with_job_tracking(
+      resource: ->(job) { job.arguments.first },
+      reports_on: ->(job) { job.arguments.first.exhibit },
+      user: ->(job) { job.arguments.second }
+    )
 
     def perform(harvester, user)
       harvest_result = OaipmhBuilder.new(harvester).to_solr
