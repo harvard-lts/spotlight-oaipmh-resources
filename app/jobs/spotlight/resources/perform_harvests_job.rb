@@ -42,11 +42,6 @@ module Spotlight::Resources
     end
 
     def harvest(harvester)
-      mapping_file = nil
-      if (!harvester.data[:mapping_file].eql?("Default Mapping File") && !harvester.data[:mapping_file].eql?("New Mapping File"))
-        mapping_file = harvester.data[:mapping_file]
-      end
-
       @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
 
       harvests = harvester.oaipmh_harvests
@@ -96,6 +91,12 @@ module Spotlight::Resources
         end
       end
       { total_items: total_items, total_errors: total_errors, errored_ids: errored_ids }
+    end
+
+    def mapping_file
+      return if harvester.data[:mapping_file].eql?('Default Mapping File') || harvester.data[:mapping_file].eql?('New Mapping File')
+
+      harvester.data[:mapping_file]
     end
   end
 end
