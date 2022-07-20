@@ -26,7 +26,7 @@ module Spotlight::Resources
       @user = user
       @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
 
-      harvest(harvester)
+      harvest
       raise HarvestingFailedException if @total_errors.positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
@@ -42,7 +42,7 @@ module Spotlight::Resources
       Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
     end
 
-    def harvest(harvester)
+    def harvest
       harvests = harvester.oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
