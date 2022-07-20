@@ -20,7 +20,10 @@ module Spotlight::Resources
 
     def to_solr
       add_document_id
-      solr_hash
+      @item_solr = solr_hash
+      @item_sidecar = sidecar_data
+
+      @item_solr
     end
 
     def parse_mods_record
@@ -56,7 +59,7 @@ module Spotlight::Resources
     end
 
     def parse_subjects()
-      subject_field_name = @oai_mods_converter.get_spotlight_field_name("subjects_ssim")
+      subject_field_name = @converter.get_spotlight_field_name("subjects_ssim")
       if (@item_solr.key?(subject_field_name) && !@item_solr[subject_field_name].nil?)
         #Split on |
         subjects = @item_solr[subject_field_name].split('|')
@@ -66,7 +69,7 @@ module Spotlight::Resources
     end
 
     def parse_types()
-      type_field_name = @oai_mods_converter.get_spotlight_field_name("type_ssim")
+      type_field_name = @converter.get_spotlight_field_name("type_ssim")
       if (@item_solr.key?(type_field_name) && !@item_solr[type_field_name].nil?)
         #Split on |
         types = @item_solr[type_field_name].split('|')
@@ -95,8 +98,8 @@ module Spotlight::Resources
     end
 
     def uniquify_dates()
-      start_date_name = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
-      end_date_name = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
+      start_date_name = @converter.get_spotlight_field_name("start-date_tesim")
+      end_date_name = @converter.get_spotlight_field_name("end-date_tesim")
       start_date = @item_solr[start_date_name]
       end_date = @item_solr[end_date_name]
       if (!start_date.blank?)

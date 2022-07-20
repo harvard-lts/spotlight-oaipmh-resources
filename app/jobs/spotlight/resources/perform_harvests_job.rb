@@ -69,7 +69,7 @@ module Spotlight::Resources
 
       item.metadata = record.metadata
       item.parse_mods_record
-      item_solr = item.to_solr
+      item.to_solr
       item_sidecar = item.sidecar_data
 
       item.parse_subjects
