@@ -7,15 +7,15 @@ module Spotlight
       def initialize(resource)
         @resource = resource
       end
-      
+
       def to_solr
         mapping_file = nil
         if (!resource.data[:mapping_file].eql?("Default Mapping File") && !resource.data[:mapping_file].eql?("New Mapping File"))
           mapping_file = resource.data[:mapping_file]
         end
-        
+
         @oai_mods_converter = OaipmhModsConverter.new(resource.data[:set], resource.exhibit.slug, mapping_file)
-        
+
         harvests = resource.oaipmh_harvests
         resumption_token = harvests.resumption_token
         last_page_evaluated = false
@@ -40,7 +40,7 @@ module Spotlight
               repository_field_name = @oai_mods_converter.get_spotlight_field_name("repository_ssim")
 
               process_images()
-              
+
               uniquify_repos(repository_field_name)
 
               #Add clean resource for editing
@@ -60,13 +60,13 @@ module Spotlight
           end
         end
       end
-   
+
       #Adds the solr image info
       def add_image_info(fullurl, thumb, square)
           if (!thumb.nil?)
             @item_solr[:thumbnail_url_ssm] = thumb
           end
-        
+
           if (!fullurl.nil?)
             if (!square.nil?)
               square = File.dirname(fullurl) + '/square_' + File.basename(fullurl)
@@ -74,9 +74,9 @@ module Spotlight
             @item_solr[:thumbnail_square_url_ssm] = square
             @item_solr[:full_image_url_ssm] = fullurl
           end
-                
+
       end
-      
+
       #Adds the solr image dimensions
       def add_image_dimensions(file)
         if (!file.nil?)
@@ -86,7 +86,7 @@ module Spotlight
         end
       end
 
-private   
+private
 
       def parse_subjects()
         subject_field_name = @oai_mods_converter.get_spotlight_field_name("subjects_ssim")
@@ -97,7 +97,7 @@ private
           @item_sidecar["subjects_ssim"] = subjects
         end
       end
-      
+
       def parse_types()
         type_field_name = @oai_mods_converter.get_spotlight_field_name("type_ssim")
         if (@item_solr.key?(type_field_name) && !@item_solr[type_field_name].nil?)
@@ -107,17 +107,17 @@ private
           @item_sidecar["type_ssim"] = types
         end
       end
-      
+
       def process_images()
-        if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))           
+        if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))
           thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
-          thumburl = transform_ids_uri_to_iiif(thumburl)
+          thumburl = transform_ids_uri_to_iiif(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
           @item_solr['thumbnail_url_ssm'] =  thumburl
         end
       end
- 
+
       def uniquify_repos(repository_field_name)
-        
+
         #If the repository exists, make sure it has unique values
         if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
           repoarray = @item_solr[repository_field_name].split("|")
@@ -127,7 +127,7 @@ private
           @item_sidecar["repository_ssim"] = repo
         end
       end
-      
+
       def uniquify_dates()
         start_date_name = @oai_mods_converter.get_spotlight_field_name("start-date_tesim")
         end_date_name = @oai_mods_converter.get_spotlight_field_name("end-date_tesim")
@@ -146,7 +146,7 @@ private
           @item_sidecar["end-date_tesim"] = dates
         end
       end
-      
+
       #Resolves urn-3 uris
       def fetch_ids_uri(uri_str)
         if (uri_str =~ /urn-3/)
@@ -157,7 +157,7 @@ private
           uri_str
         end
       end
-    
+
       #Returns the uri for the iiif
       def transform_ids_uri_to_iiif(ids_uri)
         #Strip of parameters
