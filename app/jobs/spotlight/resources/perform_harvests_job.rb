@@ -12,26 +12,26 @@ module Spotlight::Resources
     queue_as :default
 
     with_job_tracking(
-      resource: ->(job) { job.arguments.first },
-      reports_on: ->(job) { job.arguments.first.exhibit },
-      user: ->(job) { job.arguments.second }
+      resource: ->(job) { job.arguments.first.dig(:harvester) },
+      reports_on: ->(job) { job.arguments.first.dig(:harvester).exhibit },
+      user: ->(job) { job.arguments.first.dig(:user) }
     )
 
-    def perform(harvester, user)
+    def perform(harvester:, user: nil)
       harvest_result = harvest(harvester)
       raise HarvestingFailedException if harvest_result[:total_errors].positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
       job_tracker.append_log_entry(type: :info, exhibit: harvester.exhibit, message: "#{harvest_result[:total_items]} items successfully harvested")
 
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now
+      Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now if user.present?
     rescue HarvestingFailedException => e
       mark_job_as_failed!
       harvest_result[:errored_ids].each do |id|
         job_tracker.append_log_entry(type: :error, exhibit: harvester.exhibit, message: id + ' did not index successfully')
       end
 
-      Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now
+      Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now if user.present?
     end
 
     def harvest(harvester)
