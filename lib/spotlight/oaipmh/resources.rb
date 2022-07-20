@@ -1,11 +1,11 @@
 require 'spotlight/oaipmh/resources/version'
 require 'spotlight'
-
+require 'active_support/all'
+require "spotlight/oaipmh/resources/engine"
 
 module Spotlight
   module Oaipmh
     module Resources
-      require "spotlight/oaipmh/resources/engine"
       class << self
         mattr_accessor :standard_spotlight_fields,
           :use_iiif_images
