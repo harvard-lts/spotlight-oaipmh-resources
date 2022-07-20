@@ -11,6 +11,8 @@ module Spotlight::Resources
     include Spotlight::JobTracking
     queue_as :default
 
+    attr_reader :harvester, :exhibit, :set, :user
+
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
       reports_on: ->(job) { job.arguments.first.dig(:harvester).exhibit },
@@ -18,20 +20,25 @@ module Spotlight::Resources
     )
 
     def perform(harvester:, user: nil)
+      @harvester = harvester
+      @exhibit = harvester.exhibit
+      @set = harvester.data[:set]
+      @user = user
+
       harvest_result = harvest(harvester)
       raise HarvestingFailedException if harvest_result[:total_errors].positive?
 
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + harvester.data[:set])
-      job_tracker.append_log_entry(type: :info, exhibit: harvester.exhibit, message: "#{harvest_result[:total_items]} items successfully harvested")
+      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
+      job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{harvest_result[:total_items]} items successfully harvested")
 
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(harvester.data[:set], harvester.exhibit, user).deliver_now if user.present?
+      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
     rescue HarvestingFailedException => e
       mark_job_as_failed!
       harvest_result[:errored_ids].each do |id|
-        job_tracker.append_log_entry(type: :error, exhibit: harvester.exhibit, message: id + ' did not index successfully')
+        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: id + ' did not index successfully')
       end
 
-      Spotlight::HarvestingCompleteMailer.harvest_failed(harvester.data[:set], harvester.exhibit, user).deliver_now if user.present?
+      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
     end
 
     def harvest(harvester)
@@ -40,7 +47,7 @@ module Spotlight::Resources
         mapping_file = harvester.data[:mapping_file]
       end
 
-      @oai_mods_converter = OaipmhModsConverter.new(harvester.data[:set], harvester.exhibit.slug, mapping_file)
+      @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
 
       harvests = harvester.oaipmh_harvests
       resumption_token = harvests.resumption_token
@@ -55,7 +62,7 @@ module Spotlight::Resources
         end
 
         harvests.each do |record|
-          @item = OaipmhModsItem.new(harvester.exhibit, @oai_mods_converter)
+          @item = OaipmhModsItem.new(exhibit, @oai_mods_converter)
 
           @item.metadata = record.metadata
           @item.parse_mods_record
@@ -70,7 +77,7 @@ module Spotlight::Resources
             @item.uniquify_repos(repository_field_name)
 
             # Add clean resource for editing
-            new_resource = OaiUpload.find_or_create_by(exhibit: harvester.exhibit, external_id: @item.id) do |new_r|
+            new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: @item.id) do |new_r|
               new_r.data = @item_sidecar
             end
             new_resource.reindex_later
