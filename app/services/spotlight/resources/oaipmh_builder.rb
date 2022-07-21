@@ -178,6 +178,9 @@ private
         uri = uri + "/full/300,/0/native.jpg"
       end
 
+      def riiif
+        Riiif::Engine.routes.url_helpers
+      end
     end
   end
 end
