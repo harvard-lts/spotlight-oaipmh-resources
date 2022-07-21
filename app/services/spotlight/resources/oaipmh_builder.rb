@@ -69,6 +69,7 @@ module Spotlight
         image.remote_image_url = resource.data['full_image_url_ssm']
         iiif_tilesource = riiif.info_path(image)
         image.update(iiif_tilesource: iiif_tilesource)
+        resource.save
       end
 
       #Adds the solr image info
