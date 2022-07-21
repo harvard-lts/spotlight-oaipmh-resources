@@ -26,30 +26,23 @@ module Spotlight::Resources
       @user = user
       @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
 
-      harvest
+      harvest_oai_items
       raise HarvestingFailedException if @total_errors.positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
-      job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{@total_items} items successfully harvested")
-
       Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
     rescue HarvestingFailedException => e
       mark_job_as_failed!
-      @errored_ids.each do |id|
-        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: id + ' did not index successfully')
-      end
-
       Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
     end
 
-    def harvest
+    def harvest_oai_items
       harvests = harvester.oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
-      @total_items = 0
       @total_errors = 0
-      @errored_ids = []
 
+      update_progress_total
       until resumption_token.nil? && last_page_evaluated
         last_page_evaluated = true if resumption_token.nil? # we've reached the last page
 
@@ -60,6 +53,8 @@ module Spotlight::Resources
         if resumption_token.present?
           harvests = harvester.resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
+          update_progress_total # set size can change mid-harvest
+          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{@total_errors} errors)")
         end
       end
     end
@@ -83,13 +78,18 @@ module Spotlight::Resources
         new_r.data = item_sidecar
       end
       new_resource.reindex_later
-      @total_items += 1
+      progress&.increment
     rescue Exception => e
-      Delayed::Worker.logger.add(Logger::ERROR, item.id + ' did not index successfully')
+      error_msg = item.id + ' did not index successfully'
+      Delayed::Worker.logger.add(Logger::ERROR, error_msg)
       Delayed::Worker.logger.add(Logger::ERROR, e.message)
       Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+      job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
       @total_errors += 1
-      @errored_ids << item.id
+    end
+
+    def update_progress_total
+      progress.total = harvester.complete_list_size
     end
 
     def mapping_file
