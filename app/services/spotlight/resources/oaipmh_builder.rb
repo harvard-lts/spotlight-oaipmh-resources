@@ -47,6 +47,8 @@ module Spotlight
               new_resource = OaiUpload.find_or_create_by(exhibit: resource.exhibit, external_id: @item.id) do |new_r|
                 new_r.data = @item_sidecar
               end
+
+              attach_image(new_resource) if Spotlight::Oaipmh::Resources.download_full_image
               new_resource.reindex_later
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
@@ -59,6 +61,14 @@ module Spotlight
             resumption_token = harvests.resumption_token
           end
         end
+      end
+
+      def attach_image(resource)
+        return if resource.data['full_image_url_ssm'].blank?
+        image = resource.upload || resource.create_upload
+        image.remote_image_url = resource.data['full_image_url_ssm']
+        iiif_tilesource = riiif.info_path(image)
+        image.update(iiif_tilesource: iiif_tilesource)
       end
 
       #Adds the solr image info
