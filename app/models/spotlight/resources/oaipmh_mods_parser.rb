@@ -5,8 +5,7 @@ require 'mods'
 include OAI::XPath
 include Spotlight::Resources::Exceptions
 module Spotlight::Resources
-  # TODO: rename to OaipmhModsParser?
-  class OaipmhModsItem
+  class OaipmhModsParser
     extend CarrierWave::Mount
     attr_reader :titles, :id, :solr_hash, :exhibit
     attr_accessor :metadata, :sidecar_data

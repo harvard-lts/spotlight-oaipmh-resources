@@ -60,7 +60,7 @@ module Spotlight::Resources
     end
 
     def harvest_item(record)
-      item = OaipmhModsItem.new(exhibit, oai_mods_converter)
+      item = OaipmhModsParser.new(exhibit, oai_mods_converter)
 
       item.metadata = record.metadata
       item.parse_mods_record
