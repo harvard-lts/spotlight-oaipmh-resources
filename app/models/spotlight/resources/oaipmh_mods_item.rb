@@ -30,7 +30,7 @@ module Spotlight::Resources
       @modsrecord = Mods::Record.new.from_str(metadata.elements.to_a[0].to_s)
 
       if (@modsrecord.mods_ng_xml.record_info && @modsrecord.mods_ng_xml.record_info.recordIdentifier)
-        @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text 
+        @id = @modsrecord.mods_ng_xml.record_info.recordIdentifier.text
         #Strip out all of the decimals
         @id = @id.gsub('.', '')
         @id = @exhibit.id.to_s + "-" + @id.to_s
@@ -48,12 +48,12 @@ module Spotlight::Resources
         raise InvalidModsRecord, "Mods record " + @id + " must have a title.  This mods record was not updated in Spotlight."
       elsif (@id.blank?)
         raise InvalidModsRecord, "Mods record " + @titles[0] + "must have a title. This mods record was not updated in Spotlight."
-      end  
+      end
 
       @solr_hash = @converter.convert(@modsrecord)
       @sidecar_data = @converter.sidecar_hash
     end
-  
+
     def add_document_id
       solr_hash[:id] = @id.to_s
     end
@@ -79,11 +79,19 @@ module Spotlight::Resources
     end
 
     def process_images()
-      if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))           
+      if (@item_solr.key?('thumbnail_url_ssm') && !@item_solr['thumbnail_url_ssm'].blank? && !@item_solr['thumbnail_url_ssm'].eql?('null'))
         thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
-        thumburl = transform_ids_uri_to_iiif(thumburl)
+        thumburl = transform_ids_uri_to_iiif(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
       end
+    end
+
+    def attach_image
+      return if @item_solr['full_image_url_ssm'].blank?
+      image = self.upload || self.create_upload
+      image.remote_image_url = @item_solr['full_image_url_ssm']
+      iiif_tilesource = riiif.info_path(image)
+      image.update(iiif_tilesource: iiif_tilesource)
     end
 
     def uniquify_repos(repository_field_name)
@@ -135,6 +143,10 @@ module Spotlight::Resources
       uri = uri.sub(%r|/view/|, "/iiif/")
       #Append /info.json to end
       uri = uri + "/full/300,/0/native.jpg"
+    end
+
+    def riiif
+      Riiif::Engine.routes.url_helpers
     end
   end
 end

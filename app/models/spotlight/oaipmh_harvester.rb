@@ -19,9 +19,10 @@ module Spotlight
         .list_identifiers(set: set, metadata_prefix: 'mods')
         .doc
         .get_elements('.//resumptionToken')
-        .first
-        .attributes['completeListSize']
-        .to_i
+        &.first
+        &.attributes
+        &.[]('completeListSize')
+        &.to_i || 0
     end
 
     def client

@@ -77,7 +77,9 @@ module Spotlight::Resources
       new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: item.id) do |new_r|
         new_r.data = item_sidecar
       end
-      new_resource.reindex_later
+      new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
+      new_resource.save_and_index
+
       progress&.increment
     rescue Exception => e
       error_msg = item.id + ' did not index successfully'
