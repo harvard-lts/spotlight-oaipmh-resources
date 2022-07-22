@@ -18,13 +18,10 @@ module Spotlight::Resources
       if (resource_params.has_key?(:custom_mapping))
               mapping_file = resource_params[:custom_mapping].original_filename
       end
-      harvester = Spotlight::Resources::OaipmhHarvester.create(
-        url: resource_params[:url],
-        data: {
-          base_url: resource_params[:url],
-          set: resource_params[:set],
-          mapping_file: mapping_file
-        },
+      harvester = Spotlight::OaipmhHarvester.create(
+        base_url: resource_params[:url],
+        set: resource_params[:set],
+        mapping_file: mapping_file,
         exhibit: current_exhibit
       )
 
@@ -52,7 +49,7 @@ module Spotlight::Resources
 
 
     def resource_params
-      params.require(:resources_oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
+      params.require(:oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
     end
   end
 end

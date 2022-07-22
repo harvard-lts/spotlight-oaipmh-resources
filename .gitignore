@@ -4,3 +4,4 @@ log/*
 .project
 .DS_Store
 /log/
+*~undo-tree~
