@@ -37,7 +37,8 @@ module Spotlight::Resources
         .doc
         .get_elements('.//resumptionToken')
         &.first
-        &.attributes['completeListSize']
+        &.attributes
+        &.[]('completeListSize')
         &.to_i || 0
     end
 
