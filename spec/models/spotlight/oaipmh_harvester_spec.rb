@@ -3,9 +3,9 @@ require 'yaml'
 include OAI::XPath
 
 
-  RSpec.describe Spotlight::Resources::OaipmhHarvester, type: :model do
+  RSpec.describe Spotlight::OaipmhHarvester, type: :model do
     let(:exhibit) { FactoryGirl.create(:exhibit) }
-    subject { described_class.create(exhibit_id: exhibit.id, data: {base_url: 'http://api-qa.lib.harvard.edu:8080/oai', set: 'CNA'}) }
+    subject { described_class.create(exhibit_id: exhibit.id, base_url: 'http://api-qa.lib.harvard.edu:8080/oai', set: 'CNA') }
 
     describe "retrieval" do
           context "given a url and collection" do
