@@ -4,7 +4,7 @@ module Spotlight
   module Resources
     ##
     # Exhibit-specific resources, created using uploaded and custom fields
-    class OaiUpload < Spotlight::Resources::Upload
+    class OaipmhUpload < Spotlight::Resources::Upload
       def attach_image
         return if self.data['full_image_url_ssm'].blank?
         image = self.upload || self.create_upload
