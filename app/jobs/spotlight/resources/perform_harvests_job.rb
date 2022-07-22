@@ -22,7 +22,7 @@ module Spotlight::Resources
     def perform(harvester:, user: nil)
       @harvester = harvester
       @exhibit = harvester.exhibit
-      @set = harvester.data[:set]
+      @set = harvester.set
       @user = user
       @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
 
@@ -93,9 +93,9 @@ module Spotlight::Resources
     end
 
     def mapping_file
-      return if harvester.data[:mapping_file].eql?('Default Mapping File') || harvester.data[:mapping_file].eql?('New Mapping File')
+      return if harvester.mapping_file.eql?('Default Mapping File') || harvester.mapping_file.eql?('New Mapping File')
 
-      harvester.data[:mapping_file]
+      harvester.mapping_file
     end
   end
 end

@@ -21,7 +21,7 @@ module Spotlight::Resources
       harvester = Spotlight::OaipmhHarvester.create(
         base_url: resource_params[:url],
         set: resource_params[:set],
-        mapping_file: mapping_file
+        mapping_file: mapping_file,
         exhibit: current_exhibit
       )
 
@@ -49,7 +49,7 @@ module Spotlight::Resources
 
 
     def resource_params
-      params.require(:resources_oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
+      params.require(:oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
     end
   end
 end
