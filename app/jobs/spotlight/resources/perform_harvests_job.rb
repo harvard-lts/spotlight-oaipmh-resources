@@ -64,12 +64,12 @@ module Spotlight::Resources
 
       item.metadata = record.metadata
       item.parse_mods_record
+      item.uppercase_unique_id
       item.to_solr
       item_sidecar = item.sidecar_data
 
       item.parse_subjects
       item.parse_types
-      item.uppercase_unique_id
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
       item.process_images
       item.uniquify_repos(repository_field_name)
