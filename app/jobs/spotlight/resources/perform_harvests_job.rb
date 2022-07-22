@@ -60,21 +60,21 @@ module Spotlight::Resources
     end
 
     def harvest_item(record)
-      item = OaipmhModsParser.new(exhibit, oai_mods_converter)
+      parsed_oai_item = OaipmhModsParser.new(exhibit, oai_mods_converter)
 
-      item.metadata = record.metadata
-      item.parse_mods_record
-      item.to_solr
-      item_sidecar = item.sidecar_data
+      parsed_oai_item.metadata = record.metadata
+      parsed_oai_item.parse_mods_record
+      parsed_oai_item.to_solr
+      parsed_oai_item_sidecar = parsed_oai_item.sidecar_data
 
-      item.parse_subjects
-      item.parse_types
+      parsed_oai_item.parse_subjects
+      parsed_oai_item.parse_types
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
-      item.process_images
-      item.uniquify_repos(repository_field_name)
+      parsed_oai_item.process_images
+      parsed_oai_item.uniquify_repos(repository_field_name)
 
       # Add clean resource for editing
-      new_resource = OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: item.id) do |new_r|
+      new_resource = OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id) do |new_r|
         new_r.data = item_sidecar
       end
       new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
@@ -82,7 +82,7 @@ module Spotlight::Resources
 
       progress&.increment
     rescue Exception => e
-      error_msg = item.id + ' did not index successfully'
+      error_msg = parsed_oai_item.id + ' did not index successfully'
       Delayed::Worker.logger.add(Logger::ERROR, error_msg)
       Delayed::Worker.logger.add(Logger::ERROR, e.message)
       Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
