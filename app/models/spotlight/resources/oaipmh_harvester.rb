@@ -1,7 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
-  
+
 module Spotlight::Resources
   class OaipmhHarvester < Spotlight::Resource
     attr_accessor :set, :base_url, :mapping_file
@@ -36,9 +36,9 @@ module Spotlight::Resources
         .list_identifiers(:set => self.data[:set], :metadata_prefix => 'mods')
         .doc
         .get_elements('.//resumptionToken')
-        .first
-        .attributes['completeListSize']
-        .to_i
+        &.first
+        &.attributes['completeListSize']
+        &.to_i || 0
     end
 
     def client
