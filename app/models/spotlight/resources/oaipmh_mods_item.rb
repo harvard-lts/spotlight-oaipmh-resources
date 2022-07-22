@@ -53,6 +53,14 @@ module Spotlight::Resources
       @solr_hash = @converter.convert(@modsrecord)
       @sidecar_data = @converter.sidecar_hash
     end
+
+    def uppercase_unique_id
+      # check if the unique ID has a lowercase letter in it
+      if (solr_hash["unique-id_tesim"] =~ /[a-z]/).present?
+        # make all URNs uppercase
+        solr_hash["unique-id_tesim"] = solr_hash["unique-id_tesim"].upcase!
+      end
+    end
   
     def add_document_id
       solr_hash[:id] = @id.to_s

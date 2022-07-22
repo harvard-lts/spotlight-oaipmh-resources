@@ -69,12 +69,14 @@ module Spotlight::Resources
 
       item.parse_subjects
       item.parse_types
+      item.uppercase_unique_id
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
       item.process_images
       item.uniquify_repos(repository_field_name)
 
       # Add clean resource for editing
-      new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: item.id) do |new_r|
+      
+      new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: item.id.upcase) do |new_r|
         new_r.data = item_sidecar
       end
       new_resource.reindex_later
