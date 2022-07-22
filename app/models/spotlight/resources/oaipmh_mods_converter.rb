@@ -152,8 +152,9 @@ private
 
        #eg: subject
        path_array.each do |path|
-         node = node.send(path)
+         node = node.try(path)
        end
+       node ||= []
 
        if (!subpaths.empty?)
 

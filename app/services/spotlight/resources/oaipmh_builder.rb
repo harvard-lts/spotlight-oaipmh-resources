@@ -49,7 +49,7 @@ module Spotlight
               end
 
               attach_image(new_resource) if Spotlight::Oaipmh::Resources.download_full_image
-              new_resource.reindex_later
+              new_resource.save_and_index
             rescue Exception => e
               Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
               Delayed::Worker.logger.add(Logger::ERROR, e.message)
@@ -69,7 +69,6 @@ module Spotlight
         image.remote_image_url = resource.data['full_image_url_ssm']
         iiif_tilesource = riiif.info_path(image)
         image.update(iiif_tilesource: iiif_tilesource)
-        resource.save
       end
 
       #Adds the solr image info
