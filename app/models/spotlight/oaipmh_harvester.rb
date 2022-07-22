@@ -2,25 +2,9 @@ require 'oai'
 require 'net/http'
 require 'uri'
   
-module Spotlight::Resources
-  class OaipmhHarvester < Spotlight::Resource
-    attr_accessor :set, :base_url, :mapping_file
-
-    def self.indexing_pipeline
-      @indexing_pipeline ||= super.dup.tap do |pipeline|
-        # if, say, you wanted to feed the transform with multiple source documents (here, by calling the `#iiif_manifest` method on the DlmeJson instance); previously, the #to_solr method of the document builder would have done this extraction
-        # pipeline.sources = [Spotlight::Etl::Sources::SourceMethodSource(:iiif_manifests)]
-        pipeline.transforms = [
-          ->(data, p) { nil }
-        ]
-      end
-    end
-
-    def reindex(touch: true, **args, &block)
-      super
-
-      PerformHarvestsJob.perform_later(harvester: self)
-    end
+module Spotlight
+  class OaipmhHarvester < ActiveRecord::Base
+    belongs_to :exhibit
 
     def oaipmh_harvests
       self.url = self.data[:base_url] + '?verb=ListRecords&metadataPrefix=mods&set=' + self.data[:set]
