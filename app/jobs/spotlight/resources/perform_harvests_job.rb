@@ -11,7 +11,7 @@ module Spotlight::Resources
     include Spotlight::JobTracking
     queue_as :default
 
-    attr_reader :harvester, :exhibit, :set, :user, :oai_mods_converter
+    attr_reader :harvester, :exhibit, :set, :user, :oai_mods_converter, :total_errors
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -25,9 +25,10 @@ module Spotlight::Resources
       @set = harvester.set
       @user = user
       @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
+      @total_errors = 0
 
       harvest_oai_items
-      raise HarvestingFailedException if @total_errors.positive?
+      raise HarvestingFailedException if total_errors.positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
       Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
@@ -40,7 +41,6 @@ module Spotlight::Resources
       harvests = harvester.oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
-      @total_errors = 0
 
       update_progress_total
       until resumption_token.nil? && last_page_evaluated
@@ -54,7 +54,7 @@ module Spotlight::Resources
           harvests = harvester.resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
           update_progress_total # set size can change mid-harvest
-          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{@total_errors} errors)")
+          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{total_errors} errors)")
         end
       end
     end
@@ -87,7 +87,7 @@ module Spotlight::Resources
       Delayed::Worker.logger.add(Logger::ERROR, e.message)
       Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
       job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
-      @total_errors += 1
+      total_errors += 1
     end
 
     def update_progress_total
