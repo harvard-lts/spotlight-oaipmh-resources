@@ -66,7 +66,7 @@ module Spotlight::Resources
       parsed_oai_item.parse_mods_record
       parsed_oai_item.uppercase_unique_id
       parsed_oai_item.to_solr
-      parsed_oai_item_sidecar = parsed_oai_item.sidecar_data
+      parsed_oai_item.sidecar = parsed_oai_item.sidecar_data
 
       parsed_oai_item.parse_subjects
       parsed_oai_item.parse_types
