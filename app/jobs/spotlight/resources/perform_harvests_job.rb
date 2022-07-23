@@ -64,6 +64,7 @@ module Spotlight::Resources
 
       item.metadata = record.metadata
       item.parse_mods_record
+      item.uppercase_unique_id
       item.to_solr
       item_sidecar = item.sidecar_data
 
@@ -74,7 +75,8 @@ module Spotlight::Resources
       item.uniquify_repos(repository_field_name)
 
       # Add clean resource for editing
-      new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: item.id) do |new_r|
+      
+      new_resource = OaiUpload.find_or_create_by(exhibit: exhibit, external_id: item.id.upcase) do |new_r|
         new_r.data = item_sidecar
       end
       new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
