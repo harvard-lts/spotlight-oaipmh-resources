@@ -93,14 +93,6 @@ module Spotlight::Resources
       end
     end
 
-    def attach_image
-      return if @item_solr['full_image_url_ssm'].blank?
-      image = self.upload || self.create_upload
-      image.remote_image_url = @item_solr['full_image_url_ssm']
-      iiif_tilesource = riiif.info_path(image)
-      image.update(iiif_tilesource: iiif_tilesource)
-    end
-
     def uniquify_repos(repository_field_name)
       #If the repository exists, make sure it has unique values
       if (@item_solr.key?(repository_field_name) && !@item_solr[repository_field_name].blank?)
@@ -150,10 +142,6 @@ module Spotlight::Resources
       uri = uri.sub(%r|/view/|, "/iiif/")
       #Append /info.json to end
       uri = uri + "/full/300,/0/native.jpg"
-    end
-
-    def riiif
-      Riiif::Engine.routes.url_helpers
     end
   end
 end
