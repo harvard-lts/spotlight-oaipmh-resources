@@ -11,7 +11,7 @@ module Spotlight::Resources
     include Spotlight::JobTracking
     queue_as :default
 
-    attr_reader :harvester, :exhibit, :set, :user, :oai_mods_converter, :total_errors
+    attr_reader :harvester, :exhibit, :set, :user
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -24,81 +24,15 @@ module Spotlight::Resources
       @exhibit = harvester.exhibit
       @set = harvester.set
       @user = user
-      @oai_mods_converter = OaipmhModsConverter.new(set, exhibit.slug, mapping_file)
-      @total_errors = 0
 
-      harvest_oai_items
-      raise HarvestingFailedException if total_errors.positive?
+      harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
+      raise HarvestingFailedException if harvester.total_errors.positive?
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
       Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
     rescue HarvestingFailedException => e
       mark_job_as_failed!
       Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
-    end
-
-    def harvest_oai_items
-      harvests = harvester.oaipmh_harvests
-      resumption_token = harvests.resumption_token
-      last_page_evaluated = false
-
-      update_progress_total
-      until resumption_token.nil? && last_page_evaluated
-        last_page_evaluated = true if resumption_token.nil? # we've reached the last page
-
-        harvests.each do |record|
-          harvest_item(record)
-        end
-
-        if resumption_token.present?
-          harvests = harvester.resumption_oaipmh_harvests(resumption_token)
-          resumption_token = harvests.resumption_token
-          update_progress_total # set size can change mid-harvest
-          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{progress.progress} of #{progress.total} (#{total_errors} errors)")
-        end
-      end
-    end
-
-    def harvest_item(record)
-      parsed_oai_item = OaipmhModsParser.new(exhibit, oai_mods_converter)
-
-      parsed_oai_item.metadata = record.metadata
-      parsed_oai_item.parse_mods_record
-      parsed_oai_item.uppercase_unique_id
-      parsed_oai_item.to_solr
-      parsed_oai_item.sidecar = parsed_oai_item.sidecar_data
-
-      parsed_oai_item.parse_subjects
-      parsed_oai_item.parse_types
-      repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
-      parsed_oai_item.process_images
-      parsed_oai_item.uniquify_repos(repository_field_name)
-
-      # Add clean resource for editing
-      new_resource = OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase) do |new_r|
-        new_r.data = item_sidecar
-      end
-      new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
-      new_resource.save_and_index
-
-      progress&.increment
-    rescue Exception => e
-      error_msg = parsed_oai_item.id + ' did not index successfully'
-      Delayed::Worker.logger.add(Logger::ERROR, error_msg)
-      Delayed::Worker.logger.add(Logger::ERROR, e.message)
-      Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
-      job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
-      total_errors += 1
-    end
-
-    def update_progress_total
-      progress.total = harvester.complete_list_size
-    end
-
-    def mapping_file
-      return if harvester.mapping_file.eql?('Default Mapping File') || harvester.mapping_file.eql?('New Mapping File')
-
-      harvester.mapping_file
     end
   end
 end
