@@ -40,9 +40,11 @@ module Spotlight
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
           update_progress_total(job_progress) # set size can change mid-harvest
-          if job_tracker.present?
-            job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
-          end
+        end
+
+        # Log an update every 100 records
+        if (job_progress.progress % 100).zero?
+          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end
     end
