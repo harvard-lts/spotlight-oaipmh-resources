@@ -18,8 +18,20 @@ module Spotlight::Resources
       if (resource_params.has_key?(:custom_mapping))
               mapping_file = resource_params[:custom_mapping].original_filename
       end
-      Spotlight::Resources::PerformHarvestsJob.perform_later(resource_params[:url], resource_params[:set], mapping_file, current_exhibit, current_user)
-      flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
+      harvester = Spotlight::OaipmhHarvester.create(
+        base_url: resource_params[:url],
+        set: resource_params[:set],
+        mapping_file: mapping_file,
+        exhibit: current_exhibit
+      )
+
+      if harvester.save
+        Spotlight::Resources::PerformHarvestsJob.perform_later(harvester: harvester, user: current_user)
+        flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
+      else
+        Spotlight::HarvestingCompleteMailer.harvest_failed(resource_params[:set], current_exhibit, current_user).deliver_now
+        flash[:error] = "Failed to create harvester for '%{set}'."
+      end
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
     
@@ -37,10 +49,7 @@ module Spotlight::Resources
 
 
     def resource_params
-      params.require(:resources_oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
+      params.require(:oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
     end
-       
-    
   end
-
 end
