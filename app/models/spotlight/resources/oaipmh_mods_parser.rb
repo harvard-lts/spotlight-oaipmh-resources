@@ -60,6 +60,12 @@ module Spotlight::Resources
         solr_hash["unique-id_tesim"] = solr_hash["unique-id_tesim"].upcase!
       end
     end
+
+    def search_id
+      # strip out decimal and store in hashes
+      solr_hash['search-id_tesim'] = sidecar_data['search-id_tesim'] = solr_hash['unique-id_tesim'].gsub('.', '')
+    end
+
     def add_document_id
       solr_hash[:id] = @id.to_s
     end
