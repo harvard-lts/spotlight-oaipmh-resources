@@ -53,6 +53,7 @@ module Spotlight
       parsed_oai_item.metadata = record.metadata
       parsed_oai_item.parse_mods_record
       parsed_oai_item.uppercase_unique_id
+      parsed_oai_item.search_id
       parsed_oai_item.to_solr
       parsed_oai_item_sidecar = parsed_oai_item.sidecar_data
 
