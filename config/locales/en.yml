@@ -13,7 +13,7 @@ en:
                 help: "Type in the MODS set name."
               mapping-file: "Select Mapping File"
               mapping-file-field:
-                help: "Select Mapping File to Use (default is mapping.yml)"
+                help: "Select Mapping File to Use (default is mapping.yml)."
               custom-mapping: "Custom Mapping File"
               custom-mapping-field:
                 help: "Upload an optional mapping file (YML format)."
@@ -26,4 +26,3 @@ en:
        harvest_failed:
           title: "Your harvest has failed to import."
           body: "The %{set} harvest for the exhibit %{title} has failed."
-        
