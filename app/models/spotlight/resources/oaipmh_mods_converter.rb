@@ -39,7 +39,7 @@ module Spotlight::Resources
       values = xpath_values.concat(mods_values)
 
       #uniquify
-      values = values.uniq
+      values = values.uniq.map { |v| Nokogiri::HTML.parse(v)&.text }
 
       finalvalue = nil
       if (!values.empty?)
