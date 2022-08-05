@@ -1,7 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
-  
+
 module Spotlight
   class OaipmhHarvester < ActiveRecord::Base
     belongs_to :exhibit
@@ -64,7 +64,6 @@ module Spotlight
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
       parsed_oai_item.process_images
       parsed_oai_item.uniquify_repos(repository_field_name)
-
       # Add clean resource for editing
       new_resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase) do |new_r|
         new_r.data = parsed_oai_item_sidecar

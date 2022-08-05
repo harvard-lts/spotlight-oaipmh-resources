@@ -95,7 +95,28 @@ module Spotlight::Resources
         thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
         thumburl = transform_ids_uri_to_iiif(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
+        @item_sidecar['thumbnail_url_ssm'] = thumburl
       end
+
+      if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
+        full_url = transform_to_view_urls(@item_solr['full_image_url_ssm'])
+        @item_solr['full_image_url_ssm'] = full_url
+        @item_sidecar['full_image_url_ssm'] = full_url
+      end
+    end
+
+    def transform_to_view_urls(url_string)
+      url_string.gsub!(/\?.*$/, '')
+      parts = url_string.split('/')
+      tail = parts.last
+      tail_parts = tail.split(':')
+      if tail != tail_parts.join('')
+        tail_parts[3] = "VIEW"
+        tail = tail_parts.join(':')
+        parts[-1] = tail
+        url_string = parts.join('/')
+      end
+      url_string
     end
 
     def uniquify_repos(repository_field_name)
