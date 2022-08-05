@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gemspec
 
@@ -40,4 +41,4 @@ else
 end
 # END ENGINE_CART BLOCK
 
-gem 'blacklight-spotlight', github: 'projectblacklight/spotlight'
+gem 'blacklight-spotlight', github: 'projectblacklight/spotlight', branch: 'main'
