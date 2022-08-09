@@ -149,6 +149,14 @@ module Spotlight::Resources
       end
     end
 
+    def parse_object_id
+      object_id_name = @converter.get_spotlight_field_name('object_id_ssi')
+      parsed_object_id = @item_solr['full_image_url_ssm']
+
+      @item_solr[object_id_name] = parsed_object_id
+      @item_sidecar['object_id_ssi'] = parsed_object_id
+    end
+
     # Resolves urn-3 uris
     def fetch_ids_uri(uri_str)
       if (uri_str =~ /urn-3/)
