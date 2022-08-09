@@ -151,6 +151,7 @@ module Spotlight::Resources
 
     def parse_object_id
       object_id_name = @converter.get_spotlight_field_name('object_id_ssi')
+      # TODO: full_image_url_ssm is not the correct value we need, replace with the correct value
       parsed_object_id = @item_solr['full_image_url_ssm']
 
       @item_solr[object_id_name] = parsed_object_id
