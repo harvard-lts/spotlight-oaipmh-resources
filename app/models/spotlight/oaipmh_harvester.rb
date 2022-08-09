@@ -57,7 +57,6 @@ module Spotlight
       parsed_oai_item.uppercase_unique_id
       parsed_oai_item.search_id
       parsed_oai_item.to_solr
-      parsed_oai_item_sidecar = parsed_oai_item.sidecar_data
 
       parsed_oai_item.parse_subjects
       parsed_oai_item.parse_types
@@ -65,11 +64,19 @@ module Spotlight
       parsed_oai_item.process_images
       parsed_oai_item.uniquify_repos(repository_field_name)
       # Add clean resource for editing
-      new_resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase) do |new_r|
-        new_r.data = parsed_oai_item_sidecar
+      resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
+      resource.data = parsed_oai_item.sidecar_data
+      # If the sidecar for a resource already exists, and new fields have been added between harvests, they
+      # the new key(s) will not persist on the Solr document. To ensure all keys always update, merge in
+      # the whole data hash if the sidecar already exists before indexing.
+      if resource.solr_document_sidecars.present?
+        sidecar = resource.solr_document_sidecars.first
+        sidecar.data['configured_fields'].merge!(resource.data)
+        sidecar.save
+        resource.reload
       end
-      new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
-      new_resource.save_and_index
+      resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
+      resource.save_and_index
 
       job_progress&.increment
     rescue Exception => e
