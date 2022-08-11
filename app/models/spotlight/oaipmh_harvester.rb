@@ -55,10 +55,10 @@ module Spotlight
       parsed_oai_item.metadata = record.metadata
       parsed_oai_item.parse_mods_record
       parsed_oai_item.uppercase_unique_id
-      parsed_oai_item.search_id(exhibit.id)
       parsed_oai_item.to_solr
       parsed_oai_item_sidecar = parsed_oai_item.sidecar_data
 
+      parsed_oai_item.search_id(exhibit.id)
       parsed_oai_item.parse_subjects
       parsed_oai_item.parse_types
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
