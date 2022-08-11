@@ -62,19 +62,19 @@ module Spotlight::Resources
     end
 
     def search_id(exhibit_id)
-      return if @item_solr['thumbnail_url_ssm'].blank?
-
       # strip out decimal and store in hashes
       id_arr = []
       id_arr << solr_hash['unique-id_tesim'].gsub('.', '') # stripped_decimals
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '')}" # stripped_decimals w/ exhibit id
       id_arr << solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '') # all_punc_stripped
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '')}" # all_punc_stripped w/ exhibit id
-      id_arr << urn = fetch_ids_uri(@item_solr['thumbnail_url_ssm']).split('/').last.split('?').first # urn
-      id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
+      if @item_solr['thumbnail_url_ssm'].present?
+        id_arr << urn = fetch_ids_uri(@item_solr['thumbnail_url_ssm']).split('/').last.split('?').first # urn
+        id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
+        parsed_urn_id(urn)
+      end
 
       solr_hash['search-id_tesim'] = sidecar_data['search-id_tesim'] = id_arr.compact_blank
-      parsed_urn_id(urn)
     end
 
     def add_document_id
