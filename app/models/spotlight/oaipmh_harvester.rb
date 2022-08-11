@@ -66,14 +66,14 @@ module Spotlight
       # Add clean resource for editing
       resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
       resource.data = parsed_oai_item.sidecar_data
-      # If the sidecar for a resource already exists, and new fields have been added between harvests, they
+      # If the sidecar for a resource already exists, and new fields have been added between harvests, then
       # the new key(s) will not persist on the Solr document. To ensure all keys always update, merge in
       # the whole data hash if the sidecar already exists before indexing.
       if resource.solr_document_sidecars.present?
         sidecar = resource.solr_document_sidecars.first
         sidecar.data['configured_fields'].merge!(resource.data)
-        sidecar.save
-        # we edited this to reload the sidecar data, because resource.reload was overwriting the data we were trying to change
+        sidecar.save!
+        # Get the updated sidecar data into our local variable
         resource.solr_document_sidecars.map(&:reload)
       end
       resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
