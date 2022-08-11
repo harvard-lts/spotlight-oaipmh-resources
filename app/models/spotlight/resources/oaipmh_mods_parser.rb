@@ -72,6 +72,7 @@ module Spotlight::Resources
       id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
 
       solr_hash['search-id_tesim'] = sidecar_data['search-id_tesim'] = id_arr.compact_blank
+      parsed_urn_id(urn)
     end
 
     def add_document_id
@@ -155,6 +156,10 @@ module Spotlight::Resources
         @item_solr[end_date_name] = dates
         @item_sidecar['end-date_tesim'] = dates
       end
+    end
+
+    def parsed_urn_id(urn)
+      @item_solr['object_id_ssi'] = @item_sidecar['object_id_ssi'] = urn
     end
 
     # Resolves urn-3 uris
