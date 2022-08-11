@@ -73,7 +73,8 @@ module Spotlight
         sidecar = resource.solr_document_sidecars.first
         sidecar.data['configured_fields'].merge!(resource.data)
         sidecar.save
-        resource.reload
+        # we edited this to reload the sidecar data, because resource.reload was overwriting the data we were trying to change
+        resource.solr_document_sidecars.map(&:reload)
       end
       resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
       resource.save_and_index
