@@ -68,8 +68,8 @@ module Spotlight::Resources
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '')}" # stripped_decimals w/ exhibit id
       id_arr << solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '') # all_punc_stripped
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '')}" # all_punc_stripped w/ exhibit id
-      if @item_solr['thumbnail_url_ssm'].present?
-        id_arr << urn = fetch_ids_uri(@item_solr['thumbnail_url_ssm']).split('/').last.split('?').first # urn
+      if @item_solr['full_image_url_ssm'].present?
+        id_arr << urn = fetch_ids_uri(@item_solr['full_image_url_ssm']).split('/').last.split('?').first # urn
         id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
         parsed_urn_id(urn)
       end
@@ -183,6 +183,7 @@ module Spotlight::Resources
       uri = uri.sub(%r|/view/|, '/iiif/')
       #Append /info.json to end
       uri = uri.gsub('/full/150,/0/default.jpg', '')
+      uri = uri.gsub('/full/,150/0/default.jpg', '')
       uri += '/full/300,/0/native.jpg'
     end
   end
