@@ -71,6 +71,14 @@ module Spotlight
       new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
       new_resource.save_and_index
 
+      if Spotlight::Oaipmh::Resources.use_solr_document_urns
+        sd = new_resource.solr_document_sidecars.first
+        if sd.present?
+          sd.urn = new_resource.data['urn_ssi']
+          sd.save
+        end
+      end
+
       job_progress&.increment
     rescue Exception => e
       error_msg = parsed_oai_item.id + ' did not index successfully'
