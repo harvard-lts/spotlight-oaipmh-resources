@@ -70,7 +70,7 @@ module Spotlight::Resources
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '')}" # all_punc_stripped w/ exhibit id
       if @item_solr['full_image_url_ssm'].present?
         id_arr << urn = fetch_ids_uri(@item_solr['full_image_url_ssm']).split('/').last.split('?').first # urn
-        id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
+        id_arr << urn = urn.gsub('.', '').gsub(':', '') # urn with punc stripped
         parsed_urn_id(urn)
       end
 
