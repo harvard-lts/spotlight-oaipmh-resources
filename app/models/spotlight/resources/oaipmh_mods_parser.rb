@@ -110,19 +110,23 @@ module Spotlight::Resources
       end
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
-        full_url = transform_to_view_urls(@item_solr['full_image_url_ssm'])
+        full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
         @item_sidecar['full_image_url_ssm'] = full_url
+
+        manifest_url = transform_urls(@item_solr['full_image_url_ssm'], 'MANIFEST')
+        @item_solr['manifest_url_ssm'] = manifest_url
+        @item_sidecar['manifest_url_ssm'] = manifest_url
       end
     end
 
-    def transform_to_view_urls(url_string)
+    def transform_urls(url_string, suffix)
       url_string.gsub!(/\?.*$/, '')
       parts = url_string.split('/')
       tail = parts.last
       tail_parts = tail.split(':')
       if tail != tail_parts.join('')
-        tail_parts[3] = 'VIEW'
+        tail_parts[3] = suffix
         tail = tail_parts.join(':')
         parts[-1] = tail
         url_string = parts.join('/')
