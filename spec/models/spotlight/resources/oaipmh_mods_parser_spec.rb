@@ -91,26 +91,51 @@ require 'spec_helper'
     end
   end
 
-  describe 'transform_to_view_urls' do
-    let(:result) {"https://nrs.harvard.edu/urn-3:FHCL:562283:VIEW"}
-    it 'strips params off and adds view' do
-      url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283?buttons=y"
-      expect(subject.transform_to_view_urls(url_string)).to eq(result)
+  describe 'transform_urls' do
+    context 'when adding the :VIEW suffix'
+      let(:result) {"https://nrs.harvard.edu/urn-3:FHCL:562283:VIEW"}
+      it 'strips params off and adds view' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283?buttons=y"
+        expect(subject.transform_urls(url_string, 'VIEW')).to eq(result)
+      end
+
+      it 'strips params off and does not add view if view is present' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:VIEW?buttons=y"
+        expect(subject.transform_urls(url_string, 'VIEW')).to eq(result)
+      end
+
+      it 'strips params off and changes manifest for view' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:MANIFEST?buttons=y"
+        expect(subject.transform_urls(url_string, 'VIEW')).to eq(result)
+      end
+
+      it 'adds view if no params or view type is present' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283"
+        expect(subject.transform_urls(url_string, 'VIEW')).to eq(result)
+      end
     end
 
-    it 'strips params off and does not add view if view is present' do
-      url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:VIEW?buttons=y"
-      expect(subject.transform_to_view_urls(url_string)).to eq(result)
-    end
+    context 'when adding the :MANIFEST suffix'
+      let(:result) {"https://nrs.harvard.edu/urn-3:FHCL:562283:MANIFEST"}
+      it 'strips params off and adds MANIFEST' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283?buttons=y"
+        expect(subject.transform_urls(url_string, 'MANIFEST')).to eq(result)
+      end
 
-    it 'strips params off and changes manifest for view' do
-      url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:MANIFEST?buttons=y"
-      expect(subject.transform_to_view_urls(url_string)).to eq(result)
-    end
+      it 'strips params off and does not add MANIFEST if MANIFEST is present' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:MANIFEST?buttons=y"
+        expect(subject.transform_urls(url_string, 'MANIFEST')).to eq(result)
+      end
 
-    it 'adds view if no params or view type is present' do
-      url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283"
-      expect(subject.transform_to_view_urls(url_string)).to eq(result)
+      it 'strips params off and changes manifest for MANIFEST' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283:MANIFEST?buttons=y"
+        expect(subject.transform_urls(url_string, 'MANIFEST')).to eq(result)
+      end
+
+      it 'adds MANIFEST if no params or MANIFEST type is present' do
+        url_string = "https://nrs.harvard.edu/urn-3:FHCL:562283"
+        expect(subject.transform_urls(url_string, 'MANIFEST')).to eq(result)
+      end
     end
   end
 end
