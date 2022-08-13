@@ -65,18 +65,22 @@ module Spotlight
       parsed_oai_item.process_images
       parsed_oai_item.uniquify_repos(repository_field_name)
       # Add clean resource for editing
-      new_resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase) do |new_r|
-        new_r.data = parsed_oai_item_sidecar
-      end
-      new_resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
-      new_resource.save_and_index
+      resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
+      resource.data = parsed_oai_item_sidecar
 
-      if Spotlight::Oaipmh::Resources.use_solr_document_urns
-        sd = new_resource.solr_document_sidecars.first
-        if sd.present?
-          sd.urn = new_resource.data['urn_ssi']
-          sd.save
-        end
+      if resource.solr_document_sidecars.present?
+        sidecar = resource.solr_document_sidecars.first
+        sidecar.data['configured_fields'].merge!(resource.data)
+        sidecar.save!
+        # Get the updated sidecar data into our local variable
+        resource.solr_document_sidecars.map(&:reload)
+      end
+      resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
+      resource.save_and_index
+
+      if Spotlight::Oaipmh::Resources.use_solr_document_urns && sidecar = resource.solr_document_sidecars.last.presence
+        sidecar.urn = resource.data['urn_ssi']
+        sidecar.save!
       end
 
       job_progress&.increment
