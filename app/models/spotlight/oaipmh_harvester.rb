@@ -61,9 +61,10 @@ module Spotlight
       parsed_oai_item.parse_subjects
       parsed_oai_item.parse_types
       repository_field_name = oai_mods_converter.get_spotlight_field_name('repository_ssim')
-      parsed_oai_item.process_images
       parsed_oai_item.uniquify_repos(repository_field_name)
-      # Add clean resource for editing
+      parsed_oai_item.process_images
+
+      # Create clean resource for editing
       resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
       resource.data = parsed_oai_item.sidecar_data
       # If the sidecar for a resource already exists, and new fields have been added between harvests, then
