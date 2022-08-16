@@ -65,7 +65,7 @@ module Spotlight
       parsed_oai_item.process_images
 
       # Create clean resource for editing
-      resource = Spotlight::Resources::OaipmhUpload.find_or_create_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
+      resource = Spotlight::Resources::OaipmhUpload.find_or_initialize_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
       resource.data = parsed_oai_item.sidecar_data
       # If the sidecar for a resource already exists, and new fields have been added between harvests, then
       # the new key(s) will not persist on the Solr document. To ensure all keys always update, merge in
