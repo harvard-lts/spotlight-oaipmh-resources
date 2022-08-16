@@ -186,7 +186,7 @@ module Spotlight::Resources
       #Change /view/ to /iiif/
       uri = uri.sub(%r|/view/|, '/iiif/')
       #Append /info.json to end
-      uri = uri.gsub('/full/150,/0/default.jpg', '')
+      uri = uri.gsub(/\/full\/\d*,\d*\/0\/default.jpg/, '')
       uri += '/full/300,/0/native.jpg'
     end
   end
