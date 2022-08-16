@@ -104,7 +104,7 @@ module Spotlight::Resources
     def process_images()
       if @item_solr.key?('thumbnail_url_ssm') && @item_solr['thumbnail_url_ssm'].present? && !@item_solr['thumbnail_url_ssm'].eql?('null')
         thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
-        thumburl = transform_ids_uri_to_iiif(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
+        thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
         @item_sidecar['thumbnail_url_ssm'] = thumburl
       end
@@ -179,13 +179,13 @@ module Spotlight::Resources
       end
     end
 
-    # Returns the uri for the iiif
-    def transform_ids_uri_to_iiif(ids_uri)
-      #Strip of parameters
+    # Returns the uri for the iiif thumbnail
+    def transform_to_iiif_thumbnail(ids_uri)
+      # Strip out parameters
       uri = ids_uri.sub(/\?.+/, '')
-      #Change /view/ to /iiif/
+      # Change /view/ to /iiif/
       uri = uri.sub(%r|/view/|, '/iiif/')
-      #Append /info.json to end
+      # Append iiif format (thumbnail version)
       uri = uri.gsub(/\/full\/\d*,\d*\/0\/default.jpg/, '')
       uri += '/full/300,/0/native.jpg'
     end
