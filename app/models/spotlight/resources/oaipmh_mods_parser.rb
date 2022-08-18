@@ -68,9 +68,9 @@ module Spotlight::Resources
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '')}" # stripped_decimals w/ exhibit id
       id_arr << solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '') # all_punc_stripped
       id_arr << "#{exhibit_id}-#{solr_hash['unique-id_tesim'].gsub('.', '').gsub(':', '')}" # all_punc_stripped w/ exhibit id
-      if @item_solr['thumbnail_url_ssm'].present?
-        id_arr << urn = fetch_ids_uri(@item_solr['thumbnail_url_ssm']).split('/').last.split('?').first # urn
-        id_arr << urn.gsub('.', '').gsub(':', '') # urn with punc stripped
+      if full_url = @item_solr['full_image_url_ssm'].presence
+        id_arr << urn = full_url&.split('/')&.last&.split('?')&.first&.gsub(':VIEW', '') # urn
+        id_arr << urn = urn&.upcase # .gsub('.', '').gsub(':', '') # urn with punc stripped
         parsed_urn_id(urn)
       end
 
@@ -165,7 +165,7 @@ module Spotlight::Resources
     end
 
     def parsed_urn_id(urn)
-      @item_solr['object_id_ssi'] = @item_sidecar['object_id_ssi'] = urn
+      @item_solr['urn_ssi'] = @item_sidecar['urn_ssi'] = urn
     end
 
     # Resolves urn-3 uris
