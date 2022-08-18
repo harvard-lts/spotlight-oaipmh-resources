@@ -104,25 +104,29 @@ module Spotlight::Resources
     def process_images()
       if @item_solr.key?('thumbnail_url_ssm') && @item_solr['thumbnail_url_ssm'].present? && !@item_solr['thumbnail_url_ssm'].eql?('null')
         thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
-        thumburl = transform_ids_uri_to_iiif(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
+        thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
         @item_sidecar['thumbnail_url_ssm'] = thumburl
       end
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
-        full_url = transform_to_view_urls(@item_solr['full_image_url_ssm'])
+        full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
         @item_sidecar['full_image_url_ssm'] = full_url
+
+        manifest_url = transform_urls(@item_solr['full_image_url_ssm'], 'MANIFEST')
+        @item_solr['manifest_url_ssm'] = manifest_url
+        @item_sidecar['manifest_url_ssm'] = manifest_url
       end
     end
 
-    def transform_to_view_urls(url_string)
+    def transform_urls(url_string, suffix)
       url_string.gsub!(/\?.*$/, '')
       parts = url_string.split('/')
       tail = parts.last
       tail_parts = tail.split(':')
       if tail != tail_parts.join('')
-        tail_parts[3] = 'VIEW'
+        tail_parts[3] = suffix
         tail = tail_parts.join(':')
         parts[-1] = tail
         url_string = parts.join('/')
@@ -175,15 +179,14 @@ module Spotlight::Resources
       end
     end
 
-    # Returns the uri for the iiif
-    def transform_ids_uri_to_iiif(ids_uri)
-      #Strip of parameters
+    # Returns the uri for the iiif thumbnail
+    def transform_to_iiif_thumbnail(ids_uri)
+      # Strip out parameters
       uri = ids_uri.sub(/\?.+/, '')
-      #Change /view/ to /iiif/
+      # Change /view/ to /iiif/
       uri = uri.sub(%r|/view/|, '/iiif/')
-      #Append /info.json to end
-      uri = uri.gsub('/full/150,/0/default.jpg', '')
-      uri = uri.gsub('/full/,150/0/default.jpg', '')
+      # Append iiif format (thumbnail version)
+      uri = uri.gsub(/\/full\/\d*,\d*\/0\/default.jpg/, '')
       uri += '/full/300,/0/native.jpg'
     end
   end
