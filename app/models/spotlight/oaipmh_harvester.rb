@@ -6,6 +6,9 @@ module Spotlight
   class OaipmhHarvester < ActiveRecord::Base
     belongs_to :exhibit
 
+    validates :base_url, presence: true
+    validates :set, presence: true
+
     attr_accessor :total_errors
 
     def self.mapping_files
