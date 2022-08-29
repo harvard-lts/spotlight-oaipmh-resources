@@ -1,6 +1,6 @@
 <%= bootstrap_form_for([current_exhibit, @resource.becomes(Spotlight::OaipmhHarvester)], url: spotlight_oaipmh_resources_engine.exhibit_oaipmh_harvester_path(exhibit_id: current_exhibit), layout: :horizontal, label_col: 'col-md-2', control_col: 'col-sm-6 col-md-6' ) do |f| %>
-  <%= f.text_field :url, help: t('.url-field.help'), label: t('.url') %>
-  <%= f.text_field :set, help: t('.set-field.help'), label: t('.set') %>
+  <%= f.text_field :url, help: t('.url-field.help'), label: t('.url'), required: true %>
+  <%= f.text_field :set, help: t('.set-field.help'), label: t('.set'), required: true %>
   <%= f.select :mapping_file, 
     Spotlight::OaipmhHarvester.mapping_files, 
     { help: t('.mapping-file-field.help'), label: t('.mapping-file') }, 
