@@ -24,6 +24,7 @@ module Spotlight
 
     def harvest_oai_items(job_tracker: nil, job_progress: nil)
       @total_errors = 0
+      @sidecar_ids = []
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
@@ -47,6 +48,7 @@ module Spotlight
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end
+      @sidecar_ids
     end
 
     def harvest_item(record, job_tracker, job_progress)
@@ -80,9 +82,8 @@ module Spotlight
       resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
       resource.save_and_index
 
-      if Spotlight::Oaipmh::Resources.use_solr_document_urns && sidecar = resource.solr_document_sidecars.last.presence
-        sidecar.urn = resource.data['urn_ssi']
-        sidecar.save!
+      if Spotlight::Oaipmh::Resources.use_solr_document_urns
+        @sidecar_ids << parsed_oai_item.id
       end
 
       job_progress&.increment

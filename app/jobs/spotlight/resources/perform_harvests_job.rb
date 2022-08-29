@@ -25,8 +25,9 @@ module Spotlight::Resources
       @set = harvester.set
       @user = user
 
-      harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
-      raise HarvestingFailedException if harvester.total_errors.positive?
+      sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
+      urn_errors = Spotlight::Resources::LoadUrnsJob.perform_now(sidecar_ids: sidecar_ids, user: user) if Spotlight::Oaipmh::Resources.use_solr_document_urns
+      raise HarvestingFailedException if (harvester.total_errors.positive? || urn_errors&.positive?)
 
       Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
       Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
