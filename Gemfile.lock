@@ -48,7 +48,7 @@ GIT
 PATH
   remote: .
   specs:
-    spotlight-oaipmh-resources (3.0.0.pre.beta.4)
+    spotlight-oaipmh-resources (3.0.0.pre.beta.5)
       mods
       oai
 
