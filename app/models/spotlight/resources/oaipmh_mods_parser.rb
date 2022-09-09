@@ -85,7 +85,7 @@ module Spotlight::Resources
       subject_field_name = @converter.get_spotlight_field_name('subjects_ssim')
       if @item_solr.key?(subject_field_name) && !@item_solr[subject_field_name].nil?
         #Split on |
-        subjects = @item_solr[subject_field_name].split('|')
+        subjects = @item_solr[subject_field_name].split(/[|,]/).flatten
         @item_solr[subject_field_name] = subjects
         @item_sidecar['subjects_ssim'] = subjects
       end
@@ -138,10 +138,9 @@ module Spotlight::Resources
       #If the repository exists, make sure it has unique values
       if @item_solr.key?(repository_field_name) && @item_solr[repository_field_name].present?
         repoarray = @item_solr[repository_field_name].split('|')
-        repoarray = repoarray.uniq
-        repo = repoarray.join('|')
-        @item_solr[repository_field_name] = repo
-        @item_sidecar['repository_ssim'] = repo
+        repoarray = repoarray.flatten.uniq
+        @item_solr[repository_field_name] = repoarray
+        @item_sidecar['repository_ssim'] = repoarray
       end
     end
 
