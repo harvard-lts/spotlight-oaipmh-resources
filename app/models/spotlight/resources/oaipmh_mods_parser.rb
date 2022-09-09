@@ -84,7 +84,7 @@ module Spotlight::Resources
     def parse_subjects()
       subject_field_name = @converter.get_spotlight_field_name('subjects_ssim')
       if @item_solr.key?(subject_field_name) && !@item_solr[subject_field_name].nil?
-        #Split on |
+        # Split on | and ,
         subjects = @item_solr[subject_field_name].split(/[|,]/).flatten
         @item_solr[subject_field_name] = subjects
         @item_sidecar['subjects_ssim'] = subjects
