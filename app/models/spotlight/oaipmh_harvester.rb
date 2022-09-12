@@ -26,8 +26,8 @@ module Spotlight
     end
 
     def harvest_oai_items(job_tracker: nil, job_progress: nil)
-      @total_errors = 0
-      @total_successes = 0
+      self.total_errors = 0
+      self.total_successes = 0
       @sidecar_ids = []
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
@@ -60,8 +60,10 @@ module Spotlight
 
       parsed_oai_item.metadata = record.metadata
       parsed_oai_item.parse_mods_record
-      # Track ID set by #parse_mods_record. @sidecar_ids gets used by the PerformHarvestsJob
+      # At this point, we know the candidate for the sidecar's document_id.  This will be used in
+      # the Spotlight::Resources::LoadUrnsJob
       @sidecar_ids << parsed_oai_item.id if Spotlight::Oaipmh::Resources.use_solr_document_urns
+
       parsed_oai_item.uppercase_unique_id
       parsed_oai_item.to_solr
 
