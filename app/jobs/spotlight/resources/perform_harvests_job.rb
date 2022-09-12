@@ -24,16 +24,19 @@ module Spotlight::Resources
       @exhibit = harvester.exhibit
       @set = harvester.set
       @user = user
+      @missing_sidecar_ids = []
+      @sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
+      @successful_sidecar_ids = @sidecar_ids.clone
 
-      sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
-      urn_errors = Spotlight::Resources::LoadUrnsJob.perform_now(sidecar_ids: sidecar_ids, user: user) if Spotlight::Oaipmh::Resources.use_solr_document_urns
-      raise HarvestingFailedException if (harvester.total_errors.positive? || urn_errors&.positive?)
+      if Spotlight::Oaipmh::Resources.use_solr_document_urns
+        @missing_sidecar_ids = Spotlight::Resources::LoadUrnsJob.perform_now(sidecar_ids: sidecar_ids, user: user)
+        @successful_sidecar_ids -= @missing_sidecar_ids
+      end
+    end
 
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
-    rescue HarvestingFailedException => e
-      mark_job_as_failed!
-      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
+    after_perform do |job|
+      Delayed::Worker.logger.add(Logger::INFO, "Harvesting complete for set #{job.set}")
+      Spotlight::HarvestingCompleteMailer.harvest_set_completed(job).deliver_now if job.user.present?
     end
   end
 end
