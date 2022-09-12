@@ -29,20 +29,19 @@ module Spotlight::Resources
         Spotlight::Resources::PerformHarvestsJob.perform_later(harvester: harvester, user: current_user)
         flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
       else
-        Spotlight::HarvestingCompleteMailer.harvest_failed(resource_params[:set], current_exhibit, current_user).deliver_now
-        flash[:error] = "Failed to create harvester for '%{set}'."
+        flash[:error] = "Failed to create harvester for '%{set}'. #{harvester.errors.full_messages.to_sentence}"
       end
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
-    
+
   private
-    
+
     def upload
       name = resource_params[:custom_mapping].original_filename
-      Dir.mkdir("public/uploads") unless Dir.exist?("public/uploads")  
+      Dir.mkdir("public/uploads") unless Dir.exist?("public/uploads")
       dir = "public/uploads/modsmapping"
       Dir.mkdir(dir) unless Dir.exist?(dir)
-      
+
       path = File.join(dir, name)
       File.open(path, "w") { |f| f.write(resource_params[:custom_mapping].read) }
     end
