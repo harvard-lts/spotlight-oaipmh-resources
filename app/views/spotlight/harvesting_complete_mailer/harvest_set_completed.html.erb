@@ -2,10 +2,12 @@
 
 <p><%= t :".body", set: @set, title: @exhibit.title %></p>
 
-<p>Successfully harvested <%= 'item'.pluralize(@successful_sidecar_ids.count) %></p>
+<% if @total_errors.positive? %>
+  <p>The harvester encountered <%= "#{@total_errors} #{'errors'.pluralize(@total_errors)}" %>.</p>
+<% end %>
 
 <% if @missing_sidecar_ids.any? %>
-  <p>The following document IDs had missing sidecar data:</p>
+  <p>The following document IDs had errors:</p>
   <ul>
     <% @missing_sidecar_ids.each do |id| %>
       <li><%= id %></li>

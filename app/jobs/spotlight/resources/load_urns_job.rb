@@ -11,7 +11,7 @@ module Spotlight::Resources
       missing_sidecar_ids = []
 
       sidecar_ids.each do |sidecar_id|
-        sidecar = Spotlight::SolrDocumentSidecar.where(document_id: sidecar_id).first
+        sidecar = Spotlight::SolrDocumentSidecar.find_by(document_id: sidecar_id)
         unless sidecar
           missing_sidecar_ids << sidecar_id
           next

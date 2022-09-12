@@ -8,9 +8,12 @@ module Spotlight
       @exhibit = job.exhibit
       @missing_sidecar_ids = job.missing_sidecar_ids
       @successful_sidecar_ids = job.successful_sidecar_ids
-      subject = "Harvest indexing complete for #{set}"
+      @total_errors = job.harvester.total_errors
+      @user = job.user
+      subject = "Harvest indexing complete for #{@set}"
       subject += " with #{@missing_sidecar_ids.size} missing #{'sidecar'.pluralize(@missing_sidecar_ids.size)}" if @missing_sidecar_ids.present?
-      mail(to: user.email, from: 'oaiharvester@noreply.com', subject: subject)
+      subject += " with harvesting #{@total_errors} #{'error'.pluralize(@total_errors)}" if @total_errors.positive?
+      mail(to: @user.email, from: 'oaiharvester@noreply.com', subject: subject)
     end
   end
 end

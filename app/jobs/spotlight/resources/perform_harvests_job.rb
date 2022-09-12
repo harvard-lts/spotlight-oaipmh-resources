@@ -11,7 +11,9 @@ module Spotlight::Resources
     include Spotlight::JobTracking
     queue_as :default
 
-    attr_reader :harvester, :exhibit, :set, :user
+    PERCENT_FAILURE_THRESHOLD = 0.5
+
+    attr_reader :harvester, :exhibit, :set, :user, :sidecar_ids, :missing_sidecar_ids, :successful_sidecar_ids
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -32,6 +34,8 @@ module Spotlight::Resources
         @missing_sidecar_ids = Spotlight::Resources::LoadUrnsJob.perform_now(sidecar_ids: sidecar_ids, user: user)
         @successful_sidecar_ids -= @missing_sidecar_ids
       end
+      mark_job_as_failed! if (@missing_sidecar_ids.size.to_f / @sidecar_ids.size.to_f) > PERCENT_FAILURE_THRESHOLD
+      mark_job_as_failed! if (harvester.total_errors.to_f / (harvester.total_errors + harvester.total_successes).to_f) > PERCENT_FAILURE_THRESHOLD
     end
 
     after_perform do |job|

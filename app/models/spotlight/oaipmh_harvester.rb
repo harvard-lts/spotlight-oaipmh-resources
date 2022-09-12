@@ -9,7 +9,7 @@ module Spotlight
     validates :base_url, presence: true
     validates :set, presence: true
 
-    attr_accessor :total_errors
+    attr_accessor :total_errors, :total_successes
 
     def self.mapping_files
       if (Dir.exist?('public/uploads/modsmapping'))
@@ -27,6 +27,7 @@ module Spotlight
 
     def harvest_oai_items(job_tracker: nil, job_progress: nil)
       @total_errors = 0
+      @total_successes = 0
       @sidecar_ids = []
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
@@ -59,6 +60,8 @@ module Spotlight
 
       parsed_oai_item.metadata = record.metadata
       parsed_oai_item.parse_mods_record
+      # Track ID set by #parse_mods_record. @sidecar_ids gets used by the PerformHarvestsJob
+      @sidecar_ids << parsed_oai_item.id if Spotlight::Oaipmh::Resources.use_solr_document_urns
       parsed_oai_item.uppercase_unique_id
       parsed_oai_item.to_solr
 
@@ -85,11 +88,8 @@ module Spotlight
       resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
       resource.save_and_index
 
-      if Spotlight::Oaipmh::Resources.use_solr_document_urns
-        @sidecar_ids << parsed_oai_item.id
-      end
-
       job_progress&.increment
+      self.total_successes += 1
     rescue Exception => e
       error_msg = parsed_oai_item.id + ' did not index successfully:'
       Delayed::Worker.logger.add(Logger::ERROR, error_msg)
