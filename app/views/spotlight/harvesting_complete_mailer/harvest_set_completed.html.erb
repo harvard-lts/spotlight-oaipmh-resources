@@ -3,5 +3,5 @@
 <p><%= t :".body", set: @set, title: @exhibit.title %></p>
 
 <% if @total_errors.positive? %>
-  <p>The harvester encountered <%= "#{@total_errors} #{'errors'.pluralize(@total_errors)}" %>.  See the harvester logs for details.</p>
+  <p>The harvester encountered <%= "#{@total_errors} #{'errors'.pluralize(@total_errors)}" %>. See the harvester logs for details.</p>
 <% end %>

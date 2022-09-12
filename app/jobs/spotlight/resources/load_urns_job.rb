@@ -7,11 +7,11 @@ module Spotlight::Resources
     queue_as :default
 
     # @return [Integer] total number of URN errors
-    def perform(job_tracker:, sidecar_ids:, user: nil)
+    def perform(job_tracker:, sidecar_ids:, exhibit:, user: nil)
       total_errors = 0
 
       sidecar_ids.each do |sidecar_id|
-        sidecar = Spotlight::SolrDocumentSidecar.where(document_id: sidecar_id).first
+        sidecar = Spotlight::SolrDocumentSidecar.find_by(document_id: sidecar_id)
         unless sidecar
           message = "Missing Spotlight::SolrDocumentSidecar for document_id=#{sidecar_id}"
           job_tracker&.append_log_entry(type: :error, exhibit: exhibit, message: message)
