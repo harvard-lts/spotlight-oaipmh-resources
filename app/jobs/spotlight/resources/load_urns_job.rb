@@ -30,7 +30,7 @@ module Spotlight::Resources
           total_errors += 1
         end
       end
-      missing_sidecar_ids
+      total_errors
     end
   end
 end

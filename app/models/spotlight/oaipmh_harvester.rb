@@ -9,7 +9,7 @@ module Spotlight
     validates :base_url, presence: true
     validates :set, presence: true
 
-    attr_accessor :total_errors, :total_successes
+    attr_accessor :total_errors
 
     def self.mapping_files
       if (Dir.exist?('public/uploads/modsmapping'))
@@ -27,7 +27,6 @@ module Spotlight
 
     def harvest_oai_items(job_tracker: nil, job_progress: nil)
       self.total_errors = 0
-      self.total_successes = 0
       @sidecar_ids = []
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
@@ -91,7 +90,6 @@ module Spotlight
       resource.save_and_index
 
       job_progress&.increment
-      self.total_successes += 1
     rescue Exception => e
       error_msg = parsed_oai_item.id + ' did not index successfully:'
       Delayed::Worker.logger.add(Logger::ERROR, error_msg)
