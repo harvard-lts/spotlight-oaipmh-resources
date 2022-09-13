@@ -10,7 +10,7 @@ module Spotlight::Resources
     def perform(job_tracker:, sidecar_ids:, exhibit:, user: nil)
       total_warnings = 0
 
-      sidecar_ids.each do |sidecar_id|
+      sidecar_ids.map(&:upcase).each do |sidecar_id|
         sidecar = Spotlight::SolrDocumentSidecar.find_by(document_id: sidecar_id)
         unless sidecar
           # Note: type warning will bubble up to .table-warning in the CSS, which per Bootstrap
