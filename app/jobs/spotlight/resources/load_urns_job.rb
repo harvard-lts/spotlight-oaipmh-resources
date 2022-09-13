@@ -8,14 +8,18 @@ module Spotlight::Resources
 
     # @return [Integer] total number of URN errors
     def perform(job_tracker:, sidecar_ids:, exhibit:, user: nil)
-      total_errors = 0
+      total_warnings = 0
 
       sidecar_ids.each do |sidecar_id|
         sidecar = Spotlight::SolrDocumentSidecar.find_by(document_id: sidecar_id)
         unless sidecar
+          # Note: type warning will bubble up to .table-warning in the CSS, which per Bootstrap
+          #       documentation will be highlighted in yellow.
+          #
+          # https://getbootstrap.com/docs/4.0/content/tables/
           message = "Missing Spotlight::SolrDocumentSidecar for document_id=#{sidecar_id}"
-          job_tracker&.append_log_entry(type: :error, exhibit: exhibit, message: message)
-          total_errors += 1
+          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: message)
+          total_warnings += 1
           next
         end
 
@@ -24,13 +28,17 @@ module Spotlight::Resources
         begin
           sidecar.save!
         rescue ActiveRecord::RecordInvalid => e
+          # Note: type warning will bubble up to .table-warning in the CSS, which per Bootstrap
+          #       documentation will be highlighted in yellow.
+          #
+          # https://getbootstrap.com/docs/4.0/content/tables/
           message = "Invalid data for Spotlight::SolrDocumentSidecar for document_id=#{sidecar_id}"
-          job_tracker&.append_log_entry(type: :error, exhibit: exhibit, message: message)
-          job_tracker&.append_log_entry(type: :error, exhibit: exhibit, message: e.message)
-          total_errors += 1
+          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: message)
+          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: e.message)
+          total_warnings += 1
         end
       end
-      total_errors
+      total_warnings
     end
   end
 end

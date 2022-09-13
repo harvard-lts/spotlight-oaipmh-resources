@@ -6,7 +6,8 @@ module Spotlight
     def harvest_set_completed(job)
       @set = job.set
       @exhibit = job.exhibit
-      @total_errors = job.harvester.total_errors
+      @total_errors = job.total_errors
+      @total_warnings = job.total_warnings
       @user = job.user
       subject = "Harvest indexing complete for #{@set}"
       subject += " with harvesting #{@total_errors} #{'error'.pluralize(@total_errors)}" if @total_errors.positive?

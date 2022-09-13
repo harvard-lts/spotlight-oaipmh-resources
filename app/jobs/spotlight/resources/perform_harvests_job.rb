@@ -13,7 +13,7 @@ module Spotlight::Resources
 
     PERCENT_FAILURE_THRESHOLD = 0.5
 
-    attr_reader :harvester, :exhibit, :set, :user, :sidecar_ids
+    attr_reader :harvester, :exhibit, :set, :user, :sidecar_ids, :total_errors, :total_warnings
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -28,11 +28,11 @@ module Spotlight::Resources
       @user = user
       @sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
       @total_errors = harvester.total_errors
+      @total_warnings = 0
 
       if Spotlight::Oaipmh::Resources.use_solr_document_urns
-        urn_errors = Spotlight::Resources::LoadUrnsJob.perform_now(job_tracker: job_tracker, sidecar_ids: sidecar_ids, exhibit: exhibit, user: user)
-        mark_job_as_failed! if (urn_errors.to_f / sidecar_ids.size.to_f) > PERCENT_FAILURE_THRESHOLD
-        @total_errors += urn_errors
+        total_warnings = Spotlight::Resources::LoadUrnsJob.perform_now(job_tracker: job_tracker, sidecar_ids: sidecar_ids, exhibit: exhibit, user: user)
+        @total_warnings += total_warnings
       end
 
       mark_job_as_failed! if (harvester.total_errors.to_f / sidecar_ids.count.to_f) > PERCENT_FAILURE_THRESHOLD
