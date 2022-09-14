@@ -1,14 +1,14 @@
 
 module Spotlight::Resources
   class OaipmhHarvesterController < Spotlight::ApplicationController
-    
+
     load_and_authorize_resource :exhibit, class: Spotlight::Exhibit
-    
+
     # POST /oaipmh_harvester
     def create
-      
+
       my_params = resource_params
-      
+
       #upload the mapping file if it exists
       if (my_params.has_key?(:custom_mapping))
         upload
@@ -29,7 +29,7 @@ module Spotlight::Resources
         Spotlight::Resources::PerformHarvestsJob.perform_later(harvester: harvester, user: current_user)
         flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
       else
-        flash[:error] = "Failed to create harvester for '%{set}'. #{harvester.errors.full_messages.to_sentence}"
+        flash[:error] = "Failed to create harvester for #{resource_params[:set]}. #{harvester.errors.full_messages.to_sentence}"
       end
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end

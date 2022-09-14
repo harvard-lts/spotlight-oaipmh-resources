@@ -11,7 +11,9 @@ module Spotlight::Resources
     include Spotlight::JobTracking
     queue_as :default
 
-    attr_reader :harvester, :exhibit, :set, :user
+    PERCENT_FAILURE_THRESHOLD = 0.5
+
+    attr_reader :harvester, :exhibit, :set, :user, :sidecar_ids, :total_errors, :total_warnings
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -24,16 +26,21 @@ module Spotlight::Resources
       @exhibit = harvester.exhibit
       @set = harvester.set
       @user = user
+      @sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
+      @total_errors = harvester.total_errors
+      @total_warnings = 0
 
-      sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
-      urn_errors = Spotlight::Resources::LoadUrnsJob.perform_now(sidecar_ids: sidecar_ids, user: user) if Spotlight::Oaipmh::Resources.use_solr_document_urns
-      raise HarvestingFailedException if (harvester.total_errors.positive? || urn_errors&.positive?)
+      if Spotlight::Oaipmh::Resources.use_solr_document_urns
+        total_warnings = Spotlight::Resources::LoadUrnsJob.perform_now(job_tracker: job_tracker, sidecar_ids: sidecar_ids, exhibit: exhibit, user: user)
+        @total_warnings += total_warnings
+      end
 
-      Delayed::Worker.logger.add(Logger::INFO, 'Harvesting complete for set ' + set)
-      Spotlight::HarvestingCompleteMailer.harvest_indexed(set, exhibit, user).deliver_now if user.present?
-    rescue HarvestingFailedException => e
-      mark_job_as_failed!
-      Spotlight::HarvestingCompleteMailer.harvest_failed(set, exhibit, user).deliver_now if user.present?
+      mark_job_as_failed! if (harvester.total_errors.to_f / sidecar_ids.count.to_f) > PERCENT_FAILURE_THRESHOLD
+    end
+
+    after_perform do |job|
+      Delayed::Worker.logger.add(Logger::INFO, "Harvesting complete for set #{job.set}")
+      Spotlight::HarvestingCompleteMailer.harvest_set_completed(job).deliver_now if job.user.present?
     end
   end
 end

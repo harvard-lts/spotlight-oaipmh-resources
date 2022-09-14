@@ -3,16 +3,15 @@ module Spotlight
   # Notify the curator that we're finished processing a
   # batch upload
   class HarvestingCompleteMailer < ActionMailer::Base
-    def harvest_indexed(set, exhibit, user)
-      @set = set
-      @exhibit = exhibit
-      mail(to: user.email, from: 'oaiharvester@noreply.com', subject: 'Harvest indexing complete for '+ set)
-    end
-    
-    def harvest_failed(set, exhibit, user)
-      @set = set
-      @exhibit = exhibit
-      mail(to: user.email, from: 'oaiharvester@noreply.com', subject: 'The harvest failed for '+ set)
+    def harvest_set_completed(job)
+      @set = job.set
+      @exhibit = job.exhibit
+      @total_errors = job.total_errors
+      @total_warnings = job.total_warnings
+      @user = job.user
+      subject = "Harvest indexing complete for #{@set}"
+      subject += " with harvesting #{@total_errors} #{'error'.pluralize(@total_errors)}" if @total_errors.positive?
+      mail(to: @user.email, from: 'oaiharvester@noreply.com', subject: subject)
     end
   end
 end
