@@ -8,7 +8,7 @@ module Spotlight::Resources
   class OaipmhModsParser
     extend CarrierWave::Mount
     attr_reader :titles, :id, :solr_hash, :exhibit
-    attr_accessor :metadata, :sidecar_data
+    attr_accessor :metadata, :sidecar_data, :item_sidecar
     #attr_accessor :metadata, :itemurl, :sidecar_data
     #mount_uploader :itemurl, Spotlight::ItemUploader
     def initialize(exhibit, converter)
@@ -20,7 +20,9 @@ module Spotlight::Resources
     def to_solr
       add_document_id
       @item_solr = solr_hash
-      @item_sidecar = sidecar_data
+      @item_sidecar = {}
+      # Populate values in @item_sidecar in the correct format
+      sidecar_data.map { |k, v| assign_item_sidecar_data(k, v) }
 
       @item_solr
     end
@@ -74,7 +76,8 @@ module Spotlight::Resources
         parsed_urn_id(urn)
       end
 
-      solr_hash['search-id_tesim'] = sidecar_data['search-id_tesim'] = id_arr.compact_blank
+      solr_hash['search-id_tesim'] = id_arr.compact_blank
+      assign_item_sidecar_data('search-id_tesim', id_arr.compact_blank)
     end
 
     def add_document_id
@@ -87,7 +90,7 @@ module Spotlight::Resources
         # Split on | and ,
         subjects = @item_solr[subject_field_name].split(/[|,]/).flatten
         @item_solr[subject_field_name] = subjects
-        @item_sidecar['subjects_ssim'] = subjects
+        assign_item_sidecar_data('subjects_ssim', subjects)
       end
     end
 
@@ -97,7 +100,7 @@ module Spotlight::Resources
         #Split on |
         types = @item_solr[type_field_name].split('|')
         @item_solr[type_field_name] = types
-        @item_sidecar['type_ssim'] = types
+        assign_item_sidecar_data('type_ssim', types)
       end
     end
 
@@ -106,17 +109,17 @@ module Spotlight::Resources
         thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
         thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
-        @item_sidecar['thumbnail_url_ssm'] = thumburl
+        assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
       end
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
         full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
-        @item_sidecar['full_image_url_ssm'] = full_url
+        assign_item_sidecar_data('full_image_url_ssm', full_url)
 
         manifest_url = transform_urls(@item_solr['full_image_url_ssm'], 'MANIFEST')
         @item_solr['manifest_url_ssm'] = manifest_url
-        @item_sidecar['manifest_url_ssm'] = manifest_url
+        assign_item_sidecar_data('manifest_url_ssm', manifest_url)
       end
     end
 
@@ -140,7 +143,7 @@ module Spotlight::Resources
         repoarray = @item_solr[repository_field_name].split('|')
         repoarray = repoarray.flatten.uniq
         @item_solr[repository_field_name] = repoarray
-        @item_sidecar['repository_ssim'] = repoarray
+        assign_item_sidecar_data('repository_ssim', repoarray)
       end
     end
 
@@ -153,18 +156,19 @@ module Spotlight::Resources
         datearray = @item_solr[start_date_name].split('|')
         dates = datearray.join('|')
         @item_solr[start_date_name] = dates
-        @item_sidecar['start-date_tesim'] = dates
+        assign_item_sidecar_data('start-date_tesim', dates)
       end
       if end_date.present?
         datearray = @item_solr[end_date_name].split('|')
         dates = datearray.join('|')
         @item_solr[end_date_name] = dates
-        @item_sidecar['end-date_tesim'] = dates
+        assign_item_sidecar_data('end-date_tesim', dates)
       end
     end
 
     def parsed_urn_id(urn)
-      @item_solr['urn_ssi'] = @item_sidecar['urn_ssi'] = urn
+      @item_solr['urn_ssi'] = urn
+      assign_item_sidecar_data('urn_ssi', urn)
     end
 
     # Resolves urn-3 uris
@@ -188,6 +192,36 @@ module Spotlight::Resources
       thumbnail_size = Spotlight::Engine.config.featured_image_thumb_size&.[](0) || 300
       uri = uri.gsub(/\/full\/\d*,\d*\/0\/default.jpg/, '')
       uri += "/full/#{thumbnail_size},/0/native.jpg"
+    end
+
+    # TODO: docs
+    def configured_field_names
+      @configured_field_names ||= ['full_title_tesim'] + exhibit.uploaded_resource_fields.map(&:field_name).map(&:to_s)
+    end
+
+    # TODO: docs
+    def assign_item_sidecar_data(field_name, value)
+      if configured_field_names.include?(field_name)
+        item_sidecar[field_name] = value
+      else
+        custom_field_slug = field_name.sub(/_.*$/, '')
+        item_sidecar[custom_field_slug] = value
+      end
+    end
+
+    # TODO: docs
+    def organize_item_sidecar_data
+      organized_item_sidecar = { 'configured_fields' => {} }
+      custom_field_slugs = exhibit.custom_fields.map(&:slug)
+
+      item_sidecar.map do |field_name, value|
+        organized_item_sidecar['configured_fields'][field_name] = value if configured_field_names.include?(field_name)
+        next unless custom_field_slugs.include?(field_name)
+
+        organized_item_sidecar[field_name] = value
+      end
+
+      organized_item_sidecar
     end
   end
 end
