@@ -194,12 +194,11 @@ module Spotlight::Resources
       uri += "/full/#{thumbnail_size},/0/native.jpg"
     end
 
-    # TODO: docs
-    def configured_field_names
-      @configured_field_names ||= ['full_title_tesim'] + exhibit.uploaded_resource_fields.map(&:field_name).map(&:to_s)
-    end
-
-    # TODO: docs
+    # Spotlight v3.3.0
+    # Spotlight expects "exhibit-specific fields" (a.k.a. Exhibit#custom_fields) to not have
+    # a Solr suffix (e.g. _tesim, _ssim, etc.). This method assumes all non-configured fields
+    # are custom and thus removes their Solr suffix when adding them to the @item_sidecar hash.
+    # Configured fields are added as-is (Solr suffix included).
     def assign_item_sidecar_data(field_name, value)
       if configured_field_names.include?(field_name)
         item_sidecar[field_name] = value
@@ -209,7 +208,22 @@ module Spotlight::Resources
       end
     end
 
-    # TODO: docs
+    # Spotlight v3.3.0
+    # Used to update an existing sidecar's data when harvesting (see
+    # Spotlight::OaipmhHarvester#harvest_item). Default "configured" fields are expected
+    # to be nested in a "configured_fields" sub-hash. This method assumes non-configured
+    # fields are "exhibit-specific fields" (a.k.a. Exhibit#custom_fields) and puts them
+    # in the "top level" of the hash (where Spotlight expects them to be).
+    #
+    # Example:
+    # {
+    #   'configured_fields' => {
+    #     'full_title_tesim' => 'My Title'
+    #   },
+    #   'custom-field' => 'Hello world'
+    # }
+    #
+    # @return [Hash] Sidecar data organized in the format that Spotlight expects
     def organize_item_sidecar_data
       organized_item_sidecar = { 'configured_fields' => {} }
       custom_field_slugs = exhibit.custom_fields.map(&:slug)
@@ -222,6 +236,12 @@ module Spotlight::Resources
       end
 
       organized_item_sidecar
+    end
+
+    # @return [Array<String>] List of default fields names as configured in config/initializers/spotlight_initializer.rb
+    def configured_field_names
+      # Add full_title_tesim to the list since it's a default Spotlight field
+      @configured_field_names ||= ['full_title_tesim'] + exhibit.uploaded_resource_fields.map(&:field_name).map(&:to_s)
     end
   end
 end
