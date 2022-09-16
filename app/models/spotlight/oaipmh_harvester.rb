@@ -75,19 +75,22 @@ module Spotlight
 
       # Create clean resource for editing
       resource = Spotlight::Resources::OaipmhUpload.find_or_initialize_by(exhibit: exhibit, external_id: parsed_oai_item.id.upcase)
-      resource.data = parsed_oai_item.sidecar_data
-      # If the sidecar for a resource already exists, and new fields have been added between harvests, then
-      # the new key(s) will not persist on the Solr document. To ensure all keys always update, merge in
-      # the whole data hash if the sidecar already exists before indexing.
-      if resource.solr_document_sidecars.present?
-        sidecar = resource.solr_document_sidecars.first
-        sidecar.data['configured_fields'].merge!(resource.data)
-        sidecar.save!
-        # Get the updated sidecar data into our local variable
-        resource.solr_document_sidecars.map(&:reload)
-      end
+      resource.data = parsed_oai_item.item_sidecar
       resource.attach_image if Spotlight::Oaipmh::Resources.download_full_image
-      resource.save_and_index
+      # The resource's sidecar is set up correctly the first time; nothing special is required
+      if resource.solr_document_sidecars.blank?
+        resource.save_and_index
+      else
+        # As of Spotlight v3.3.0, if a resource already has a sidecar, the sidecar (and thus the data in Solr)
+        # will not update unless done explicitly. The sidecar's #data is organized differently than the
+        # resource's #data, so we can't just copy it over from the resource directly.
+        resource.save!
+        sidecar = resource.solr_document_sidecars.first
+        sidecar.data = parsed_oai_item.organize_item_sidecar_data
+        sidecar.save!
+        # Get the updated sidecar into our local variable to ensure proper indexing
+        resource.reload.reindex_later
+      end
 
       job_progress&.increment
     rescue Exception => e
