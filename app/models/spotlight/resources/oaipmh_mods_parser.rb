@@ -203,7 +203,7 @@ module Spotlight::Resources
       if configured_field_names.include?(field_name)
         item_sidecar[field_name] = value
       else
-        custom_field_slug = field_name.sub(/_.*$/, '')
+        custom_field_slug = field_name.sub(/_[^_]+$/, '')
         item_sidecar[custom_field_slug] = value
       end
     end
