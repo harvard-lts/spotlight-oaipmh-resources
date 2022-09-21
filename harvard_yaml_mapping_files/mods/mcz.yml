@@ -1,0 +1,341 @@
+# 2018-12-03: Rev to put numbers at front of field names for 2nd and 3rd specimens; added artwork-creation-location blocks (RKW)
+# 2018-11-14: Consolidated ssim blocks for Specimen-level facets to insure a single facet per field across specimens. (RKW)
+# 2018-11-13: Added permalink field; changed original name and common name blocks to use displayLabel attribute, put some of the fields in place for 2nd specimen (RKW) 
+# 2018-10-15: 1st draft (RKW) 
+#
+# Structure:
+#  - spotlight-field: xxx
+#    multivalue-breaks: "yes" (optional) - if you want repeatable values for a given field to be 
+#        handled separately in a facet or to be displayed on separate lines in a record display.
+#    default-value: xxx (optional)
+#    delimiter: xxx (optional, what to separate all path values with.  Defaults to a space)
+#    mods:
+#        - path: xxx (repeatable - all path fields will be concatenated)
+#          delimiter: " " (optional)
+#          attribute: xxx (optional) - attribute, attribute-value, and mods-path+mods-value supply 
+#             conditions which must be met for the spotlight-field to be created.
+#             E.g., only create field if MODS element has @displayLabel where value = "collection".)
+#          attribute-value: xxx (optional, but only used with attribute)
+#          mods-path: xxx (optional)
+#          mods-value: xxx (optional)
+#          subpaths: (optional)
+#            - subpath: xxx
+#            - subpath: xxx
+#    xpath: 
+#        - xpath-value: xxx (repeatable)
+#          xpath-namespace-prefix: xxx (optional)
+#          xpath-namespace-def: xxx (optional)
+#   
+#  Documentation at https://github.com/harvard-library/spotlight-oaipmh-resources/wiki
+#  
+#  Multiterm field names need terms separated with dash, not underscore. Underscore is used 
+#  1) by Stanford-defined baked-in fields and 2) for ssim, tesim, ssm suffixes, etc.   
+#
+#  Spotlight field names in YAML may not contain capital letters.
+#
+#  xPaths with multiple namespaces cannot be mapped. 
+#  xPaths that address the a namespace within a mods:extension without including MODS will work, e.g., 
+#  //cdwalite:cultureWrap/cdwalite:culture, //cdwalite:styleWrap/cdwalite:style, //cdwalite:indexingMaterialsTechSet/cdwalite:termMaterialsTech
+#  
+#  YML structure sensitive to the exact number of leading spaces.
+#  Tabs will cause the ingest to fail.
+#
+- spotlight-field: unique-id_tesim
+  mods:
+      - path: recordInfo/recordIdentifier
+
+- spotlight-field: full_title_tesim
+  delimiter: ": "
+  mods:
+      - path: titleInfo
+        delimiter: " "
+        subpaths:
+          - subpath: title
+          
+- spotlight-field: artist_ssim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Artist']/mods:namePart" 
+
+- spotlight-field: artist_tesim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Artist']/mods:namePart" 
+
+- spotlight-field: spotlight_upload_description_tesim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  mods: 
+      - path: physicalDescription/note
+            
+- spotlight-field: artwork-date_tesim
+  mods:   
+      - path: originInfo/dateCreated
+
+- spotlight-field: artwork-date_ssim
+  mods:
+      - path: originInfo/dateCreated 
+      
+- spotlight-field: artwork-creation-location_tesim
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm"
+
+- spotlight-field: artwork-creation-location_ssim
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm"
+
+- spotlight-field: extent_tesim
+  mods:
+      - path: physicalDescription/extent
+
+- spotlight-field: genre_tesim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "//mods:genre"
+
+- spotlight-field: genre_ssim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "//mods:genre"
+
+- spotlight-field: materials-techniques_tesim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "//mods:physicalDescription/mods:form[@type='materialsTechniques']"
+
+- spotlight-field: materials-techniques_ssim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "//mods:physicalDescription/mods:form[@type='materialsTechniques']"
+
+- spotlight-field: support_ssim
+  delimiter: "|"
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:physicalDescription/mods:form[@type='support']"
+          
+- spotlight-field: support_tesim
+  delimiter: "|"
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:physicalDescription/mods:form[@type='support']"
+          
+- spotlight-field: expedition-leader_tesim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Expedition Leader']/mods:namePart" 
+      
+- spotlight-field: expedition-leader_ssim
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Expedition Leader']/mods:namePart" 
+        
+- spotlight-field: expedition-name_tesim
+  xpath:
+      - xpath-value: "//mods:name[@displayLabel='Expedition Name']/mods:namePart" 
+
+- spotlight-field: annotation_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:note[@type='annotation']"
+
+- spotlight-field: annotator_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Annotator']/mods:namePart" 
+
+- spotlight-field: annotator_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:name[mods:role/mods:roleTerm='Annotator']/mods:namePart" 
+
+- spotlight-field: artwork-note_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:note[@type!='annotation']"
+
+- spotlight-field: thumbnail_url_ssm
+  xpath:
+      - xpath-value: "//mods:location/mods:url[@access='preview']"
+
+- spotlight-field: full_image_url_ssm
+  xpath:
+      - xpath-value: "//mods:location/mods:url[@access='raw object']"
+
+- spotlight-field: repository_ssim
+  xpath:
+    - xpath-value: "/mods:mods/mods:location/mods:physicalLocation[@type='repository']"
+
+- spotlight-field: repository_tesim
+  xpath:
+    - xpath-value: "/mods:mods/mods:location/mods:physicalLocation[@type='repository']"
+
+- spotlight-field: call-number_tesim
+  xpath:
+    - xpath-value: "/mods:mods/mods:location/mods:shelfLocator"
+    
+#-----------------------All Specimen Facets
+
+- spotlight-field: taxonomic-classifications_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen']/mods:subject/mods:topic" 
+
+- spotlight-field: common-names_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen'][1]/mods:titleInfo[@displayLabel='Common Name']/mods:title"
+
+- spotlight-field: original-names_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen']/mods:titleInfo[@displayLabel='Original Name']/mods:title"
+
+- spotlight-field: authorities_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen']/mods:name[mods:role/mods:roleTerm='Authority']/mods:namePart"
+
+- spotlight-field: specimen-collectors_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen']/mods:name[mods:role/mods:roleTerm='Specimen Collector']/mods:namePart"
+
+- spotlight-field: specimen-collection-locations_ssim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "//mods:relatedItem[@otherType='Specimen']/mods:originInfo[@displayLabel='Specimen Collected']/mods:place/mods:placeTerm[@type='text']"
+
+#-----------------------First Specimen Chunk-----------------------
+
+- spotlight-field: taxonomic-classification_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:subject/mods:topic)"
+
+- spotlight-field: classification-note_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:note[@type='Classification Note'])"
+
+- spotlight-field: common-name_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:titleInfo[@displayLabel='Common Name']/mods:title)"
+
+- spotlight-field: original-name_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:titleInfo[@displayLabel='Original Name']/mods:title)"
+
+- spotlight-field: authority_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:name[mods:role/mods:roleTerm='Authority']/mods:namePart)"
+
+- spotlight-field: specimen-collector_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:name[mods:role/mods:roleTerm='Specimen Collector']/mods:namePart)"
+
+- spotlight-field: specimen-collection-date_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:originInfo[@displayLabel='Specimen Collected']/mods:dateOther[@type='Specimen Collection Date'])"
+
+- spotlight-field: specimen-collection-location_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:originInfo[@displayLabel='Specimen Collected']/mods:place/mods:placeTerm[@type='text'])"
+
+- spotlight-field: specimen-note_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][1]/mods:note[@displayLabel='Specimen Note'])"
+
+#-----------------------Second Specimen Chunk-----------------------
+
+- spotlight-field: 2-taxonomic-classification_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:subject/mods:topic)"
+
+- spotlight-field: 2-classification-note_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:note[@type='Classification Note'])"
+
+- spotlight-field: 2-common-name_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:titleInfo[@displayLabel='Common Name']/mods:title)"
+
+- spotlight-field: 2-original-name_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:titleInfo[@displayLabel='Original Name']/mods:title)"
+
+- spotlight-field: 2-authority_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:name[mods:role/mods:roleTerm='Authority']/mods:namePart)"
+
+- spotlight-field: 2-specimen-collector_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:name[mods:role/mods:roleTerm='Specimen Collector']/mods:namePart)"
+
+- spotlight-field: 2-specimen-collection-date_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:originInfo[@displayLabel='Specimen Collected']/mods:dateOther[@type='Specimen Collection Date'])"
+
+- spotlight-field: 2-specimen-collection-location_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:originInfo[@displayLabel='Specimen Collected']/mods:place/mods:placeTerm[@type='text'])"
+
+- spotlight-field: 2-specimen-note_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][2]/mods:note[@displayLabel='Specimen Note'])"
+
+#-----------------------Third Specimen Chunk-----------------------
+
+- spotlight-field: 3-taxonomic-classification_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:subject/mods:topic)"
+
+- spotlight-field: 3-classification-note_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:note[@type='Classification Note'])"
+
+- spotlight-field: 3-common-name_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:titleInfo[@displayLabel='Common Name']/mods:title)"
+
+- spotlight-field: 3-original-name_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:titleInfo[@displayLabel='Original Name']/mods:title)"
+
+- spotlight-field: 3-authority_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:name[mods:role/mods:roleTerm='Authority']/mods:namePart)"
+
+- spotlight-field: 3-specimen-collector_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:name[mods:role/mods:roleTerm='Specimen Collector']/mods:namePart)"
+
+- spotlight-field: 3-specimen-collection-date_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:originInfo[@displayLabel='Specimen Collected']/mods:dateOther[@type='Specimen Collection Date'])"
+
+- spotlight-field: 3-specimen-collection-location_tesim
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:originInfo[@displayLabel='Specimen Collected']/mods:place/mods:placeTerm[@type='text'])"
+
+- spotlight-field: 3-specimen-note_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:relatedItem[@otherType='Specimen'][3]/mods:note[@displayLabel='Specimen Note'])"
+#--------------------------------------------
+- spotlight-field: permalink_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Jacques Burkhardt Scientific Drawings']"
+
+- spotlight-field: record-id_tesim
+  mods:
+      - path: recordInfo/recordIdentifier
