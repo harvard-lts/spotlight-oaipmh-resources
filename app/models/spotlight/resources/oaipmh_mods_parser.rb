@@ -121,6 +121,9 @@ module Spotlight::Resources
     end
 
     def transform_urls(url_string, suffix)
+      res = Net::HTTP.get_response(URI(url_string))
+      pageOrder = res['location']&.[](/\$\d*!/)&.gsub(/\$|!/, '')
+      pageOrder ||= res['location']&.[](/n=\d*/)&.gsub(/n=/, '')
       url_string.gsub!(/\?.*$/, '')
       parts = url_string.split('/')
       tail = parts.last
@@ -131,6 +134,7 @@ module Spotlight::Resources
         parts[-1] = tail
         url_string = parts.join('/')
       end
+      url_string += "?n=#{pageOrder}" if pageOrder
       url_string
     end
 
