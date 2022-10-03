@@ -1,3 +1,4 @@
+# 2022-10-03: Updated digital-formats_ssim and digital-formats_tesim to digital-format_ssim and digital-format_tesim to match other collections (VV)
 # 2018-12-04: Added thumbnail block (RKW)
 # 2018-11-13: Added digitalFormat segments and collection-specific permalink, changed date type to be pulled from a mods:note element (RKW) 
 # 2018-10-03: 1st draft (RKW) 
@@ -221,14 +222,14 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Milman Parry Collection of Oral Literature']"
 
-- spotlight-field: digital-formats_ssim
+- spotlight-field: digital-format_ssim
   multivalue-breaks: "yes"
   xpath: 
       - xpath-value: "//librarycloud:digitalFormat"
         xpath-namespace-prefix: "librarycloud"
         xpath-namespace-def: "http://hul.harvard.edu/ois/xml/ns/librarycloud"
 
-- spotlight-field: digital-formats_tesim
+- spotlight-field: digital-format_tesim
   multivalue-breaks: "yes"
   xpath: 
       - xpath-value: "//librarycloud:digitalFormat"
