@@ -177,7 +177,7 @@ module Spotlight::Resources
 
     # Resolves urn-3 uris
     def fetch_ids_uri(uri_str)
-      if uri_str =~ /urn-3/
+      if uri_str.scan(/urn-3/).size == 1
         response = Net::HTTP.get_response(URI.parse(uri_str))['location']
       elsif uri_str.include?('?')
         uri_str = uri_str.slice(0..(uri_str.index('?')-1))
