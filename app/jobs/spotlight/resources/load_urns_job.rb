@@ -18,7 +18,7 @@ module Spotlight::Resources
           #
           # https://getbootstrap.com/docs/4.0/content/tables/
           message = "Missing Spotlight::SolrDocumentSidecar for document_id=#{sidecar_id}"
-          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: message)
+          job_tracker.append_log_entry(type: :warning, exhibit: exhibit, message: message)
           total_warnings += 1
           next
         end
@@ -33,10 +33,15 @@ module Spotlight::Resources
           #
           # https://getbootstrap.com/docs/4.0/content/tables/
           message = "Invalid data for Spotlight::SolrDocumentSidecar for document_id=#{sidecar_id}"
-          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: message)
-          job_tracker&.append_log_entry(type: :warning, exhibit: exhibit, message: e.message)
+          job_tracker.append_log_entry(type: :warning, exhibit: exhibit, message: message)
+          job_tracker.append_log_entry(type: :warning, exhibit: exhibit, message: e.message)
           total_warnings += 1
         end
+      rescue StandardError => e
+        message = "An error has occurred when trying to index the URN for document_id=#{sidecar_id}"
+        job_tracker.append_log_entry(type: :warning, exhibit: exhibit, message: message)
+        job_tracker.append_log_entry(type: :warning, exhibit: exhibit, message: %(#{e.class}: #{e.message}))
+        total_warnings += 1
       end
       total_warnings
     end
