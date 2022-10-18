@@ -3,12 +3,7 @@ require 'net/http'
 require 'uri'
 
 module Spotlight
-  class OaipmhHarvester < ActiveRecord::Base
-    belongs_to :exhibit
-
-    validates :base_url, presence: true
-    validates :set, presence: true
-
+  class OaipmhHarvester < Harvester
     attr_accessor :total_errors
 
     def self.mapping_files
