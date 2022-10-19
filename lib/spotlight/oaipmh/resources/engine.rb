@@ -2,7 +2,7 @@ require 'spotlight/engine'
 
 module Spotlight::Oaipmh::Resources
   class Engine < ::Rails::Engine
-    Spotlight::Oaipmh::Resources::Engine.config.resource_partial = 'spotlight/resources/oaipmh_harvester/form'
+    Spotlight::Oaipmh::Resources::Engine.config.resource_partial = 'spotlight/resources/harvester/form'
 
     initializer :append_migrations do |app|
       if !app.root.to_s.match(root.to_s) && app.root.join('db/migrate').children.none? { |path| path.fnmatch?("*.spotlight-oaipmh-resources.rb") }

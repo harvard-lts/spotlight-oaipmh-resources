@@ -1,7 +1,7 @@
 en:
   spotlight:
     resources:
-        oaipmh_harvester:
+        harvester:
             form:
               title: 'OAI-PMH MODS Harvest URL'
               url: "Base URL"
