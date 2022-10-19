@@ -1,4 +1,3 @@
-<%# TODO: add hint text %>
 <%= bootstrap_form_for([current_exhibit, @resource.becomes(Spotlight::Harvester)], url: spotlight_oaipmh_resources_engine.exhibit_harvester_path(exhibit_id: current_exhibit), layout: :horizontal, label_col: 'col-md-2', control_col: 'col-sm-6 col-md-6' ) do |f| %>
   <%= f.select :type, Spotlight::HarvestType::HARVEST_TYPES, {}, :onChange=>"toggleHarvesters(this.value);" %>
   <%= f.text_field :url, help: t('.url-field.help'), label: t('.url'), required: true %>
