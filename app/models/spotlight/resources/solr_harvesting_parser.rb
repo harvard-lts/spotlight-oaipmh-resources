@@ -1,6 +1,6 @@
 include Spotlight::Resources::Exceptions
 module Spotlight::Resources
-  class SolrHarvestingItem
+  class SolrHarvestingParser
     attr_reader :titles, :id
     attr_accessor :metadata, :sidecar_data
     def initialize(exhibit, converter)

@@ -44,7 +44,7 @@ module Spotlight
 
         while (!last_page_evaluated)
           harvests['response']['docs'].each do |record|
-            @item = SolrHarvestingItem.new(exhibit, @solr_converter)
+            @item = SolrHarvestingParser.new(exhibit, @solr_converter)
             
             @item.metadata = record
             @item.parse_record(unique_id_field)
