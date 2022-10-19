@@ -6,36 +6,9 @@ module Spotlight::Resources
 
     # POST /harvester
     def create
+      upload if resource_params.has_key?(:custom_mapping)
 
-      my_params = resource_params
-
-      #upload the mapping file if it exists
-      if (my_params.has_key?(:custom_mapping))
-        upload
-        my_params.delete(:custom_mapping)
-      end
-      mapping_file = resource_params[:mods_mapping_file]
-      if (resource_params[:type] == Spotlight::HarvestType::SOLR)
-        mapping_file = resource_params[:solr_mapping_file]
-        harvester = Spotlight::SolrHarvester.new(
-          base_url: resource_params[:url],
-          set: resource_params[:set],
-          mapping_file: mapping_file,
-          exhibit: current_exhibit
-        )
-      else
-        harvester = Spotlight::OaipmhHarvester.new(
-          base_url: resource_params[:url],
-          set: resource_params[:set],
-          mapping_file: mapping_file,
-          exhibit: current_exhibit
-        )
-      end
-      # TODO: handle
-      if (resource_params.has_key?(:custom_mapping))
-        mapping_file = resource_params[:custom_mapping].original_filename
-      end
-
+      harvester = build_harvester_by_type(resource_params[:type])
       if harvester.save
         Spotlight::Resources::PerformHarvestsJob.perform_later(harvester: harvester, user: current_user)
         flash[:notice] = t('spotlight.resources.harvester.performharvest.success', set: resource_params[:set])
@@ -45,7 +18,7 @@ module Spotlight::Resources
       redirect_to spotlight.admin_exhibit_catalog_path(current_exhibit, sort: :timestamp)
     end
 
-  private
+    private
 
     def upload
       name = resource_params[:custom_mapping].original_filename
@@ -60,6 +33,35 @@ module Spotlight::Resources
       File.open(path, "w") { |f| f.write(resource_params[:custom_mapping].read) }
     end
 
+    def build_harvester_by_type(type)
+      if type == Spotlight::HarvestType::MODS
+        Spotlight::OaipmhHarvester.new(
+          base_url: resource_params[:url],
+          set: resource_params[:set],
+          mods_mapping_file: mapping_file(type),
+          exhibit: current_exhibit
+        )
+      else
+        Spotlight::SolrHarvester.new(
+          base_url: resource_params[:url],
+          set: resource_params[:set],
+          solr_mapping_file: mapping_file(type),
+          exhibit: current_exhibit
+        )
+      end
+    end
+
+    def mapping_file(type)
+      return resource_params[:custom_mapping].original_filename if resource_params[:custom_mapping].present?
+
+      mapping_file = if type == Spotlight::HarvestType::MODS
+                       resource_params[:mods_mapping_file]
+                     else
+                       resource_params[:solr_mapping_file]
+                     end
+
+      mapping_file
+    end
 
     def resource_params
       params.require(:harvester).permit(:type, :url, :set, :mods_mapping_file, :solr_mapping_file, :custom_mapping)
