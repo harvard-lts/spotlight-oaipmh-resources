@@ -1,10 +1,10 @@
 
 module Spotlight::Resources
-  class OaipmhHarvesterController < Spotlight::ApplicationController
+  class HarvesterController < Spotlight::ApplicationController
 
     load_and_authorize_resource :exhibit, class: Spotlight::Exhibit
 
-    # POST /oaipmh_harvester
+    # POST /harvester
     def create
 
       my_params = resource_params
@@ -14,20 +14,31 @@ module Spotlight::Resources
         upload
         my_params.delete(:custom_mapping)
       end
-      mapping_file = resource_params[:mapping_file]
-      if (resource_params.has_key?(:custom_mapping))
-              mapping_file = resource_params[:custom_mapping].original_filename
+      mapping_file = resource_params[:mods_mapping_file]
+      if (resource_params[:type] == Spotlight::HarvestType::SOLR)
+        mapping_file = resource_params[:solr_mapping_file]
+        harvester = Spotlight::SolrHarvester.new(
+          base_url: resource_params[:url],
+          set: resource_params[:set],
+          mapping_file: mapping_file,
+          exhibit: current_exhibit
+        )
+      else
+        harvester = Spotlight::OaipmhHarvester.new(
+          base_url: resource_params[:url],
+          set: resource_params[:set],
+          mapping_file: mapping_file,
+          exhibit: current_exhibit
+        )
       end
-      harvester = Spotlight::OaipmhHarvester.create(
-        base_url: resource_params[:url],
-        set: resource_params[:set],
-        mapping_file: mapping_file,
-        exhibit: current_exhibit
-      )
+      # TODO: handle
+      if (resource_params.has_key?(:custom_mapping))
+        mapping_file = resource_params[:custom_mapping].original_filename
+      end
 
       if harvester.save
         Spotlight::Resources::PerformHarvestsJob.perform_later(harvester: harvester, user: current_user)
-        flash[:notice] = t('spotlight.resources.oaipmh_harvester.performharvest.success', set: resource_params[:set])
+        flash[:notice] = t('spotlight.resources.harvester.performharvest.success', set: resource_params[:set])
       else
         flash[:error] = "Failed to create harvester for #{resource_params[:set]}. #{harvester.errors.full_messages.to_sentence}"
       end
@@ -40,6 +51,9 @@ module Spotlight::Resources
       name = resource_params[:custom_mapping].original_filename
       Dir.mkdir("public/uploads") unless Dir.exist?("public/uploads")
       dir = "public/uploads/modsmapping"
+      if (resource_params[:type]  == Spotlight::HarvestType::SOLR)
+        dir = "public/uploads/solrmapping"
+      end
       Dir.mkdir(dir) unless Dir.exist?(dir)
 
       path = File.join(dir, name)
@@ -48,7 +62,7 @@ module Spotlight::Resources
 
 
     def resource_params
-      params.require(:oaipmh_harvester).permit(:url, :set, :mapping_file, :custom_mapping)
+      params.require(:harvester).permit(:type, :url, :set, :mods_mapping_file, :solr_mapping_file, :custom_mapping)
     end
   end
 end
