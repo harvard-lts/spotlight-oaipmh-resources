@@ -6,6 +6,8 @@ module Spotlight
   class OaipmhHarvester < Harvester
     attr_accessor :total_errors
 
+    alias_attribute :mapping_file, :mods_mapping_file
+
     def self.mapping_files
       if (Dir.exist?('public/uploads/modsmapping'))
         files = Dir.entries('public/uploads/modsmapping')
