@@ -12,7 +12,7 @@ module Spotlight
       super('modsmapping')
     end
 
-    def harvest_oai_items(job_tracker: nil, job_progress: nil)
+    def harvest_items(job_tracker: nil, job_progress: nil)
       self.total_errors = 0
       @sidecar_ids = []
       harvests = oaipmh_harvests

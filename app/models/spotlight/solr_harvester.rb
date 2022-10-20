@@ -21,7 +21,7 @@ module Spotlight
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
-    def harvest_solr_items
+    def harvest_items
       max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
       solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 

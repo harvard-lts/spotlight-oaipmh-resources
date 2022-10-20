@@ -26,7 +26,7 @@ module Spotlight::Resources
       @exhibit = harvester.exhibit
       @set = harvester.set
       @user = user
-      @sidecar_ids = harvester.harvest_oai_items(job_tracker: job_tracker, job_progress: progress)
+      @sidecar_ids = harvester.harvest_items(job_tracker: job_tracker, job_progress: progress)
       @total_errors = harvester.total_errors
       @total_warnings = 0
 
