@@ -118,9 +118,5 @@ module Spotlight
     def oai_mods_converter
       @oai_mods_converter ||= Spotlight::Resources::OaipmhModsConverter.new(set, exhibit.slug, get_mapping_file)
     end
-
-    def update_progress_total(job_progress)
-      job_progress.total = complete_list_size
-    end
   end
 end

@@ -16,12 +16,16 @@ module Spotlight
       solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
     end
 
+    def complete_list_size
+      @complete_list_size ||= solr_harvests['response']['numFound'] || 0
+    end
+
     def solr_connection
       solr_url = base_url + set
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
-    def harvest_items
+    def harvest_items(job_tracker: nil, job_progress: nil)
       max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
       solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
@@ -45,6 +49,7 @@ module Spotlight
         totalrecords = count
       end
 
+      update_progress_total(job_progress)
       last_page_evaluated = harvests['response']['docs'].blank?
       while (!last_page_evaluated)
         harvests['response']['docs'].each do |record|
@@ -77,6 +82,7 @@ module Spotlight
             break
           else
             harvests = solr_harvests(page)
+            update_progress_total(job_progress) # set size can change mid-harvest
           end
         end
 
