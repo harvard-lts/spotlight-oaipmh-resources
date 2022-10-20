@@ -11,9 +11,9 @@ module Spotlight
       super('solrmapping')
     end
 
-    def get_harvests
-      @solr_connection = RSolr.connect :url => @url  
-      response = @solr_connection.paginate 0, ROW_COUNT, 'select', :params => {:q => '*:*', :wt => 'json'}
+    def solr_harvests
+      @solr_connection = RSolr.connect(url: @url)
+      @solr_connection.paginate(0, ROW_COUNT, 'select', :params => {:q => '*:*', :wt => 'json'})
     end
 
     def paginate (page)
@@ -27,7 +27,6 @@ module Spotlight
       max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
       solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
-      last_page_evaluated = harvests['response']['docs'].blank?
       unique_id_field = nil 
       if (!solr_converter.get_unique_id_field.nil?)
         unique_id_field = solr_converter.get_unique_id_field
@@ -41,13 +40,14 @@ module Spotlight
         harvests = paginate(page)
       else
         page = 1
-        harvests = harvests
+        harvests = solr_harvests
       end
 
       if !count.blank?
         totalrecords = count
       end
 
+      last_page_evaluated = harvests['response']['docs'].blank?
       while (!last_page_evaluated)
         harvests['response']['docs'].each do |record|
           parsed_solr_item = SolrHarvestingParser.new(exhibit, solr_converter)
