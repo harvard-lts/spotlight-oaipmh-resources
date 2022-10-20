@@ -26,6 +26,7 @@ module Spotlight
     end
 
     def harvest_items(job_tracker: nil, job_progress: nil)
+      self.total_errors = 0
       max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
       solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
@@ -66,12 +67,16 @@ module Spotlight
 
             count = count + 1
             totalrecords = totalrecords + 1
-            curtime = Time.zone.now
-            get_job_entry.update(job_item_count: totalrecords, end_time: curtime)
+            job_progress&.increment
           rescue Exception => e
             Delayed::Worker.logger.add(Logger::ERROR, parsed_solr_item.id + ' did not index successfully')
             Delayed::Worker.logger.add(Logger::ERROR, e.message)
             Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
+            if job_tracker.present?
+              job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
+              job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: e.message)
+            end
+            self.total_errors += 1
           end
         end #End of each loop
         page = page + 1
@@ -90,13 +95,11 @@ module Spotlight
         if (harvests['response']['docs'].blank?)
           last_page_evaluated = true
         end
+        # Log an update every 100 records
+        if (job_progress.progress % 100).zero?
+          job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
+        end
       end #End of while loop
-      if (last_page_evaluated)
-        get_job_entry.succeeded!
-      end
-    rescue
-      get_job_entry.failed!
-      raise
     end
 
     def get_unique_id_field_name(mapping_file)

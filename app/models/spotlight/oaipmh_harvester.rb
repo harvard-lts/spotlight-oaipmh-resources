@@ -4,8 +4,6 @@ require 'uri'
 
 module Spotlight
   class OaipmhHarvester < Harvester
-    attr_accessor :total_errors
-
     alias_attribute :mapping_file, :mods_mapping_file
 
     def self.mapping_files

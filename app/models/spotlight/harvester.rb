@@ -2,6 +2,8 @@ module Spotlight
   class Harvester < ActiveRecord::Base
     belongs_to :exhibit
 
+    attr_accessor :total_errors
+
     validates :base_url, presence: true
     validates :set, presence: true
 
