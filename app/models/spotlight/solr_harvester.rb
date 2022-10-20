@@ -13,11 +13,12 @@ module Spotlight
 
     def solr_harvests(page = nil)
       page = page.present? ? page : 0
-      @solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
+      solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
     end
 
     def solr_connection
-      @solr_connection ||= RSolr.connect(url: @url)
+      solr_url = base_url + set
+      @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
     def harvest_solr_items
