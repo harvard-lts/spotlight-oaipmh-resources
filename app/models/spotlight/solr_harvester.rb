@@ -11,16 +11,13 @@ module Spotlight
       super('solrmapping')
     end
 
-    def solr_harvests
-      @solr_connection = RSolr.connect(url: @url)
-      @solr_connection.paginate(0, ROW_COUNT, 'select', :params => {:q => '*:*', :wt => 'json'})
+    def solr_harvests(page = nil)
+      page = page.present? ? page : 0
+      @solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
     end
 
-    def paginate (page)
-      if (@solr_connection.nil?)
-        @solr_connection = RSolr.connect :url => @url  
-      end
-      response = @solr_connection.paginate page, ROW_COUNT, 'select', :params => {:q => '*:*', :wt => 'json'}
+    def solr_connection
+      @solr_connection ||= RSolr.connect(url: @url)
     end
 
     def harvest_solr_items
@@ -37,7 +34,7 @@ module Spotlight
       #If the resumption token was stored, begin there.
       if !cursor.blank?
         page = cursor
-        harvests = paginate(page)
+        harvests = solr_harvests(page)
       else
         page = 1
         harvests = solr_harvests
@@ -78,7 +75,7 @@ module Spotlight
             schedule_next_batch(page, totalrecords)
             break
           else
-            harvests = paginate(page)
+            harvests = solr_harvests(page)
           end
         end
 
