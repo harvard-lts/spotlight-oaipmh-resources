@@ -18,5 +18,11 @@ module Spotlight
       files.insert(0, 'Default Mapping File')
       files
     end
+
+    def get_mapping_file
+      return if mapping_file.eql?('Default Mapping File') || mapping_file.eql?('New Mapping File')
+
+      mapping_file
+    end
   end
 end

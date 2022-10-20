@@ -122,11 +122,5 @@ module Spotlight
     def update_progress_total(job_progress)
       job_progress.total = complete_list_size
     end
-
-    def get_mapping_file
-      return if mapping_file.eql?('Default Mapping File') || mapping_file.eql?('New Mapping File')
-
-      mapping_file
-    end
   end
 end
