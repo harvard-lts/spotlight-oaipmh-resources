@@ -25,15 +25,13 @@ module Spotlight
 
     def harvest_solr_items
       max_batch_count = Spotlight::Oaipmh::Resources::Engine.config.solr_harvest_batch_max
-
-      @solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
-      @solr_converter.parse_mapping_file(@solr_converter.mapping_file) 
-
+      solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
+      solr_converter.parse_mapping_file(solr_converter.mapping_file) 
+      last_page_evaluated = harvests['response']['docs'].blank?
       unique_id_field = nil 
-      if (!@solr_converter.get_unique_id_field.nil?)
-        unique_id_field = @solr_converter.get_unique_id_field
+      if (!solr_converter.get_unique_id_field.nil?)
+        unique_id_field = solr_converter.get_unique_id_field
       end
-
       count = 0
       totalrecords = 0
 
@@ -50,30 +48,25 @@ module Spotlight
         totalrecords = count
       end
 
-      last_page_evaluated = harvests['response']['docs'].blank?
-
       while (!last_page_evaluated)
         harvests['response']['docs'].each do |record|
-          @item = SolrHarvestingParser.new(exhibit, @solr_converter)
+          parsed_solr_item = SolrHarvestingParser.new(exhibit, solr_converter)
 
-          @item.metadata = record
-          @item.parse_record(unique_id_field)
+          parsed_solr_item.metadata = record
+          parsed_solr_item.parse_record(unique_id_field)
+          parsed_solr_item.to_solr
           begin
-            @item_solr = @item.to_solr
-            @item_sidecar = @item.sidecar_data
-
-            #Add the sidecar info for editing
-            sidecar ||= resource.document_model.new(id: @item.id).sidecar(exhibit) 
-            sidecar.update(data: @item_sidecar)
-            yield base_doc.merge(@item_solr) if @item_solr.present?
+            # Create clean resource for editing
+            resource = Spotlight::Resources::SolrUpload.find_or_initialize_by(exhibit: exhibit, external_id: parsed_solr_item.id.upcase)
+            resource.data = parsed_solr_item.sidecar_data
+            resource.save_and_index
 
             count = count + 1
             totalrecords = totalrecords + 1
             curtime = Time.zone.now
             get_job_entry.update(job_item_count: totalrecords, end_time: curtime)
-
           rescue Exception => e
-            Delayed::Worker.logger.add(Logger::ERROR, @item.id + ' did not index successfully')
+            Delayed::Worker.logger.add(Logger::ERROR, parsed_solr_item.id + ' did not index successfully')
             Delayed::Worker.logger.add(Logger::ERROR, e.message)
             Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
           end
@@ -86,7 +79,6 @@ module Spotlight
             break
           else
             harvests = paginate(page)
-            
           end
         end
 
