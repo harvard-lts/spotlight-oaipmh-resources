@@ -55,7 +55,20 @@ module Spotlight
       # Create clean resource for editing
       resource = Spotlight::Resources::SolrUpload.find_or_initialize_by(exhibit: exhibit, external_id: parsed_solr_item.id.upcase)
       resource.data = parsed_solr_item.sidecar_data
-      resource.save_and_index
+      # The resource's sidecar is set up correctly the first time; nothing special is required
+      if resource.solr_document_sidecars.blank?
+        resource.save_and_index
+      else
+        # As of Spotlight v3.3.0, if a resource already has a sidecar, the sidecar (and thus the data in Solr)
+        # will not update unless done explicitly. The sidecar's #data is organized differently than the
+        # resource's #data, so we can't just copy it over from the resource directly.
+        resource.save!
+        sidecar = resource.solr_document_sidecars.first
+        sidecar.data = parsed_solr_item.reorganize_sidecar_data
+        sidecar.save!
+        # Get the updated sidecar into our local variable to ensure proper indexing
+        resource.reload.reindex_later
+      end
 
       job_progress&.increment
     rescue Exception => e

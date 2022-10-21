@@ -65,6 +65,36 @@ module Spotlight::Resources
       organized_sidecar_data
     end
 
+    # Spotlight v3.3.0
+    # Used to update an existing sidecar's data when harvesting (see
+    # Spotlight::SolrHarvester#harvest_item). Default "configured" fields are expected
+    # to be nested in a "configured_fields" sub-hash. This method assumes non-configured
+    # fields are "exhibit-specific fields" (a.k.a. Exhibit#custom_fields) and puts them
+    # in the "top level" of the hash (where Spotlight expects them to be).
+    #
+    # Example:
+    # {
+    #   'configured_fields' => {
+    #     'full_title_tesim' => 'My Title'
+    #   },
+    #   'custom-field' => 'Hello world'
+    # }
+    #
+    # @return [Hash] Sidecar data organized in the format that Spotlight expects
+    def reorganize_sidecar_data
+      reorganized_sidecar_data = { 'configured_fields' => {} }
+      custom_field_slugs = exhibit.custom_fields.map(&:slug)
+
+      @sidecar_data.map do |field_name, value|
+        reorganized_sidecar_data['configured_fields'][field_name] = value if configured_field_names.include?(field_name)
+        next unless custom_field_slugs.include?(field_name)
+
+        reorganized_sidecar_data[field_name] = value
+      end
+
+      reorganized_sidecar_data
+    end
+
     # @return [Array<String>] List of default fields names as configured in config/initializers/spotlight_initializer.rb
     def configured_field_names
       # Add full_title_tesim to the list since it's a default Spotlight field
