@@ -11,20 +11,6 @@ module Spotlight
       super('solrmapping')
     end
 
-    def solr_harvests(page = nil)
-      page = page.present? ? page : 1
-      solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
-    end
-
-    def complete_list_size
-      @complete_list_size ||= solr_harvests['response']['numFound'] || 0
-    end
-
-    def solr_connection
-      solr_url = base_url + set
-      @solr_connection ||= RSolr.connect(url: solr_url)
-    end
-
     def harvest_items(job_tracker: nil, job_progress: nil)
       self.total_errors = 0
       solr_converter = SolrConverter.new(set, exhibit.slug, get_mapping_file)
@@ -78,6 +64,20 @@ module Spotlight
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end # End of while loop
+    end
+
+    def solr_harvests(page = nil)
+      page = page.present? ? page : 1
+      solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
+    end
+
+    def complete_list_size
+      @complete_list_size ||= solr_harvests['response']['numFound'] || 0
+    end
+
+    def solr_connection
+      solr_url = base_url + set
+      @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
     def get_unique_id_field_name(mapping_file)
