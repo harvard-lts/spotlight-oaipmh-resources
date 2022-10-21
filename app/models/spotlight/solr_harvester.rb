@@ -13,6 +13,7 @@ module Spotlight
 
     def harvest_items(job_tracker: nil, job_progress: nil)
       self.total_errors = 0
+      @sidecar_ids = []
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
       page = 1
       harvests = solr_harvests(page)
@@ -42,6 +43,7 @@ module Spotlight
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end
+      @sidecar_ids
     end
 
     def harvest_item(record, job_tracker, job_progress)
@@ -49,6 +51,9 @@ module Spotlight
 
       parsed_solr_item.metadata = record
       parsed_solr_item.parse_record(unique_id_field)
+      # At this point, we know the candidate for the sidecar's document_id.  This will be used in
+      # the Spotlight::Resources::LoadUrnsJob
+      @sidecar_ids << parsed_solr_item.id if Spotlight::Oaipmh::Resources.use_solr_document_urns
       parsed_solr_item.to_solr
 
       # Create clean resource for editing
