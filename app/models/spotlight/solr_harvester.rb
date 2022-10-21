@@ -17,10 +17,6 @@ module Spotlight
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
       page = 1
       harvests = solr_harvests(page)
-      unique_id_field = nil 
-      if (!solr_converter.get_unique_id_field.nil?)
-        unique_id_field = solr_converter.get_unique_id_field
-      end
 
       update_progress_total(job_progress)
       last_page_evaluated = harvests['response']['docs'].blank?
@@ -47,10 +43,10 @@ module Spotlight
     end
 
     def harvest_item(record, job_tracker, job_progress)
-      parsed_solr_item = SolrHarvestingParser.new(exhibit, solr_converter)
+      parsed_solr_item = Spotlight::Resources::SolrHarvestingParser.new(exhibit, solr_converter)
 
       parsed_solr_item.metadata = record
-      parsed_solr_item.parse_record(unique_id_field)
+      parsed_solr_item.parse_record(solr_converter.get_unique_id_field)
       # At this point, we know the candidate for the sidecar's document_id.  This will be used in
       # the Spotlight::Resources::LoadUrnsJob
       @sidecar_ids << parsed_solr_item.id if Spotlight::Oaipmh::Resources.use_solr_document_urns
@@ -81,16 +77,7 @@ module Spotlight
     end
 
     def solr_converter
-      @solr_converter ||= SolrConverter.new(set, exhibit.slug, get_mapping_file)
-    end
-
-    def get_unique_id_field_name(mapping_file)
-      mapping_config = YAML.load_file(mapping_file)
-      mapping_config.each do |field|
-        if (!field.key?("spotlight-field") || field['spotlight-field'].blank?)
-          raise InvalidMappingFile, "spotlight-field is required for each entry"
-        end
-      end
+      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, exhibit.slug, get_mapping_file)
     end
   end
 end
