@@ -21,6 +21,17 @@ module Spotlight
       files
     end
 
+    def handle_item_harvest_error(error, parsed_item, job_tracker = nil)
+      Delayed::Worker.logger.add(Logger::ERROR, parsed_item.id + ' did not index successfully')
+      Delayed::Worker.logger.add(Logger::ERROR, error.message)
+      Delayed::Worker.logger.add(Logger::ERROR, error.backtrace)
+      if job_tracker.present?
+        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
+        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error.message)
+      end
+      self.total_errors += 1
+    end
+
     def update_progress_total(job_progress)
       job_progress.total = complete_list_size
     end

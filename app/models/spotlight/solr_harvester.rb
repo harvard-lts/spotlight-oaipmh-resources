@@ -58,14 +58,7 @@ module Spotlight
 
       job_progress&.increment
     rescue Exception => e
-      Delayed::Worker.logger.add(Logger::ERROR, parsed_solr_item.id + ' did not index successfully')
-      Delayed::Worker.logger.add(Logger::ERROR, e.message)
-      Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
-      if job_tracker.present?
-        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
-        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: e.message)
-      end
-      self.total_errors += 1
+      handle_item_harvest_error(e, parsed_solr_item, job_tracker)
     end
 
     def solr_harvests(page = nil)
