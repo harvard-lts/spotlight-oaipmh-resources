@@ -63,7 +63,7 @@ module Spotlight
     end
 
     def solr_harvests(page = nil)
-      page = page.present? ? page : 1
+      page = page.presence || 1
       solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
     end
 

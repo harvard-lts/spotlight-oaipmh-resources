@@ -28,7 +28,7 @@ module Spotlight::Resources
       end
       
       @solr_hash = @converter.convert(metadata)
-      @sidecar_data = @converter.sidecar_hash
+      @sidecar_data = organize_sidecar_data(@converter.sidecar_hash)
    end
   
    # private
@@ -44,6 +44,31 @@ module Spotlight::Resources
         solr_hash[:id] = rand.to_s[2..11] 
       end
     end
-  
+
+    # Spotlight v3.3.0
+    # Spotlight expects "exhibit-specific fields" (a.k.a. Exhibit#custom_fields) to not have
+    # a Solr suffix (e.g. _tesim, _ssim, etc.). This method assumes all non-configured fields
+    # are custom and thus removes their Solr suffix when adding them to the @item_sidecar hash.
+    # Configured fields are added as-is (Solr suffix included).
+    def organize_sidecar_data(hash)
+      organized_sidecar_data = {}
+
+      hash.each do |field_name, value|
+        if configured_field_names.include?(field_name)
+          organized_sidecar_data[field_name] = value
+        else
+          custom_field_slug = field_name.sub(/_[^_]+$/, '')
+          organized_sidecar_data[custom_field_slug] = value
+        end
+      end
+
+      organized_sidecar_data
+    end
+
+    # @return [Array<String>] List of default fields names as configured in config/initializers/spotlight_initializer.rb
+    def configured_field_names
+      # Add full_title_tesim to the list since it's a default Spotlight field
+      @configured_field_names ||= ['full_title_tesim'] + exhibit.uploaded_resource_fields.map(&:field_name).map(&:to_s)
+    end
   end
 end
