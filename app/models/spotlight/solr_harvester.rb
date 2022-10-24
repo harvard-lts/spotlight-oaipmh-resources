@@ -85,7 +85,10 @@ module Spotlight
     end
 
     def solr_connection
-      solr_url = base_url + set
+      # Add trailing "/" if it's missing from base_url
+      valid_base_url = base_url.match?(/\/$/) ? base_url : base_url + '/'
+      solr_url = valid_base_url + set
+
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
