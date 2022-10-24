@@ -124,6 +124,7 @@ module Spotlight::Resources
     end
 
     def transform_urls(url_string, suffix)
+      url_string.strip!
       res = Net::HTTP.get_response(URI(url_string))
       pageOrder = res['location']&.[](/\$\d*!/)&.gsub(/\$|!/, '')
       pageOrder ||= res['location']&.[](/n=\d*/)&.gsub(/n=/, '')
@@ -177,6 +178,8 @@ module Spotlight::Resources
 
     # Resolves urn-3 uris
     def fetch_ids_uri(uri_str)
+      uri_str.strip!
+
       if uri_str.scan(/urn-3/).size == 1
         response = Net::HTTP.get_response(URI.parse(uri_str))['location']
       elsif uri_str.include?('?')
