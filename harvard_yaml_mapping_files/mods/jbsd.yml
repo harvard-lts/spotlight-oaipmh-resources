@@ -1,6 +1,8 @@
-# 2018-12-03: Rev to put numbers at front of field names for 2nd and 3rd specimens; added artwork-creation-location blocks (RKW)
+# 2022-10-25: Updated thumbnail_url_ssm and full_image_url_ssm to only harvest the first one in order to display properly. (VV)
+# 2022-10-25: Added additional-digital-items_tesim to harvest other digital items not displayed; i.e. every one but the first one. (VV)
+# 2018-12-03: Rev to put numbers at front of field names for 2nd and 3rd specimens; added artwork-creation-location blocks. (RKW)
 # 2018-11-14: Consolidated ssim blocks for Specimen-level facets to insure a single facet per field across specimens. (RKW)
-# 2018-11-13: Added permalink field; changed original name and common name blocks to use displayLabel attribute, put some of the fields in place for 2nd specimen (RKW) 
+# 2018-11-13: Added permalink field; changed original name and common name blocks to use displayLabel attribute, put some of the fields in place for 2nd specimen. (RKW) 
 # 2018-10-15: 1st draft (RKW) 
 #
 # Structure:
@@ -156,11 +158,16 @@
 
 - spotlight-field: thumbnail_url_ssm
   xpath:
-      - xpath-value: "//mods:location/mods:url[@access='preview']"
+      - xpath-value: "(//mods:location/mods:url[@access='preview'])[1]"
 
 - spotlight-field: full_image_url_ssm
   xpath:
-      - xpath-value: "//mods:location/mods:url[@access='raw object']"
+      - xpath-value: "(//mods:location/mods:url[@access='raw object'])[1]"
+
+- spotlight-field: additional-digital-items_tesim
+  multivalue-breaks: "yes"
+  xpath:
+      - xpath-value: "(//mods:location/mods:url[@access='raw object'])[position()>1]"
 
 - spotlight-field: repository_ssim
   xpath:
