@@ -22,4 +22,4 @@ en:
     harvesting_complete_mailer:
        harvest_set_completed:
           title: "Harvesting complete for %{set}"
-          body: "The %{set} as just finished harvesting to the %{title} exhibit.\nItems may still be in the process of indexing. See delayed_jobs for current status."
+          body: "The %{set} has just finished harvesting to the %{title} exhibit.\nItems may still be in the process of indexing. See delayed_jobs for current status."
