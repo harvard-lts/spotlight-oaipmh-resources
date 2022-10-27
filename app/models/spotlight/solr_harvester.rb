@@ -15,8 +15,8 @@ module Spotlight
       self.total_errors = 0
       @sidecar_ids = []
       solr_converter.parse_mapping_file(solr_converter.mapping_file) 
-      page = 1
-      harvests = solr_harvests(page)
+      harvests = solr_harvests
+      @cursor = harvests['nextCursorMark']
 
       update_progress_total(job_progress)
       last_page_evaluated = harvests['response']['docs'].blank?
@@ -25,9 +25,9 @@ module Spotlight
           harvest_item(record, job_tracker, job_progress)
         end
 
-        page += 1
         unless last_page_evaluated 
-          harvests = solr_harvests(page)
+          harvests = solr_harvests(@cursor)
+          @cursor = harvests['nextCursorMark']
           update_progress_total(job_progress) # set size can change mid-harvest
         end
 
@@ -75,9 +75,10 @@ module Spotlight
       handle_item_harvest_error(e, parsed_solr_item, job_tracker)
     end
 
-    def solr_harvests(page = nil)
-      page = page.presence || 1
-      solr_connection.paginate(page, ROW_COUNT, 'select', params: { q: '*:*', wt: 'json' })
+    def solr_harvests(cursor = nil)
+      cursor = cursor.presence || '*'
+
+      solr_connection.get('select', params: { q: '*:*', cursorMark: cursor, sort: '_id asc', rows: ROW_COUNT, wt: 'json' })
     end
 
     def complete_list_size
