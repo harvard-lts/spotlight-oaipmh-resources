@@ -21,5 +21,6 @@ en:
               success: "Successfully scheduled '%{set}' for harvesting."
     harvesting_complete_mailer:
        harvest_set_completed:
-          title: "Your harvest has just finished being processed."
-          body: "The %{set} set has been indexed from the harvest and added to the exhibit %{title}."
+          title: "Harvesting complete for %{set}"
+          body: "The %{set} set has just finished harvesting to the %{title} exhibit.\nItems may still be in the process of indexing. See delayed_jobs for current status."
+
