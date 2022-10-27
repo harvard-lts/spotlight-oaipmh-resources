@@ -9,7 +9,7 @@ module Spotlight
       @total_errors = job.total_errors
       @total_warnings = job.total_warnings
       @user = job.user
-      subject = "Harvest indexing complete for #{@set}"
+      subject = "Harvesting complete for #{@set}"
       subject += " with harvesting #{@total_errors} #{'error'.pluralize(@total_errors)}" if @total_errors.positive?
       mail(to: @user.email, from: 'oaiharvester@noreply.com', subject: subject)
     end
