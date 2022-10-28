@@ -4,6 +4,7 @@ require 'uri'
 module Spotlight
   class SolrHarvester < Harvester
     ROW_COUNT = 50
+    DEFAULT_SORT_FIELD = '_id'
 
     alias_attribute :mapping_file, :solr_mapping_file
 
@@ -77,8 +78,47 @@ module Spotlight
 
     def solr_harvests(cursor = nil)
       cursor = cursor.presence || '*'
+      sort_field = sort_field_for_set(set)
 
-      solr_connection.get('select', params: { q: '*:*', cursorMark: cursor, sort: 'id asc', rows: ROW_COUNT, wt: 'json' })
+      solr_connection.get(
+        'select',
+        params: {
+          q: '*:*',
+          cursorMark: cursor,
+          sort: "#{sort_field} asc",
+          rows: ROW_COUNT,
+          wt: 'json'
+        }
+      )
+    end
+
+    # This is meant to be a temporary solution to compensate for inconsistent data
+    # structures between the Solr sets.
+    #
+    # Our Solr harvest endpoint (https://fts.lib.harvard.edu/solr/) requires queries
+    # to use a "cursor" (as opposed to pagination, for example). Solr queries that
+    # use a cursor require a field that has a unique value to sort on.
+    #
+    # The Solr sets currently (2022-10-28) do not all use a consistent field that
+    # meets this requirement. Some store the unique value in a field called "_id",
+    # some store the field in a field called "id".
+    #
+    # Due to this inconsistency in the structure of the Solr data, a file has been
+    # added to explicitly declare what the unique field is for each Solr set.
+    #
+    # This method (and related logic) can be removed once the Solr data is changed
+    # to use a consistent unique identifying field.
+    def sort_field_for_set(set)
+      file = File.join(
+        Spotlight::Oaipmh::Resources::Engine.root,
+        'harvard_yaml_mapping_files',
+        'solr',
+        'unique_key_mappings',
+        'unique_keys_by_set.yml'
+      )
+      return DEFAULT_SORT_FIELD unless File.exists?(file)
+
+      YAML.load_file(file).dig(set, 'unique_key').presence || DEFAULT_SORT_FIELD
     end
 
     def complete_list_size
