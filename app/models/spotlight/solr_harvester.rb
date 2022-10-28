@@ -78,7 +78,7 @@ module Spotlight
     def solr_harvests(cursor = nil)
       cursor = cursor.presence || '*'
 
-      solr_connection.get('select', params: { q: '*:*', cursorMark: cursor, sort: '_id asc', rows: ROW_COUNT, wt: 'json' })
+      solr_connection.get('select', params: { q: '*:*', cursorMark: cursor, sort: 'id%20asc', rows: ROW_COUNT, wt: 'json' })
     end
 
     def complete_list_size
