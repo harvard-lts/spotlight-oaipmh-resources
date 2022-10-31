@@ -1,0 +1,16 @@
+# This file is part of what is meant to be a temporary solution to compensate
+# for inconsistent data structures in the Solr sets.
+#
+# This file (and related logic) can be removed once the Solr data is changed
+# to use a consistent unique identifying field.
+#
+# @see Spotlight::SolrHarvester#sort_field_for_set
+
+tedming:
+  unique_key: id
+acat-calendar:
+  unique_key: _id
+acat-courses:
+  unique_key: _id
+acat-faculty:
+  unique_key: _id

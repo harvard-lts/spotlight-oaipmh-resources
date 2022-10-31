@@ -1,0 +1,51 @@
+<%= bootstrap_form_for([current_exhibit, @resource.becomes(Spotlight::Harvester)], url: spotlight_oaipmh_resources_engine.exhibit_harvester_path(exhibit_id: current_exhibit), layout: :horizontal, label_col: 'col-md-2', control_col: 'col-sm-6 col-md-6' ) do |f| %>
+  <%= f.select :type, Spotlight::HarvestType::HARVEST_TYPES, {}, :onChange=>"toggleHarvesters(this.value);" %>
+  <%= f.text_field :url, help: t('.url-field.help'), label: t('.url'), required: true %>
+  <%= f.text_field :set, help: t('.set-field.help'), label: t('.set'), required: true %>
+  <span id="oaiharvester">
+    <%= f.select :mods_mapping_file,
+      Spotlight::OaipmhHarvester.mapping_files,
+      { help: t('.mapping-file-field.help'), label: t('.mapping-file') },
+      :onChange=>"toggleUploadArea(this.value);" %>
+  </span>
+  <span id="solrharvester" style="display:none">
+    <%= f.select :solr_mapping_file,
+      Spotlight::SolrHarvester.mapping_files,
+      { help: t('.mapping-file-field.help'), label: t('.mapping-file') },
+      :onChange=>"toggleUploadArea(this.value);" %>
+  </span>
+  <div id="custom_mapping_file_div" style="display:none"><%= f.file_field :custom_mapping, help: t('.custom-mapping-field.help'), label: t('.custom-mapping') %></div>
+  <div class="form-actions">
+    <div class="primary-actions">
+      <%= cancel_link @resource, :back, class: 'btn btn-default' %>
+      <%= f.submit t('.add_item'), class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<%= javascript_tag do %>
+  function toggleUploadArea(value) {
+    if(value=='New Mapping File') {
+      document.getElementById("custom_mapping_file_div").style.display = "block";
+    }
+    else {
+      document.getElementById("custom_mapping_file_div").style.display = "none";
+    }
+  }
+
+  function toggleHarvesters(value) {
+    if(value=='MODS') {
+      document.getElementById("oaiharvester").style.display = "block";
+      document.getElementById("solrharvester").style.display = "none";
+    }
+    else {
+      document.getElementById("oaiharvester").style.display = "none";
+      document.getElementById("solrharvester").style.display = "block";
+    }
+  }
+
+  $('input[type="file"]').change(function(e){
+      var fileName = e.target.files[0].name;
+      $('.custom-file-label').html(fileName);
+  });
+<% end %>
