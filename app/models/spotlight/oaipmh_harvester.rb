@@ -3,29 +3,14 @@ require 'net/http'
 require 'uri'
 
 module Spotlight
-  class OaipmhHarvester < ActiveRecord::Base
-    belongs_to :exhibit
-
-    validates :base_url, presence: true
-    validates :set, presence: true
-
-    attr_accessor :total_errors
+  class OaipmhHarvester < Harvester
+    alias_attribute :mapping_file, :mods_mapping_file
 
     def self.mapping_files
-      if (Dir.exist?('public/uploads/modsmapping'))
-        files = Dir.entries('public/uploads/modsmapping')
-        files.delete('.')
-        files.delete('..')
-      else
-        files = Array.new
-      end
-
-      files.insert(0, 'New Mapping File')
-      files.insert(0, 'Default Mapping File')
-      files
+      super('modsmapping')
     end
 
-    def harvest_oai_items(job_tracker: nil, job_progress: nil)
+    def harvest_items(job_tracker: nil, job_progress: nil)
       self.total_errors = 0
       @sidecar_ids = []
       harvests = oaipmh_harvests
@@ -94,15 +79,7 @@ module Spotlight
 
       job_progress&.increment
     rescue Exception => e
-      error_msg = parsed_oai_item.id + ' did not index successfully:'
-      Delayed::Worker.logger.add(Logger::ERROR, error_msg)
-      Delayed::Worker.logger.add(Logger::ERROR, e.message)
-      Delayed::Worker.logger.add(Logger::ERROR, e.backtrace)
-      if job_tracker.present?
-        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
-        job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: e.message)
-      end
-      self.total_errors += 1
+      handle_item_harvest_error(e, parsed_oai_item, job_tracker)
     end
 
     def oaipmh_harvests
@@ -130,16 +107,6 @@ module Spotlight
 
     def oai_mods_converter
       @oai_mods_converter ||= Spotlight::Resources::OaipmhModsConverter.new(set, exhibit.slug, get_mapping_file)
-    end
-
-    def update_progress_total(job_progress)
-      job_progress.total = complete_list_size
-    end
-
-    def get_mapping_file
-      return if mapping_file.eql?('Default Mapping File') || mapping_file.eql?('New Mapping File')
-
-      mapping_file
     end
   end
 end
