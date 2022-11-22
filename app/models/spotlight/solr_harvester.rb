@@ -3,7 +3,7 @@ require 'uri'
 
 module Spotlight
   class SolrHarvester < Harvester
-    ROW_COUNT = 50
+    ROW_COUNT = 1000
     DEFAULT_SORT_FIELD = '_id'
 
     alias_attribute :mapping_file, :solr_mapping_file
