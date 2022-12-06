@@ -13,7 +13,7 @@ en:
                 help: "Add the base URL of the data to be harvested."
               set: "Set Spec"
               set-field:
-                help: "Type in the set name to be harvested."
+                help: "Type in the set spec to be harvested."
               mapping-file: "Select Mapping File"
               mapping-file-field:
                 help: "Select Mapping File to Use (default is mapping.yml)."
