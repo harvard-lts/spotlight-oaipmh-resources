@@ -1,3 +1,35 @@
+#  2022-12-05: Merged BTA changes/additions with curiosity.yml (VV)
+#              Renamed host-title_ssim to journal-title_ssim (VV)
+#              Renamed digitization_ssim to digitizing-institution_ssim (VV)
+#              Renamed biographical-historical_tesim to biographical-historical-note_tesim (VV)
+#              Renamed norm-date_ssim to normalized-date_ssim (VV)
+#              Renamed owner_ssim to owning-institution_ssim (VV)
+#  2022-10-27: Added host-title_ssim to enable serial title facet for BTA. It will pick up the title of the immediate parent of the component. Test before implementing in a collection with Alma records. (RKW)
+#              Changed norm_date_ssim to text substring function to just extract the year. Did not work; reverted.
+#  2022-10-25: Removed unsuccessful creators-contributors-limited_ssim (RKW)
+#              Added digitization_ssim to enable faceting by providers of digitization
+#  2022-10-21: Added new tesim for biographical/historical note that lacks @displayLabel="Issuing Body Note" (RKW)
+#              Excluded biographical/historical note from note_tesim
+#              Edited archival-series xpaths to reduce complexity -- not working
+#              Added xpaths to place of origin fields to pick up places with no type attribute.
+#              Revised publisher xPaths 
+#              Added owner_ssim
+#  2022-10-13: Added unit-id_tesim to select the top-level--i.e., component--Component Unique Identifier in records from ArchivesSpace (RKW)
+#              Added archival-series tesim and ssim to allow for display and facet in BTA
+#              Added norm-date_ssim to enable a facet by the normalized start date for BTA
+#              Replaced the publisher fields with xpath-only ones as an experiment
+#              Replaced the place of origin fields with xpath-only ones as an experiment
+#              Added creators-contributors-limited_ssim as a test to exclude names with certain roles
+#              Replaced xpath-values in additional-digital-items_tesim (per VV)
+#  2022-09-20: Updates for Black Teacher Archive: (RKW) 
+#              Added new tesim field for Issuing Body Note
+#              Excluded note w/displayLabel="Issuing Body Note" from note_tesim field
+#              Added xpaths to tesim and ssim for originInfo/publisher in immediate relatedItem
+#              Added xpaths to tesim and ssim for originInfo/place/placeTerm in immediate relatedItem 
+#              Added new tesim field for note where @type="source characteristics"
+#              Excluded note w/@type="source characteristics" from note_tesim field
+#              Added new tesim field for source institution digitization
+#              Added new xpath-values to creator-contributor_tesim and creators-contributors_ssim to pick up names in the immediate host relatedItem
 #  2022-03-31: Added permalink xpath for wave (AVS)
 #  2022-02-17: Added permalink xpath for hedda (VV)
 #  2021-11-17: Added new field for the finding aid component link: finding-aid-component_tesim
@@ -71,6 +103,7 @@
 #        Distinguish using the titleInfo type attribute, where values can be abbreviated, translated, alternative, or uniform. The primary title would lack a type attribute. 
 #  -- vernacular script elements are messily duplicative when not all parts of script field are in the script 
 #       (See in particular publishers, creation dates, notes.) Exactly duplicate strings will be suppressed from display, but values with any variation, e.g., punctuation will still display.
+#  -- normalized-date_ssim is only applicable for records from ArchivesSpace and some Alma records. For Alma sourced dates, add mods:dateIssued encoding="marc".
 
 - spotlight-field: unique-id_tesim
   mods:
@@ -125,7 +158,16 @@
           - subpath: name/namePart
           - subpath: titleInfo/title
           - subpath: titleInfo/partName
-        
+
+# - spotlight-field: archival-series_tesim
+#  xpath:
+#      - xpath-value: "//mods:relatedItem[/mods:mods/mods:relatedItem[@type='host']/mods:physicalDescription/mods:note[text()="series"]]/mods:titleInfo/mods:title"
+
+# - spotlight-field: archival-series_ssim
+#  xpath:
+#      - xpath-value: "//mods:relatedItem[/mods:mods/mods:relatedItem[@type='host']/mods:physicalDescription/mods:note[text()="series"]]/mods:titleInfo/mods:title"
+
+
 # Deliberately including role in display but not in facet, hence the slightly different field names.
 # Need to add "/" between Creator and Contributor for both field names in Spotlight exhibit after initial ingest. 
 
@@ -139,6 +181,7 @@
           - subpath: namePart
           - subpath: role/roleTerm
   xpath:
+    - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name/mods:namePart"
     - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
         
 - spotlight-field: creators-contributors_ssim
@@ -150,17 +193,42 @@
         subpaths:
           - subpath: namePart
   xpath:
+    - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name/mods:namePart"
     - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
-         
+
+# added journal-title_ssim to enable serial title facet for BTA. It will pick up the title of the immediate parent of the component. Test before implementing in a collection with Alma records.
+- spotlight-field: journal-title_ssim
+  xpath:
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"
+
+# Added owning-institution_ssim to enable faceting by owner names 
+- spotlight-field: owning-institution_ssim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "/mods:mods/mods:name[mods:role/mods:roleTerm='Owner']/mods:namePart"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name[mods:role/mods:roleTerm='Owner']/mods:namePart"
+
+# Added digitizing-institution_ssim to enable faceting by providers of digitization
+- spotlight-field: digitizing-institution_ssim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+  xpath:
+      - xpath-value: "/mods:mods/mods:name[mods:role/mods:roleTerm='Provider of digitization']/mods:namePart"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name[mods:role/mods:roleTerm='Provider of digitization']/mods:namePart"
+
 - spotlight-field: publisher_tesim
+  multivalue-breaks: "yes"
   delimiter: "|"  
-  mods:
-      - path: originInfo/publisher
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:publisher"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:publisher"
 
 - spotlight-field: publisher_ssim
   multivalue-breaks: "yes"
-  mods:
-      - path: originInfo/publisher
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:publisher"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:publisher"
 
 - spotlight-field: container_tesim
   delimiter: ", " 
@@ -171,17 +239,19 @@
 
 - spotlight-field: place-of-origin_tesim
   multivalue-breaks: "yes" 
-  mods:
-      - path: originInfo/place/placeTerm
-        attribute: type
-        attribute-value: '!code'
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm[@type!='code']"
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm[not(@type)]"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:place/mods:placeTerm[@type!='code']"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:place/mods:placeTerm[not(@type)]"
 
 - spotlight-field: place-of-origin_ssim
   multivalue-breaks: "yes"
-  mods:
-      - path: originInfo/place/placeTerm
-        attribute: type
-        attribute-value: '!code'
+  xpath:
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm[@type!='code']"
+      - xpath-value: "/mods:mods/mods:originInfo/mods:place/mods:placeTerm[not(@type)]"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:place/mods:placeTerm[@type!='code']"
+      - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:originInfo/mods:place/mods:placeTerm[not(@type)]"
 
 - spotlight-field: date_tesim
   multivalue-breaks: "yes"
@@ -197,23 +267,48 @@
         attribute-value: 
       - path: originInfo/copyrightDate
         attribute: '!point'
-        attribute-value:   
+        attribute-value:  
 
 - spotlight-field: date_ssim
   multivalue-breaks: "yes"
   mods:
       - path: originInfo/dateIssued
         attribute: '!point'
-        attribute-value:       
+        attribute-value: 
       - path: originInfo/dateCreated
         attribute: '!point'
-        attribute-value: 
+        attribute-value:       
       - path: originInfo/dateCaptured
         attribute: '!point'
         attribute-value: 
       - path: originInfo/copyrightDate
         attribute: '!point'
         attribute-value:  
+
+# Enables a facet by the normalized start date. For display in Spotlight, use instead of Date for facet display, but use date_tesim for metadata display.
+# Currently, this facet is only applicable for records from ArchivesSpace and some Alma records; therefore this facet is not applicable to all collections. 
+# For Alma sourced dates, we will need to add and test mods:dateIssued encoding="marc".
+- spotlight-field: normalized-date_ssim
+  multivalue-breaks: "yes"
+  delimiter: "|"
+#  xpath:
+#      xpath-value: "/mods:mods/mods:originInfo/mods:dateCreated[substring(text(),1,4)]"
+  mods:
+      - path: originInfo/dateCreated
+        attribute: 'point'
+        attribute-value: 'start'
+      - path: originInfo/dateIssued
+        attribute: 'point'
+        attribute-value: 'start'
+      - path: originInfo/dateCaptured
+        attribute: 'point'
+        attribute-value: 'start'
+      - path: originInfo/copyrightDate
+        attribute: 'point'
+        attribute-value: 'start'
+      - path: originInfo/dateOther
+        attribute: 'point'
+        attribute-value: 'start'
 
 - spotlight-field: edition_tesim
   mods:
@@ -588,6 +683,14 @@
         attribute: type
         attribute-value: ('!repository' OR '!container')
         
+#  Added for BTA, but could be useful for other collections' ArchivesSpace content. This will only select the top-level--i.e., component--ArchivesSpace Component Unique Identifier.
+- spotlight-field: unit-id_tesim
+  multivalue-breaks: "yes"
+  mods:
+      - path: identifier
+        attribute: type
+        attribute-value: unit id
+        
 - spotlight-field: attribution_tesim
   multivalue-breaks: "yes"
   mods:
@@ -612,10 +715,42 @@
         attribute: type
         attribute-value: preferred citation
 
+# Added for BTA
+- spotlight-field: source-characteristics_tesim
+  multivalue-breaks: "yes"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: source characteristics
+
+# Added for BTA. Will only pick up the note in the immediate parent of the leaf node
+- spotlight-field: issuing-body_tesim
+  multivalue-breaks: "yes"
+  mods:
+      - path: relatedItem/note
+        attribute: displayLabel
+        attribute-value: Issuing Body Note
+
+- spotlight-field: biographical-historical-note_tesim
+  multivalue-breaks: "yes"
+  mods:
+      - path: note
+        attribute: type
+        attribute-value: biographical/historical
+      - path: relatedItem/note
+        attribute: type
+        attribute-value: biographical/historical
+
 - spotlight-field: note_tesim
   multivalue-breaks: "yes"
   xpath:
-      - xpath-value: "//mods:note[not(@type='statement of responsibility' or @type='organization' or @type='preferred citation')]"
+      - xpath-value: "//mods:note[not(@type='statement of responsibility' or @type='organization' or @type='preferred citation' or @type='source characteristics' or @type='biographical/historical' or @displayLabel='Issuing Body Note')]"
+
+- spotlight-field: source-institution-digitization_tesim
+  delimiter: ": "
+  xpath:
+      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:titleInfo/mods:title"
+      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:location/mods:url" 
 
 - spotlight-field: thumbnail_url_ssm
   xpath:
@@ -630,8 +765,7 @@
 - spotlight-field: additional-digital-items_tesim
   multivalue-breaks: "yes"
   xpath:
-      - xpath-value: "(//mods:location/mods:url[@access='raw object'])[2]"
-      - xpath-value: "(//mods:location/mods:url[@access='raw object'])[3]"
+      - xpath-value: "(//mods:location/mods:url[@access='raw object'])[position()>1]"
 
 - spotlight-field: rights_tesim
   mods:
@@ -639,7 +773,7 @@
        
 - spotlight-field: record-id_tesim
   mods:
-      - path: recordInfo/recordIdentifier  
+      - path: recordInfo/recordIdentifier
 
 - spotlight-field: available-to_tesim
   multivalue-breaks: "yes"
