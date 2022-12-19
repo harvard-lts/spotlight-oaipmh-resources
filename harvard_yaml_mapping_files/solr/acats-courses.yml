@@ -1,6 +1,7 @@
 # From Mongo Solr: acatcourses
 # To Spotlight Solr
 #
+# 2022-12-16: commented out unused ssims per VV for facet issues (MC)
 # 2018-08-22: changed field-name "_id" to "hashKey" in record-id_tesim (RKW)
 # 2018-08-21: added full_title_tesim, spotlight_upload_description_tesim, and semester_tesim (RKW)
 # 2018-08-20: rev. draft (RKW)
@@ -25,9 +26,9 @@
   solr-field:
       - field-name: hashKey
 #
-- spotlight-field: school-short-name_ssim
-  solr-field:
-      - field-name: SCHOOL_SHORT_NAME
+# - spotlight-field: school-short-name_ssim
+#   solr-field:
+#       - field-name: SCHOOL_SHORT_NAME
 #
 - spotlight-field: school-short-name_tesim
   solr-field:
@@ -41,33 +42,33 @@
   solr-field:
       - field-name: SCHOOL_NM
 #
-- spotlight-field: course-title_ssim
-  solr-field:
-      - field-name: COURSE_TITLE
+# - spotlight-field: course-title_ssim
+#   solr-field:
+#       - field-name: COURSE_TITLE
 #
 - spotlight-field: course-title_tesim
   solr-field:
       - field-name: COURSE_TITLE
 #
-- spotlight-field: course-number_ssim
-  solr-field:
-      - field-name: COURSE_NO
+# - spotlight-field: course-number_ssim
+#   solr-field:
+#       - field-name: COURSE_NO
 #
 - spotlight-field: course-number_tesim
   solr-field:
       - field-name: COURSE_NO
 #
-- spotlight-field: fas-catalog-number_ssim
-  solr-field:
-      - field-name: FAS_CAT_NO
+# - spotlight-field: fas-catalog-number_ssim
+#   solr-field:
+#       - field-name: FAS_CAT_NO
 #
 - spotlight-field: fas-catalog-number_tesim
   solr-field:
       - field-name: FAS_CAT_NO
 #
-- spotlight-field: faculty_ssim
-  solr-field:
-      - field-name: INSTRUCTOR
+# - spotlight-field: faculty_ssim
+#   solr-field:
+#       - field-name: INSTRUCTOR
 #
 - spotlight-field: faculty_tesim
   solr-field:
@@ -77,9 +78,9 @@
   solr-field:
       - field-name: CREDITS 
 #
-- spotlight-field: term_ssim
-  solr-field:
-      - field-name: TERM_DESC
+# - spotlight-field: term_ssim
+#   solr-field:
+#       - field-name: TERM_DESC
 #
 - spotlight-field: term_tesim
   solr-field:
@@ -103,9 +104,9 @@
       - field-name: X_SCHED
       - field-name: Y_SCHED
 #
-- spotlight-field: location_ssim
-  solr-field:
-      - field-name: LOCATION 
+# - spotlight-field: location_ssim
+#   solr-field:
+#       - field-name: LOCATION 
 #
 - spotlight-field: location_tesim
   solr-field:
@@ -131,9 +132,9 @@
   solr-field:
       - field-name: SPECIAL_NOTES
 #
-- spotlight-field: offer-year_ssim
-  solr-field:
-      - field-name: OFFER_YR
+# - spotlight-field: offer-year_ssim
+#   solr-field:
+#       - field-name: OFFER_YR
 #
 - spotlight-field: offer-year_tesim
   solr-field:
@@ -163,6 +164,6 @@
   solr-field:
       - field-name: startYear
 #
-- spotlight-field: end-year_ssim
-  solr-field:
-      - field-name: endYear
+# - spotlight-field: end-year_ssim
+#   solr-field:
+#       - field-name: endYear
