@@ -131,9 +131,10 @@ module Spotlight
       # If we want to add a solr query, check that field, if not we don't need it
       if !filter.empty?
         solr_url = valid_base_url + set + filter
+        puts solr_url
       else
         solr_url = valid_base_url + set
-        puts solr_url
+      end
 
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
