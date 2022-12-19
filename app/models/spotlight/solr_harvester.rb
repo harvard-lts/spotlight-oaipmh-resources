@@ -128,13 +128,18 @@ module Spotlight
     def solr_connection
       # Add trailing "/" if it's missing from base_url
       valid_base_url = base_url.match?(/\/$/) ? base_url : base_url + '/'
-      solr_url = valid_base_url + set
+      # If we want to add a solr query, check that field, if not we don't need it
+      if !filter.empty?
+        solr_url = valid_base_url + set + filter
+      else
+        solr_url = valid_base_url + set
+        puts solr_url
 
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
     def solr_converter
-      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, exhibit.slug, get_mapping_file)
+      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, filter, exhibit.slug, get_mapping_file)
     end
   end
 end

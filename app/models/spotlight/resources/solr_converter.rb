@@ -59,8 +59,9 @@ end
     attr_accessor :sidecar_hash
        
     #Initialize with the name of the set being converted
-    def initialize(set, exhibitslug, mapping_file)
+    def initialize(set, filter, exhibitslug, mapping_file)
       @set = set
+      @filter = filter
       @exhibitslug = exhibitslug
       @mapping_file = mapping_file   
       @converter_items = Array.new  
