@@ -25,7 +25,7 @@ module Spotlight::Resources
       @harvester = harvester
       @exhibit = harvester.exhibit
       @set = harvester.set
-      @filter =harvester.filter
+      @filter = harvester.filter
       @user = user
       @sidecar_ids = harvester.harvest_items(job_tracker: job_tracker, job_progress: progress)
       @total_errors = harvester.total_errors
