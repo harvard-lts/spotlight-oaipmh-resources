@@ -141,7 +141,7 @@ module Spotlight
     end
 
     def solr_converter
-      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, exhibit.slug, get_mapping_file)
+      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, filter, exhibit.slug, get_mapping_file)
     end
   end
 end
