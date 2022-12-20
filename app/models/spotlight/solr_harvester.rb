@@ -78,6 +78,8 @@ module Spotlight
 
     def solr_harvests(cursor = nil)
       cursor = cursor.presence || '*'
+      sort_field = sort_field_for_set(set)
+            
       if !filter.empty?                                        
         filter_value = "#{filter}"
       else                                           
