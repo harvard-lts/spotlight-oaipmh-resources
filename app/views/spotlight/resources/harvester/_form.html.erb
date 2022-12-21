@@ -9,6 +9,7 @@
       :onChange=>"toggleUploadArea(this.value);" %>
   </span>
   <span id="solrharvester" style="display:none">
+    <%= f.text_field :filter, help: t('.filter-field.help'), label: t('.filter'), required: false %>
     <%= f.select :solr_mapping_file,
       Spotlight::SolrHarvester.mapping_files,
       { help: t('.mapping-file-field.help'), label: t('.mapping-file') },

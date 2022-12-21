@@ -45,6 +45,7 @@ module Spotlight::Resources
         Spotlight::SolrHarvester.new(
           base_url: resource_params[:url],
           set: resource_params[:set],
+          filter: resource_params[:filter],
           solr_mapping_file: mapping_file(type),
           exhibit: current_exhibit
         )
@@ -64,7 +65,7 @@ module Spotlight::Resources
     end
 
     def resource_params
-      params.require(:harvester).permit(:type, :url, :set, :mods_mapping_file, :solr_mapping_file, :custom_mapping)
+      params.require(:harvester).permit(:type, :url, :set, :filter, :mods_mapping_file, :solr_mapping_file, :custom_mapping)
     end
   end
 end

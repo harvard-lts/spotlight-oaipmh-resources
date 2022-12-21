@@ -14,6 +14,9 @@ en:
               set: "Set Spec"
               set-field:
                 help: "Type in the set spec to be harvested."
+              filter: "Solr Query Filter"
+              filter-field:
+                help: "Add a properly formatted solr query filter."
               mapping-file: "Select Mapping File"
               mapping-file-field:
                 help: "Select Mapping File to Use (default is mapping.yml)."

@@ -79,11 +79,17 @@ module Spotlight
     def solr_harvests(cursor = nil)
       cursor = cursor.presence || '*'
       sort_field = sort_field_for_set(set)
+            
+      if !filter.empty?                                        
+        filter_value = "#{filter}"
+      else                                           
+        filter_value = '*:*'                             
+      end  
 
-      solr_connection.get(
-        'select',
-        params: {
-          q: '*:*',
+      solr_connection.get(        
+        'select',                          
+        params: {                             
+          q: filter_value,
           cursorMark: cursor,
           sort: "#{sort_field} asc",
           rows: ROW_COUNT,
@@ -128,13 +134,14 @@ module Spotlight
     def solr_connection
       # Add trailing "/" if it's missing from base_url
       valid_base_url = base_url.match?(/\/$/) ? base_url : base_url + '/'
+      # If we want to add a solr query, check that field, if not we don't need it
       solr_url = valid_base_url + set
 
       @solr_connection ||= RSolr.connect(url: solr_url)
     end
 
     def solr_converter
-      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, exhibit.slug, get_mapping_file)
+      @solr_converter ||= Spotlight::Resources::SolrConverter.new(set, filter, exhibit.slug, get_mapping_file)
     end
   end
 end
