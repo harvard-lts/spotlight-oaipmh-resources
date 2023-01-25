@@ -8,6 +8,8 @@
 
 tedming:
   unique_key: id
+ming:
+  unique_key: id
 acat-calendar:
   unique_key: _id
 acat-courses:
