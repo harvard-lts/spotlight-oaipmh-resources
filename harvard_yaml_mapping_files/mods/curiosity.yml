@@ -1,3 +1,8 @@
+#  2023-04-13: Added new xpath to additional-digital-items_tesim for BTA. If this is the preferred label, we can delete source-institution-digitization_tesim. (VV)
+#              source-institution-digitization_tesim currently has label as well which is better for accessibility, but the link is not hyperlinked in CURIOSity. (VV)
+#              Need to confirm with BTA which label and display is preferred. (VV)
+#  2023-04-04: Added permalink xpath for amw (VV)
+#  2023-02-21: Added permalink xpath for woc (VV)
 #  2022-12-05: Merged BTA changes/additions with curiosity.yml (VV)
 #              Renamed host-title_ssim to journal-title_ssim (VV)
 #              Renamed digitization_ssim to digitizing-institution_ssim (VV)
@@ -104,6 +109,7 @@
 #  -- vernacular script elements are messily duplicative when not all parts of script field are in the script 
 #       (See in particular publishers, creation dates, notes.) Exactly duplicate strings will be suppressed from display, but values with any variation, e.g., punctuation will still display.
 #  -- normalized-date_ssim is only applicable for records from ArchivesSpace and some Alma records. For Alma sourced dates, add mods:dateIssued encoding="marc".
+#  -- Can we make a generic label for fields like Additional Digital Item and Permalink so they don't display as a naked link? This is bad accessibility.
 
 - spotlight-field: unique-id_tesim
   mods:
@@ -166,7 +172,6 @@
 # - spotlight-field: archival-series_ssim
 #  xpath:
 #      - xpath-value: "//mods:relatedItem[/mods:mods/mods:relatedItem[@type='host']/mods:physicalDescription/mods:note[text()="series"]]/mods:titleInfo/mods:title"
-
 
 # Deliberately including role in display but not in facet, hence the slightly different field names.
 # Need to add "/" between Creator and Contributor for both field names in Spotlight exhibit after initial ingest. 
@@ -750,7 +755,7 @@
   delimiter: ": "
   xpath:
       - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:titleInfo/mods:title"
-      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:location/mods:url" 
+      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:location/mods:url"
 
 - spotlight-field: thumbnail_url_ssm
   xpath:
@@ -766,6 +771,8 @@
   multivalue-breaks: "yes"
   xpath:
       - xpath-value: "(//mods:location/mods:url[@access='raw object'])[position()>1]"
+# Adding Source Institution Digitization path for BTA
+      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:location/mods:url"
 
 - spotlight-field: rights_tesim
   mods:
@@ -800,6 +807,10 @@
 #- spotlight-field: permalink-dcp_tesim
 #  xpath:
 #      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
+
+- spotlight-field: permalink-amw_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Anna May Wong']"  
 
 - spotlight-field: permalink-bac_tesim
   xpath:
@@ -924,6 +935,10 @@
 - spotlight-field: permalink-wave_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Catching the Wave']"
+
+- spotlight-field: permalink-woc_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Worlds of Change']"  
 
 - spotlight-field: permalink-ww_tesim
   xpath:
