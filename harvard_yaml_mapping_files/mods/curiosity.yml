@@ -1,3 +1,7 @@
+#  2023-05-26: Updated the title for amw (VV)
+#              Added permalink for sba (VV)
+#              Changed source-institution-digitization_tesim to source-institution-copy_tesim and kept the label with the non-hyperlinked link for accessibility. (VV)
+#              Removed BTA xpath from additional-digital-items_tesim as they would like to use source-institution-copy instead. (VV)
 #  2023-04-13: Added new xpath to additional-digital-items_tesim for BTA. If this is the preferred label, we can delete source-institution-digitization_tesim. (VV)
 #              source-institution-digitization_tesim currently has label as well which is better for accessibility, but the link is not hyperlinked in CURIOSity. (VV)
 #              Need to confirm with BTA which label and display is preferred. (VV)
@@ -295,9 +299,12 @@
 # For Alma sourced dates, we will need to add and test mods:dateIssued encoding="marc".
 - spotlight-field: normalized-date_ssim
   multivalue-breaks: "yes"
-  delimiter: "|"
-#  xpath:
-#      xpath-value: "/mods:mods/mods:originInfo/mods:dateCreated[substring(text(),1,4)]"
+  delimiter: "|" 
+  # The following line works, but it passes the whole string. 
+  # We think the harvester is expecting a node instead of a string and therefore ignoring the substring function.
+  # Either the harvester needs to accept strings OR upgrading to xpath2 will enable turning a string back into a node.
+  # xpath:
+  #      - xpath-value: "/mods:mods/mods:originInfo/mods:dateCreated[@point='start'][substring(text(),1,4)]"
   mods:
       - path: originInfo/dateCreated
         attribute: 'point'
@@ -751,7 +758,7 @@
   xpath:
       - xpath-value: "//mods:note[not(@type='statement of responsibility' or @type='organization' or @type='preferred citation' or @type='source characteristics' or @type='biographical/historical' or @displayLabel='Issuing Body Note')]"
 
-- spotlight-field: source-institution-digitization_tesim
+- spotlight-field: source-institution-copy_tesim
   delimiter: ": "
   xpath:
       - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:titleInfo/mods:title"
@@ -771,8 +778,6 @@
   multivalue-breaks: "yes"
   xpath:
       - xpath-value: "(//mods:location/mods:url[@access='raw object'])[position()>1]"
-# Adding Source Institution Digitization path for BTA
-      - xpath-value: "//mods:relatedItem[@displayLabel='Source Institution Digitization']/mods:location/mods:url"
 
 - spotlight-field: rights_tesim
   mods:
@@ -810,7 +815,7 @@
 
 - spotlight-field: permalink-amw_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='Anna May Wong']"  
+      - xpath-value: "//mods:url[@displayLabel='Anna May Wong Abroad, 1928-1936']"  
 
 - spotlight-field: permalink-bac_tesim
   xpath:
@@ -911,6 +916,10 @@
 - spotlight-field: permalink-saef_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Slavery, Abolition, Emancipation and Freedom: Primary Sources from Houghton Library']"
+
+- spotlight-field: permalink-sba_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Susan B. Anthony: Papers at Schlesinger Library']"
 
 - spotlight-field: permalink-scarlet_tesim
   xpath:
