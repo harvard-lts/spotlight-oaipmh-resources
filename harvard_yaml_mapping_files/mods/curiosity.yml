@@ -1,3 +1,5 @@
+#  2023-06-08: Added permalink xpath for bta (VV)
+#  2023-06-06: Added permalink xpath for brewster (VV)
 #  2023-05-26: Updated the title for amw (VV)
 #              Added permalink for sba (VV)
 #              Changed source-institution-digitization_tesim to source-institution-copy_tesim and kept the label with the non-hyperlinked link for accessibility. (VV)
@@ -824,6 +826,14 @@
 - spotlight-field: permalink-botanicals_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Botanical Illustrations']"  
+
+- spotlight-field: permalink-brewster_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='William Brewster']" 
+
+- spotlight-field: permalink-bta_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Black Teacher Archive']"  
       
 - spotlight-field: permalink-buttons_tesim
   xpath:
