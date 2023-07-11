@@ -1,3 +1,4 @@
+#  2023-07-10: Added permalink xpath for coptica (VV)
 #  2023-06-08: Added permalink xpath for bta (VV)
 #  2023-06-06: Added permalink xpath for brewster (VV)
 #  2023-05-26: Updated the title for amw (VV)
@@ -850,6 +851,10 @@
 - spotlight-field: permalink-contagion_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Contagion: Historical Views of Diseases and Epidemics']" 
+
+- spotlight-field: permalink-coptica_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Coptica at Harvard']" 
       
 - spotlight-field: permalink-crb_tesim
   xpath:
