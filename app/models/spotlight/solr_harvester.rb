@@ -122,7 +122,7 @@ module Spotlight
         'unique_key_mappings',
         'unique_keys_by_set.yml'
       )
-      return DEFAULT_SORT_FIELD unless File.exists?(file)
+      return DEFAULT_SORT_FIELD unless File.exist?(file)
 
       YAML.load_file(file).dig(set, 'unique_key').presence || DEFAULT_SORT_FIELD
     end
