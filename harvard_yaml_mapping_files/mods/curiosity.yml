@@ -1,3 +1,4 @@
+#  2023-10-02: Updated permalink xpath for bta to include 'The' (VV)
 #  2023-07-10: Added permalink xpath for coptica (VV)
 #  2023-06-08: Added permalink xpath for bta (VV)
 #  2023-06-06: Added permalink xpath for brewster (VV)
@@ -834,7 +835,7 @@
 
 - spotlight-field: permalink-bta_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='Black Teacher Archive']"  
+      - xpath-value: "//mods:url[@displayLabel='The Black Teacher Archive']"  
       
 - spotlight-field: permalink-buttons_tesim
   xpath:
