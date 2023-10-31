@@ -1,3 +1,4 @@
+#  2023-10-31: Renamed owning-institution_ssim to contributing-institution_ssim (VV)
 #  2023-10-02: Updated permalink xpath for bta to include 'The' (VV)
 #  2023-07-10: Added permalink xpath for coptica (VV)
 #  2023-06-08: Added permalink xpath for bta (VV)
@@ -214,8 +215,8 @@
   xpath:
       - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"
 
-# Added owning-institution_ssim to enable faceting by owner names 
-- spotlight-field: owning-institution_ssim
+# Added contributing-institution_ssim to enable faceting by owner names 
+- spotlight-field: contributing-institution_ssim
   multivalue-breaks: "yes"
   delimiter: "|"
   xpath:
