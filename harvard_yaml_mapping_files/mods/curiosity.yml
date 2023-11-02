@@ -772,6 +772,7 @@
 - spotlight-field: thumbnail_url_ssm
   xpath:
       - xpath-value: "(//mods:location/mods:url[@access='preview'])[1]"
+      - xpath-value: "(//mods:relatedItem/mods:location/mods:url[@access='preview'])[1]"
 
 # This helps, but it can result in thumbnail and full being for different resources
 
