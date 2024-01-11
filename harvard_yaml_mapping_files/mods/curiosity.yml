@@ -1,3 +1,4 @@
+#  2024-01-11: Added permalink xpath for jeffry (VV)
 #  2023-10-31: Renamed owning-institution_ssim to contributing-institution_ssim (VV)
 #  2023-10-02: Updated permalink xpath for bta to include 'The' (VV)
 #  2023-07-10: Added permalink xpath for coptica (VV)
@@ -909,6 +910,10 @@
 - spotlight-field: permalink-immigration_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Immigration to the United States, 1789-1930']"
+
+- spotlight-field: permalink-jeffry_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='In Black and White: Photographs of Black Theater by Alix Jeffry']"
 
 - spotlight-field: permalink-lap_tesim
   xpath:
