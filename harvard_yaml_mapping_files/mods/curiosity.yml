@@ -1,3 +1,4 @@
+#  2024-03-29: Added permalink xpaths for bls and pins (VV)
 #  2024-01-11: Added permalink xpath for jeffry (VV)
 #  2023-10-31: Renamed owning-institution_ssim to contributing-institution_ssim (VV)
 #  2023-10-02: Updated permalink xpath for bta to include 'The' (VV)
@@ -838,7 +839,11 @@
 - spotlight-field: permalink-bta_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='The Black Teacher Archive']"  
-      
+
+- spotlight-field: permalink-bls_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Boston Latin School']"  
+
 - spotlight-field: permalink-buttons_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Political Buttons']"  
@@ -950,6 +955,10 @@
 - spotlight-field: permalink-scores_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Digital Scores and Libretti']"
+
+- spotlight-field: permalink-pins_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Soviet Pins']"
 
 - spotlight-field: permalink-ssb_tesim
   xpath:
