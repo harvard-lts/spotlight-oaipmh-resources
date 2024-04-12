@@ -1,3 +1,4 @@
+#  2024-04-12: Added permalink xpath for wwwk (VV)
 #  2024-03-29: Added permalink xpaths for bls and pins (VV)
 #  2024-01-11: Added permalink xpath for jeffry (VV)
 #  2023-10-31: Renamed owning-institution_ssim to contributing-institution_ssim (VV)
@@ -983,3 +984,7 @@
 - spotlight-field: permalink-ww_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Women Working, 1800-1930']"  
+
+- spotlight-field: permalink-wwwk_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='What Women Want To Know']"  
