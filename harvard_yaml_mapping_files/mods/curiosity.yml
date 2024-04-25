@@ -1,3 +1,4 @@
+#  2024-04-25: Added permalink xpath for kurdish (VV)
 #  2024-04-12: Added permalink xpath for wwwk (VV)
 #  2024-03-29: Added permalink xpaths for bls and pins (VV)
 #  2024-01-11: Added permalink xpath for jeffry (VV)
@@ -920,6 +921,10 @@
 - spotlight-field: permalink-jeffry_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='In Black and White: Photographs of Black Theater by Alix Jeffry']"
+
+- spotlight-field: permalink-kurdish_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Kurdish People of the Near East']"
 
 - spotlight-field: permalink-lap_tesim
   xpath:
