@@ -1,3 +1,4 @@
+#  2024-07-01: Removed permalink xpath for dcp aka Harvard Digital Collections aka HDC (VV)
 #  2024-04-25: Added permalink xpath for kurdish (VV)
 #  2024-04-12: Added permalink xpath for wwwk (VV)
 #  2024-03-29: Added permalink xpaths for bls and pins (VV)
@@ -818,9 +819,6 @@
 #    replacing "Studies in Scarlet" with the value of the displayLabel attribute for the collection.
 #
 #
-#- spotlight-field: permalink-dcp_tesim
-#  xpath:
-#      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
 
 - spotlight-field: permalink-amw_tesim
   xpath:
@@ -881,10 +879,6 @@
 - spotlight-field: permalink-dag_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Daguerreotypes at Harvard']"
-
-- spotlight-field: permalink-dcp_tesim
-  xpath:
-      - xpath-value: "//mods:url[@displayLabel='Harvard Digital Collections']"
 
 - spotlight-field: permalink-epj_tesim
   xpath:
