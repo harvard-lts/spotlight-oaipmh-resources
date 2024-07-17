@@ -1,3 +1,4 @@
+#  2024-07-17: Added permalink xpath for salt (VV)
 #  2024-07-01: Removed permalink xpath for dcp aka Harvard Digital Collections aka HDC (VV)
 #  2024-04-25: Added permalink xpath for kurdish (VV)
 #  2024-04-12: Added permalink xpath for wwwk (VV)
@@ -959,6 +960,10 @@
 - spotlight-field: permalink-pins_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Soviet Pins']"
+
+- spotlight-field: permalink-salt_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Salt Prints']"
 
 - spotlight-field: permalink-ssb_tesim
   xpath:
