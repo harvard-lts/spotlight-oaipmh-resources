@@ -37,7 +37,7 @@ module Spotlight
         # Log an update every 100 records
         if (job_progress.progress % 100).zero?
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
-          #Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
+          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
         end
       end
       @sidecar_ids
