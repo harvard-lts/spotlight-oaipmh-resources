@@ -40,8 +40,9 @@ module Spotlight
           else
             Delayed::Worker.logger.add(Logger::INFO, "didnt set one, nil resumption token")
             if (job_progress.progress != job_progress.total)
+                Delayed::Worker.logger.add(Logger::INFO, "progress is #{job_progress.progress}, total is #{job_progress.total}")
                 Delayed::Worker.logger.add(Logger::INFO, "need to set a token")
-                resumption_token = old_rt
+                resumption_token = resumption_token.next(old_rt)
             end
           end
           update_progress_total(job_progress) # set size can change mid-harvest
@@ -51,7 +52,7 @@ module Spotlight
         if (job_progress.progress % 100).zero?
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
           if !resumption_token.nil?
-            Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
+            Delayed::Worker.logger.add(Logger::INFO, "100 record update UPDATED resumption token is #{resumption_token}")
           else
             Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
           end
