@@ -56,7 +56,6 @@ module Spotlight
     end
 
     def harvest_item(record, job_tracker, job_progress)
-      Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
       parsed_oai_item = Spotlight::Resources::OaipmhModsParser.new(exhibit, oai_mods_converter)
 
       parsed_oai_item.metadata = record.metadata
