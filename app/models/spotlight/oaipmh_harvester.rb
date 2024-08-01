@@ -16,6 +16,7 @@ module Spotlight
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
+      Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
 
       update_progress_total(job_progress)
       until resumption_token.nil? && last_page_evaluated
@@ -23,17 +24,21 @@ module Spotlight
 
         harvests.each do |record|
           harvest_item(record, job_tracker, job_progress)
+          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
         end
 
         if resumption_token.present?
+          Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
+          Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
           update_progress_total(job_progress) # set size can change mid-harvest
         end
 
         # Log an update every 100 records
         if (job_progress.progress % 100).zero?
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
+          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
         end
       end
       @sidecar_ids
@@ -84,10 +89,12 @@ module Spotlight
 
     def oaipmh_harvests
       @oaipmh_harvests = client.list_records(set: set, metadata_prefix: 'mods')
+      Delayed::Worker.logger.add(Logger::INFO, "the ORIGINAL OAI list is #{oaipmh_harvests}")
     end
 
     def resumption_oaipmh_harvests(token)
       @oaipmh_harvests = client.list_records(resumption_token: token)
+      Delayed::Worker.logger.add(Logger::INFO, "the resumtion OAI list is #{oaipmh_harvests}")
     end
 
     def complete_list_size
