@@ -32,12 +32,19 @@ module Spotlight
 
         if resumption_token.present?
           Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
+          old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
           if !resumption_token.nil?
             Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
           else
-            Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
+            Delayed::Worker.logger.add(Logger::INFO, "didnt set one, nil resumption token")
+            if (job_progress.progress != job_progress.total).zero?
+              while resumption_token.nil?
+                Delayed::Worker.logger.add(Logger::INFO, "need to set a token")
+                resumption_token = old_rt
+              end
+            end
           end
           update_progress_total(job_progress) # set size can change mid-harvest
         end
