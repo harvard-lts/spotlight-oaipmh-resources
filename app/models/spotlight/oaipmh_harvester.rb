@@ -34,14 +34,17 @@ module Spotlight
           Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
           old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
+          if harvests.blank?
+              harvests = resumption_oaipmh_harvests(resumption_token)
+          end
           resumption_token = harvests.resumption_token
           if !resumption_token.nil?
             Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
           else
             Delayed::Worker.logger.add(Logger::INFO, "didnt set one, nil resumption token")
             if (job_progress.progress != job_progress.total)
-                Delayed::Worker.logger.add(Logger::INFO, "progress is #{job_progress.progress}, total is #{job_progress.total}")
-                Delayed::Worker.logger.add(Logger::INFO, "need to set a token")
+                Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
+                Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
                 resumption_token = resumption_token.next(old_rt)
             end
           end
@@ -54,7 +57,7 @@ module Spotlight
           if !resumption_token.nil?
             Delayed::Worker.logger.add(Logger::INFO, "100 record update UPDATED resumption token is #{resumption_token}")
           else
-            Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
+            Delayed::Worker.logger.add(Logger::INFO, "nil resumption token 100 record update")
           end
         end
       end
@@ -110,8 +113,8 @@ module Spotlight
     end
 
     def resumption_oaipmh_harvests(token)
+      Delayed::Worker.logger.add(Logger::INFO, "trying to resume harvest token is #{token}")
       @oaipmh_harvests = client.list_records(resumption_token: token)
-     #Delayed::Worker.logger.add(Logger::INFO, "the resumtion OAI list is #{oaipmh_harvests}")
     end
 
     def complete_list_size
