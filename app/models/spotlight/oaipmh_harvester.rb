@@ -24,7 +24,6 @@ module Spotlight
 
         harvests.each do |record|
           harvest_item(record, job_tracker, job_progress)
-          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
         end
 
         if resumption_token.present?
