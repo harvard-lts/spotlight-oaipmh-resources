@@ -16,7 +16,11 @@ module Spotlight
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
-      Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
+      if !resumption_token.nil?
+        Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
+      else
+        Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
+      end
 
       update_progress_total(job_progress)
       until resumption_token.nil? && last_page_evaluated
@@ -30,14 +34,22 @@ module Spotlight
           Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-          Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
+          if !resumption_token.nil?
+            Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
+          else
+            Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
+          end
           update_progress_total(job_progress) # set size can change mid-harvest
         end
 
         # Log an update every 100 records
         if (job_progress.progress % 100).zero?
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
-          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token}")
+          if !resumption_token.nil?
+            Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
+          else
+            Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
+          end
         end
       end
       @sidecar_ids
