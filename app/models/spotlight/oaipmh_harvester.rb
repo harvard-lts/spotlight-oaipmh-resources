@@ -23,7 +23,6 @@ module Spotlight
       end
 
       update_progress_total(job_progress)
-      Delayed::Worker.logger.add(Logger::INFO, "Our total is #{job_progress.total}"
       until resumption_token.nil? && last_page_evaluated
         last_page_evaluated = true if resumption_token.nil? # we've reached the last page
 
@@ -40,12 +39,9 @@ module Spotlight
             Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
           else
             Delayed::Worker.logger.add(Logger::INFO, "didnt set one, nil resumption token")
-            Delayed::Worker.logger.add(Logger::INFO, "Our total is #{job_progress.total} and we're at #{job_progress.progress}"
-            if job_progress.progress != job_progress.total
-              while resumption_token.nil?
+            if (job_progress.progress != job_progress.total)
                 Delayed::Worker.logger.add(Logger::INFO, "need to set a token")
                 resumption_token = old_rt
-              end
             end
           end
           update_progress_total(job_progress) # set size can change mid-harvest
