@@ -44,11 +44,10 @@ module Spotlight
           else
             Delayed::Worker.logger.add(Logger::INFO, "resump didnt set one, nil resumption token")
             Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
-            for record in harvests
-              Delayed::Worker.logger.add(Logger::INFO, "resump #{record.metadata}")
-            end
+            Delayed::Worker.logger.add(Logger::INFO, "resump this si the harvest doc #{harvests.@doc}")
             if (job_progress.progress != job_progress.total)
               while job_progress.total == 0
+                Delayed::Worker.logger.add(Logger::INFO, "resump job progress was 0")
                 job_progress.total = complete_list_size
               end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
