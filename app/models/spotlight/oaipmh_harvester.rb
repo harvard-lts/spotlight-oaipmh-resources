@@ -46,6 +46,7 @@ module Spotlight
             Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
             for record in harvest
               Delayed::Worker.logger.add(Logger::INFO, "resump #{record.metadata}")
+            end
             if (job_progress.progress != job_progress.total)
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
