@@ -1,6 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
+require 'faraday_middleware'
 
 module Spotlight
   class OaipmhHarvester < Harvester
@@ -135,9 +136,14 @@ module Spotlight
         &.[]('completeListSize')
         &.to_i || 0
     end
-
+    
+    http_client = Faraday.new do |conn|
+        conn.request(:retry, max: 5, retry_statuses: 429)
+        conn.response(:follow_redirects, limit: 5)
+        conn.adapter :net_http
+    end
     def client
-      @client ||= OAI::Client.new(base_url)
+      @client ||= OAI::Client.new(base_url, http: http_client)
     end
 
     def oai_mods_converter
