@@ -34,7 +34,7 @@ module Spotlight
           Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
           old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
-          if harvests.empty?
+          if harvests.blank?
             Delayed::Worker.logger.add(Logger::INFO, "the harvest response was blank")
             harvests = resumption_oaipmh_harvests(resumption_token)
           end
