@@ -137,12 +137,12 @@ module Spotlight
         &.to_i || 0
     end
     
-    http_client = Faraday.new do |conn|
+    def client
+      http_client = Faraday.new do |conn|
         conn.request(:retry, max: 5, retry_statuses: 429)
         conn.response(:follow_redirects, limit: 5)
         conn.adapter :net_http
-    end
-    def client
+      end
       @client ||= OAI::Client.new(base_url, http: http_client)
     end
 
