@@ -48,6 +48,9 @@ module Spotlight
               Delayed::Worker.logger.add(Logger::INFO, "resump #{record.metadata}")
             end
             if (job_progress.progress != job_progress.total)
+              while job_progress.total == 0
+                job_progress.total = complete_list_size
+              end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
               harvests = resumption_oaipmh_harvests(old_rt)
