@@ -34,7 +34,7 @@ module Spotlight
           Delayed::Worker.logger.add(Logger::INFO, "IN the setting of resumption token is #{resumption_token}")
           old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
-          if harvests.blank?
+          if harvests.empty?
             Delayed::Worker.logger.add(Logger::INFO, "the harvest response was blank")
             harvests = resumption_oaipmh_harvests(resumption_token)
           end
@@ -44,7 +44,7 @@ module Spotlight
           else
             Delayed::Worker.logger.add(Logger::INFO, "resump didnt set one, nil resumption token")
             Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
-            for record in harvest
+            for record in harvests
               Delayed::Worker.logger.add(Logger::INFO, "resump #{record.metadata}")
             end
             if (job_progress.progress != job_progress.total)
