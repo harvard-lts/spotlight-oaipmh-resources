@@ -37,7 +37,7 @@ module Spotlight
           harvests = resumption_oaipmh_harvests(resumption_token)
           if harvests.blank?
             Delayed::Worker.logger.add(Logger::INFO, "the harvest response was blank")
-            harvests = resumption_oaipmh_harvests(resumption_token)
+            #harvests = resumption_oaipmh_harvests(resumption_token)
           end
           resumption_token = harvests.resumption_token
           if !resumption_token.nil?
@@ -45,16 +45,16 @@ module Spotlight
           else
             Delayed::Worker.logger.add(Logger::INFO, "resump didnt set one, nil resumption token")
             Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
-            Delayed::Worker.logger.add(Logger::INFO, "resump this si the harvest doc #{harvests.@doc}")
+            #Delayed::Worker.logger.add(Logger::INFO, "resump this si the harvest doc #{harvests.@doc}")
             if (job_progress.progress != job_progress.total)
               while job_progress.total == 0
                 Delayed::Worker.logger.add(Logger::INFO, "resump job progress was 0")
-                job_progress.total = complete_list_size
+                #job_progress.total = complete_list_size
               end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
-              harvests = resumption_oaipmh_harvests(old_rt)
-              resumption_token = harvests.resumption_token
+              #harvests = resumption_oaipmh_harvests(old_rt)
+              #resumption_token = harvests.resumption_token
             end
           end
           update_progress_total(job_progress) # set size can change mid-harvest
