@@ -49,7 +49,7 @@ module Spotlight
             if (job_progress.progress != job_progress.total)
               while job_progress.total == 0
                 Delayed::Worker.logger.add(Logger::INFO, "resump job progress was 0")
-                #job_progress.total = complete_list_size
+                job_progress.total = complete_list_size
               end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
