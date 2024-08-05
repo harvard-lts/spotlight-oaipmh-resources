@@ -47,10 +47,6 @@ module Spotlight
             Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
             #Delayed::Worker.logger.add(Logger::INFO, "resump this si the harvest doc #{harvests.@doc}")
             if (job_progress.progress != job_progress.total)
-              while job_progress.total == 0
-                Delayed::Worker.logger.add(Logger::INFO, "resump job progress was 0")
-                update_progress_total(job_progress)
-              end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
               new_rt = old_rt.split(":")
@@ -59,7 +55,7 @@ module Spotlight
               harvests = resumption_oaipmh_harvests(resumption_token)
             end
           end
-          update_progress_total(job_progress) # set size can change mid-harvest
+          #update_progress_total(job_progress) # set size can change mid-harvest
         end
 
         # Log an update every 100 records
