@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    spotlight-oaipmh-resources (3.0.2)
+    spotlight-oaipmh-resources (3.0.4)
+      faraday_middleware
       mods
       oai
 
