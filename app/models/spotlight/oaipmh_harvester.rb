@@ -1,6 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
+require 'faraday_middleware'
 
 module Spotlight
   class OaipmhHarvester < Harvester
@@ -26,9 +27,21 @@ module Spotlight
         end
 
         if resumption_token.present?
+          old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-          update_progress_total(job_progress) # set size can change mid-harvest
+          if resumption_token.nil?
+            Delayed::Worker.logger.add(Logger::INFO, "resump didnt set one, nil resumption token")
+            Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
+            if (job_progress.progress != job_progress.total)
+              Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
+              Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
+              new_rt = old_rt.split(":")
+              new_rt[2] = new_rt[2].to_i + 10
+              resumption_token = new_rt.join(":")
+              harvests = resumption_oaipmh_harvests(resumption_token)
+            end
+          end
         end
 
         # Log an update every 100 records
@@ -84,9 +97,11 @@ module Spotlight
 
     def oaipmh_harvests
       @oaipmh_harvests = client.list_records(set: set, metadata_prefix: 'mods')
+      #Delayed::Worker.logger.add(Logger::INFO, "the ORIGINAL OAI list is #{oaipmh_harvests}")
     end
 
     def resumption_oaipmh_harvests(token)
+      Delayed::Worker.logger.add(Logger::INFO, "trying to resume harvest token is #{token}")
       @oaipmh_harvests = client.list_records(resumption_token: token)
     end
 
@@ -100,9 +115,14 @@ module Spotlight
         &.[]('completeListSize')
         &.to_i || 0
     end
-
+    
     def client
-      @client ||= OAI::Client.new(base_url)
+      http_client = Faraday.new do |conn|
+        conn.request(:retry, max: 5)
+        conn.response(:follow_redirects, limit: 5)
+        conn.adapter :net_http
+      end
+      @client ||= OAI::Client.new(base_url, http: http_client)
     end
 
     def oai_mods_converter
