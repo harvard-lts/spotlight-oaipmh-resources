@@ -139,7 +139,7 @@ module Spotlight
     
     def client
       http_client = Faraday.new do |conn|
-        conn.request(:retry, max: 5, retry_statuses: 429)
+        conn.request(:retry, max: 5)
         conn.response(:follow_redirects, limit: 5)
         conn.adapter :net_http
       end
