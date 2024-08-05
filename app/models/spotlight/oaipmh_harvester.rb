@@ -53,8 +53,10 @@ module Spotlight
               end
               Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
               Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
-              #harvests = resumption_oaipmh_harvests(old_rt)
-              #resumption_token = harvests.resumption_token
+              new_rt = old_rt.split(":")
+              new_rt[2] = new_rt[2].to_i + 10
+              resumption_token = new_rt.join(":")
+              harvests = resumption_oaipmh_harvests(resumption_token)
             end
           end
           update_progress_total(job_progress) # set size can change mid-harvest
