@@ -83,6 +83,7 @@ module Spotlight
     rescue Exception => e
       handle_item_harvest_error(e, parsed_oai_item, job_tracker)
       Delayed::Worker.logger.add(Logger::INFO, "resumption total post error is #{job_progress.total}")
+      job_progress&.increment
     end
 
     def oaipmh_harvests
