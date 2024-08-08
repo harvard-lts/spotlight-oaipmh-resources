@@ -17,11 +17,6 @@ module Spotlight
       harvests = oaipmh_harvests
       resumption_token = harvests.resumption_token
       last_page_evaluated = false
-      if !resumption_token.nil?
-        Delayed::Worker.logger.add(Logger::INFO, "UPDATED resumption token is #{resumption_token}")
-      else
-        Delayed::Worker.logger.add(Logger::INFO, "nil resumption token")
-      end
 
       update_progress_total(job_progress)
       until resumption_token.nil? && last_page_evaluated
@@ -86,6 +81,8 @@ module Spotlight
       job_progress&.increment
     rescue Exception => e
       handle_item_harvest_error(e, parsed_oai_item, job_tracker)
+      Delayed::Worker.logger.add(Logger::INFO, "reump the count after error is #{job_progress.total}")
+      Delayed::Worker.logger.add(Logger::INFO, "resump token post error is #{resumption_token}")
     end
 
     def oaipmh_harvests
