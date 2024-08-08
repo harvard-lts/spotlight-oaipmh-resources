@@ -30,18 +30,6 @@ module Spotlight
           old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-          if resumption_token.nil?
-            Delayed::Worker.logger.add(Logger::INFO, "resump didnt set one, nil resumption token")
-            Delayed::Worker.logger.add(Logger::INFO, "resump records we got back before nil")
-            if (job_progress.progress != job_progress.total)
-              Delayed::Worker.logger.add(Logger::INFO, "resumption progress is #{job_progress.progress}, total is #{job_progress.total}")
-              Delayed::Worker.logger.add(Logger::INFO, "resumption need to set a token")
-              new_rt = old_rt.split(":")
-              new_rt[2] = new_rt[2].to_i + 10
-              resumption_token = new_rt.join(":")
-              harvests = resumption_oaipmh_harvests(resumption_token)
-            end
-          end
         end
 
         # Log an update every 100 records
@@ -93,15 +81,15 @@ module Spotlight
       job_progress&.increment
     rescue Exception => e
       handle_item_harvest_error(e, parsed_oai_item, job_tracker)
+      Delayed::Worker.logger.add(Logger::INFO, "resumption total post error is #{job_progress.total}")
+      Delayed::Worker.logger.add(Logger::INFO, "resumption token post error is #{resumption_token }")
     end
 
     def oaipmh_harvests
       @oaipmh_harvests = client.list_records(set: set, metadata_prefix: 'mods')
-      #Delayed::Worker.logger.add(Logger::INFO, "the ORIGINAL OAI list is #{oaipmh_harvests}")
     end
 
     def resumption_oaipmh_harvests(token)
-      Delayed::Worker.logger.add(Logger::INFO, "trying to resume harvest token is #{token}")
       @oaipmh_harvests = client.list_records(resumption_token: token)
     end
 
