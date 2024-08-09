@@ -30,7 +30,6 @@ module Spotlight
           old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-          Delayed::Worker.logger.add(Logger::INFO, "resumption token is #{resumption_token }")
         end
 
         # Log an update every 100 records
@@ -83,7 +82,6 @@ module Spotlight
       job_progress&.increment
     rescue Exception => e
       handle_item_harvest_error(e, parsed_oai_item, job_tracker)
-      Delayed::Worker.logger.add(Logger::INFO, "resumption total post error is #{job_progress.total}")
       job_progress&.increment
     end
 
