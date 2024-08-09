@@ -38,6 +38,7 @@ module Spotlight
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end
+      job_progress.progress = job_progress.progress - self.total_errors
       @sidecar_ids
     end
 
