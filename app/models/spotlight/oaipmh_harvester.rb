@@ -1,6 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
+require 'faraday_middleware'
 
 module Spotlight
   class OaipmhHarvester < Harvester
@@ -26,9 +27,9 @@ module Spotlight
         end
 
         if resumption_token.present?
+          old_rt = resumption_token
           harvests = resumption_oaipmh_harvests(resumption_token)
           resumption_token = harvests.resumption_token
-          update_progress_total(job_progress) # set size can change mid-harvest
         end
 
         # Log an update every 100 records
@@ -36,6 +37,7 @@ module Spotlight
           job_tracker.append_log_entry(type: :info, exhibit: exhibit, message: "#{job_progress.progress} of #{job_progress.total} (#{self.total_errors} errors)")
         end
       end
+      job_progress.progress = job_progress.progress - self.total_errors
       @sidecar_ids
     end
 
@@ -80,6 +82,7 @@ module Spotlight
       job_progress&.increment
     rescue Exception => e
       handle_item_harvest_error(e, parsed_oai_item, job_tracker)
+      job_progress&.increment
     end
 
     def oaipmh_harvests
@@ -100,9 +103,14 @@ module Spotlight
         &.[]('completeListSize')
         &.to_i || 0
     end
-
+    
     def client
-      @client ||= OAI::Client.new(base_url)
+      http_client = Faraday.new do |conn|
+        conn.request(:retry, max: 5)
+        conn.response(:follow_redirects, limit: 5)
+        conn.adapter :net_http
+      end
+      @client ||= OAI::Client.new(base_url, http: http_client)
     end
 
     def oai_mods_converter
