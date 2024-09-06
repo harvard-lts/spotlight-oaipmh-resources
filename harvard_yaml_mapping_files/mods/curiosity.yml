@@ -1,3 +1,4 @@
+#  2024-09-04: Added new path for rights: relatedItem/accessCondition so Creative Commons license would appear for Forgotten Cities
 #  2024-07-17: Added permalink xpath for salt (VV)
 #  2024-07-01: Removed permalink xpath for dcp aka Harvard Digital Collections aka HDC (VV)
 #  2024-04-25: Added permalink xpath for kurdish (VV)
@@ -793,6 +794,7 @@
 - spotlight-field: rights_tesim
   mods:
       - path: accessCondition
+      - path: relatedItem/accessCondition
        
 - spotlight-field: record-id_tesim
   mods:
