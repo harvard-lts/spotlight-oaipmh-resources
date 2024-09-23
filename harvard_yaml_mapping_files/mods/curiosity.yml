@@ -1,3 +1,4 @@
+#  2024-09-23: Updated Soviet Pins title to Soviet and Post-Soviet Lapel Pins and added permalink for forgotten (VV)
 #  2024-09-04: Added new path for rights: relatedItem/accessCondition so Creative Commons license would appear for Forgotten Cities
 #  2024-07-17: Added permalink xpath for salt (VV)
 #  2024-07-01: Removed permalink xpath for dcp aka Harvard Digital Collections aka HDC (VV)
@@ -895,6 +896,10 @@
   xpath:
       - xpath-value: "//mods:url[@displayLabel='France in the Americas']"
 
+- spotlight-field: permalink-forgotten_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='The Forgotten Cities: Early Christian Architecture in Greater Syria']"
+
 - spotlight-field: permalink-ham_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Harvard Art Museums']"
@@ -961,7 +966,7 @@
 
 - spotlight-field: permalink-pins_tesim
   xpath:
-      - xpath-value: "//mods:url[@displayLabel='Soviet Pins']"
+      - xpath-value: "//mods:url[@displayLabel='Soviet and Post-Soviet Lapel Pins']"
 
 - spotlight-field: permalink-salt_tesim
   xpath:
