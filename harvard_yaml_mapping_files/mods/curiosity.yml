@@ -1,3 +1,4 @@
+#  2024-11-22: Added permalink for pickens (VV)
 #  2024-09-23: Updated Soviet Pins title to Soviet and Post-Soviet Lapel Pins and added permalink for forgotten (VV)
 #  2024-09-04: Added new path for rights: relatedItem/accessCondition so Creative Commons license would appear for Forgotten Cities
 #  2024-07-17: Added permalink xpath for salt (VV)
@@ -939,6 +940,10 @@
 - spotlight-field: permalink-medmss_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='Medieval & Renaissance Manuscripts']"
+
+- spotlight-field: permalink-pickens_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='Claude L. Pickens, Jr. Collection of Photographs: Muslims in China']"
 
 - spotlight-field: permalink-reading_tesim
   xpath:
