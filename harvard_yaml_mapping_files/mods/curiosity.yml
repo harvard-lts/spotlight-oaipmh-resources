@@ -1,3 +1,6 @@
+#  2025-01-17: Added "- xpath-value: "//mods:relatedItem[@type='constituent']/mods:name"" to creator-contributor_tesim 
+#              and "- xpath-value: "//mods:relatedItem[@type='constituent']/mods:name/mods:namePart"" creators-contributors_ssim 
+#              for Forgotten Cities to pull in Jacoby, Thomas J.
 #  2024-11-22: Added permalink for pickens (VV)
 #  2024-09-23: Updated Soviet Pins title to Soviet and Post-Soviet Lapel Pins and added permalink for forgotten (VV)
 #  2024-09-04: Added new path for rights: relatedItem/accessCondition so Creative Commons license would appear for Forgotten Cities
@@ -206,6 +209,12 @@
   xpath:
     - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name/mods:namePart"
     - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
+    - xpath-value: "//mods:relatedItem[@type='constituent']/mods:name" 
+    # The line above should include /mods:namePart like the others, but it was added for Forgotten Cities
+    # to pull in Jacoby, Thomas J. which has two roles: creator and photographer. 
+    # When /mods:namePart is added, neither role displays. Without it both roles appear but it displays as:
+    # "Jacoby, Thomas J. creator photographer" which is not ideal but better than none.
+    # Not sure if it is possible to display as: Jacoby, Thomas J., creator, photographer
         
 - spotlight-field: creators-contributors_ssim
   multivalue-breaks: "yes"
@@ -218,6 +227,7 @@
   xpath:
     - xpath-value: "/mods:mods/mods:relatedItem[@type='host']/mods:name/mods:namePart"
     - xpath-value: "//mods:relatedItem[@displayLabel='collection']/mods:name/mods:namePart"
+    - xpath-value: "//mods:relatedItem[@type='constituent']/mods:name/mods:namePart"
 
 # added journal-title_ssim to enable serial title facet for BTA. It will pick up the title of the immediate parent of the component. Test before implementing in a collection with Alma records.
 - spotlight-field: journal-title_ssim
