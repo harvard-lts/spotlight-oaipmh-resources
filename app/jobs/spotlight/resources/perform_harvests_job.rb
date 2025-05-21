@@ -13,7 +13,7 @@ module Spotlight::Resources
 
     PERCENT_FAILURE_THRESHOLD = 0.5
 
-    attr_reader :harvester, :exhibit, :set, :filter, :user, :sidecar_ids, :total_errors, :total_warnings
+    attr_reader :harvester, :exhibit, :harvester_set, :filter, :user, :sidecar_ids, :total_errors, :total_warnings
 
     with_job_tracking(
       resource: ->(job) { job.arguments.first.dig(:harvester) },
@@ -24,7 +24,7 @@ module Spotlight::Resources
     def perform(harvester:, user: nil)
       @harvester = harvester
       @exhibit = harvester.exhibit
-      @set = harvester.set
+      @harvester_set = harvester.set
       @filter = harvester.filter
       @user = user
       @sidecar_ids = harvester.harvest_items(job_tracker: job_tracker, job_progress: progress)
@@ -40,7 +40,7 @@ module Spotlight::Resources
     end
 
     after_perform do |job|
-      Delayed::Worker.logger.add(Logger::INFO, "Harvesting complete for set #{job.set}")
+      Delayed::Worker.logger.add(Logger::INFO, "Harvesting complete for set #{job.harvester_set}")
       Spotlight::HarvestingCompleteMailer.harvest_set_completed(job).deliver_now if job.user.present?
     end
   end
