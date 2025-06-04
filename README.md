@@ -22,53 +22,21 @@ Then run the engine's generator:
 
     $ rails generate spotlight:oaipmh:resources:install
 
-Furthermore, this engine runs the harvester as a background job.  To set up the job, install delayed_job
+Furthermore, this engine runs the harvester as a background job.  To set up the job, install solid_queue
 in your Spotlight Gemfile:
-```ruby 
-gem 'delayed_job_active_record'
-gem 'daemons'
-```
-
-Add the delayed_job initializer to config/initializers/delayed_job.rb.  Here is a sample delayed_job.rb file:
-```ruby 
-Delayed::Worker.logger = Logger.new(File.join(Rails.root, 'log', 'delayed_job.log'))
-
-if Rails.env.production? || Rails.env.development?
-  # Check if the delayed job process is already running
-  # Since the process loads the rails env, this file will be called over and over
-  # Unless this condition is set.
-  pids = Dir.glob(Rails.root.join('tmp','pids','*'))
-
-  system "echo \"delayed_jobs INIT check\""
-  if pids.select{|pid| pid.start_with?(Rails.root.join('tmp','pids','delayed_job.init').to_s)}.empty?
-
-    f = File.open(Rails.root.join('tmp','pids','delayed_job.init'), "w+") 
-    f.write(".")
-    f.close
-    system "echo \"Restatring delayed_jobs...\""
-    system "RAILS_ENV=#{Rails.env} #{Rails.root.join('bin','delayed_job')} stop"
-    system "RAILS_ENV=#{Rails.env} #{Rails.root.join('bin','delayed_job')} start"
-    system "echo \"delayed_jobs Workers Initiated\""
-    File.delete(Rails.root.join('tmp','pids','delayed_job.init')) if File.exist?(Rails.root.join('tmp','pids','delayed_job.init'))
-
-  else
-    system "echo \"delayed_jobs is running\""
-  end
-end
+```ruby
+gem 'solid_queue'
+gem 'mission_control-jobs'
 ```
 
 Make a tmp/pids directory:
 
 	$ mkdir tmp/pids
 
-Generate the binstub and delayed_record migration
-
-	$ bundle exec rails generate delayed_job:active_record
-
-Add the delayed_job as the queue_adapter to config/application.rb:
+Add the solid_queue as the queue_adapter to config/application.rb:
 
 ```ruby
-config.active_job.queue_adapter = :delayed_job
+config.active_job.queue_adapter = :solid_queue
 ```
 
 ## Usage
@@ -80,6 +48,3 @@ This gem adds a new "Repository Item" form to your Spotlight application. This f
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/harvard-library/spotlight-oaipmh-resources.
-
-
-

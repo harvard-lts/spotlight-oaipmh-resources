@@ -23,9 +23,9 @@ module Spotlight
 
     def handle_item_harvest_error(error, parsed_item, job_tracker = nil)
       error_msg = parsed_item.id + ' did not index successfully:'
-      Delayed::Worker.logger.add(Logger::ERROR, error_msg)
-      Delayed::Worker.logger.add(Logger::ERROR, error.message)
-      Delayed::Worker.logger.add(Logger::ERROR, error.backtrace)
+      Rails.logger.error(error_msg)
+      Rails.logger.error(error.message)
+      Rails.logger.error(error.backtrace)
       if job_tracker.present?
         job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error_msg)
         job_tracker.append_log_entry(type: :error, exhibit: exhibit, message: error.message)
