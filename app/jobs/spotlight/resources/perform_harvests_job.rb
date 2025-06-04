@@ -40,7 +40,7 @@ module Spotlight::Resources
     end
 
     after_perform do |job|
-      Delayed::Worker.logger.add(Logger::INFO, "Harvesting complete for set #{job.harvester_set}")
+      Rails.logger.info("Harvesting complete for set #{job.harvester_set}")
       Spotlight::HarvestingCompleteMailer.harvest_set_completed(job).deliver_now if job.user.present?
     end
   end

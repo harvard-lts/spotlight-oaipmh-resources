@@ -1,3 +1,4 @@
+#  2025-05-23: Added permalink for cte (VV)
 #  2025-01-17: Added "- xpath-value: "//mods:relatedItem[@type='constituent']/mods:name"" to creator-contributor_tesim 
 #              and "- xpath-value: "//mods:relatedItem[@type='constituent']/mods:name/mods:namePart"" creators-contributors_ssim 
 #              for Forgotten Cities to pull in Jacoby, Thomas J.
@@ -886,6 +887,10 @@
 - spotlight-field: permalink-crimes_tesim
   xpath:
       - xpath-value: "//mods:url[@displayLabel='English Crime and Execution Broadsides']"
+
+- spotlight-field: permalink-cte_tesim
+  xpath:
+      - xpath-value: "//mods:url[@displayLabel='The Cuban Teachers Expedition of 1900']"
 
 - spotlight-field: permalink-currency_tesim
   xpath:
