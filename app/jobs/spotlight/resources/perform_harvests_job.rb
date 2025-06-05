@@ -42,6 +42,7 @@ module Spotlight::Resources
     after_perform do |job|
       Rails.logger.info("Harvesting complete for set #{job.harvester_set}")
       Spotlight::HarvestingCompleteMailer.harvest_set_completed(job).deliver_now if job.user.present?
+      Rails.logger.info("Sent an email about status of #{job.harvester_set}")
     end
   end
 end
