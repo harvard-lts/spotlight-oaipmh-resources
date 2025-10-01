@@ -4,6 +4,7 @@ PATH
     spotlight-oaipmh-resources (3.0.5)
       faraday
       faraday-net_http
+      faraday-retry
       mods
       oai
 
@@ -570,6 +571,7 @@ DEPENDENCIES
   engine_cart
   factory_girl_rails
   faraday-net_http
+  faraday-retry
   libxml-ruby
   mods
   oai

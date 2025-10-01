@@ -1,6 +1,8 @@
 require 'oai'
 require 'net/http'
 require 'uri'
+require 'faraday'
+require 'faraday-retry'
 require 'faraday-net_http'
 
 module Spotlight

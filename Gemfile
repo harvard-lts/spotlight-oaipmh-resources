@@ -41,4 +41,5 @@ else
 end
 # END ENGINE_CART BLOCK
 gem 'faraday-net_http'
+gem 'faraday-retry'
 gem 'blacklight-spotlight'
