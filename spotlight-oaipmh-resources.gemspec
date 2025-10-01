@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'oai'
   s.add_dependency 'mods'
   s.add_dependency 'faraday'
-  s.add_dependency 'faraday-httpclient'
+  s.add_dependency 'faraday-net_http'
   s.add_development_dependency "bundler"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec-rails"

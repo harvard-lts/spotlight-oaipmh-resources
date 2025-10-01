@@ -1,7 +1,7 @@
 require 'oai'
 require 'net/http'
 require 'uri'
-require 'faraday/httpclient'
+require 'faraday-net_http'
 
 module Spotlight
   class OaipmhHarvester < Harvester
