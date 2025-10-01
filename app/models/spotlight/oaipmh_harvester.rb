@@ -2,7 +2,7 @@ require 'oai'
 require 'net/http'
 require 'uri'
 require 'faraday'
-require 'faraday-retry'
+require 'faraday/retry'
 require 'faraday-net_http'
 
 module Spotlight
@@ -106,9 +106,17 @@ module Spotlight
         &.to_i || 0
     end
     
+
     def client
+      retry_options = {
+        max: 5,
+        interval: 0.05,
+        interval_randomness: 0.5,
+        backoff_factor: 2
+      }
+
       http_client = Faraday.new do |conn|
-        conn.request(:retry, max: 5)
+        conn.request(:retry, retry_options)
         conn.response(:follow_redirects, limit: 5)
         conn.adapter :net_http
       end
