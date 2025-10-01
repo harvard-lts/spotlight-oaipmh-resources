@@ -34,11 +34,12 @@ else
   when /^4.2/
     gem 'responders', '~> 2.0'
     gem 'sass-rails', '>= 5.0'
-    gem 'coffee-rails', '~> 4.1.0'
+    gem 'coffee-rails', '>= 4.1.0'
   when /^4.[01]/
     gem 'sass-rails', '< 5.0'
   end
 end
 # END ENGINE_CART BLOCK
-
+gem 'faraday-net_http'
+gem 'faraday-retry'
 gem 'blacklight-spotlight'
