@@ -105,14 +105,18 @@ module Spotlight::Resources
     end
 
     def process_images()
-      if @item_solr.key?('thumbnail_url_ssm') && @item_solr['thumbnail_url_ssm'].present? && !@item_solr['thumbnail_url_ssm'].eql?('null')
-        thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
-        thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
-        @item_solr['thumbnail_url_ssm'] =  thumburl
-        assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
-      end
+      # if @item_solr.key?('thumbnail_url_ssm') && @item_solr['thumbnail_url_ssm'].present? && !@item_solr['thumbnail_url_ssm'].eql?('null')
+      #   thumburl = fetch_ids_uri(@item_solr['thumbnail_url_ssm'])
+      #   thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
+      #   @item_solr['thumbnail_url_ssm'] =  thumburl
+      #   assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
+      # end
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
+        thumburl = fetch_ids_uri(@item_solr['full_image_url_ssm'])
+        thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
+        @item_solr['full_image_url_ssm'] =  thumburl
+        assign_item_sidecar_data('full_image_url_ssm', thumburl)
         full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
         assign_item_sidecar_data('full_image_url_ssm', full_url)
