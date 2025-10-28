@@ -113,11 +113,6 @@ module Spotlight::Resources
       end
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
-        thumburl = fetch_ids_uri(@item_solr['full_image_url_ssm'])
-        thumburl = transform_to_iiif_thumbnail(thumburl) if Spotlight::Oaipmh::Resources.use_iiif_images
-        @item_solr['full_image_url_ssm'] =  thumburl
-        assign_item_sidecar_data('full_image_url_ssm', thumburl)
-        
         full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
         assign_item_sidecar_data('full_image_url_ssm', full_url)
@@ -189,10 +184,6 @@ module Spotlight::Resources
       uri_str.strip!
 
       if uri_str.scan(/urn-3/i).size == 1
-        uri_str = uri_str.gsub(':THUMBNAIL', '')
-        if !uri_str.include? ":IMAGE"
-          uri_str = uri_str + ":IMAGE"
-        end
         response = Net::HTTP.get_response(URI.parse(uri_str))['location']
       elsif uri_str.include?('?')
         uri_str = uri_str.slice(0..(uri_str.index('?')-1))
