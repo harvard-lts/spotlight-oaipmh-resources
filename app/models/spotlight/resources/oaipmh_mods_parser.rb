@@ -118,8 +118,11 @@ module Spotlight::Resources
         assign_item_sidecar_data('full_image_url_ssm', full_url)
 
         manifest_url = transform_urls(@item_solr['full_image_url_ssm'], 'MANIFEST')
+        proxy_url = "/iiif/proxy?url=#{manifest_url}"
         @item_solr['manifest_url_ssm'] = manifest_url
+        @item_solr['iiif_manifest_url_ssi'] = proxy_url
         assign_item_sidecar_data('manifest_url_ssm', manifest_url)
+        assign_item_sidecar_data('iiif_manifest_url_ssi', proxy_url)
       end
     end
 

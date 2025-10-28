@@ -4,7 +4,7 @@ module Spotlight
   # batch upload
   class HarvestingCompleteMailer < ActionMailer::Base
     def harvest_set_completed(job)
-      @set = job.set
+      @set = job.harvester_set
       @exhibit = job.exhibit
       @total_errors = job.total_errors
       @total_warnings = job.total_warnings
