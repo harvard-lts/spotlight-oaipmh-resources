@@ -200,8 +200,8 @@ module Spotlight::Resources
       uri = uri.sub(%r|/view/|, '/iiif/')
       # Append iiif format (thumbnail version)
       thumbnail_size = Spotlight::Engine.config.featured_image_thumb_size&.[](0) || 300
-      uri = uri.gsub(/\/full\/\d*,\d*\/0\/default.jpg/, '')
-      uri += "/full/#{thumbnail_size},/0/native.jpg"
+      uri = uri.gsub(%r{/full/[^/]+/0/default\.jpg}, '')
+      uri += "/full/#{thumbnail_size},/0/default.jpg"
     end
 
     # Spotlight v3.3.0
