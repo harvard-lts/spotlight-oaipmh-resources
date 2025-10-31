@@ -1,0 +1,147 @@
+- spotlight-field: unique-id_tesim
+  solr-field:
+      - field-name: id
+
+- spotlight-field: title_tesim
+  solr-field:
+      - field-name: title_s
+
+- spotlight-field: full_title_tesim
+  solr-field:
+      - field-name: full_title_s
+
+- spotlight-field: full-id_tesim
+  solr-field:
+      - field-name: full_id_s
+
+- spotlight-field: date_ssim
+  solr-field:
+      - field-name: date_s
+
+- spotlight-field: date_tesim
+  solr-field:
+      - field-name: date_s
+
+- spotlight-field: text_tesim
+  solr-field:
+      - field-name: text_s
+
+- spotlight-field: page_tesim
+  solr-field:
+      - field-name: page_s
+
+- spotlight-field: manuscript_tesim
+  solr-field:
+      - field-name: manuscript_s
+
+- spotlight-field: notes_tesim
+  solr-field:
+      - field-name: notes_s
+
+- spotlight-field: textual-notes_tesim
+  solr-field:
+      - field-name: textual_notes_s
+
+- spotlight-field: recipient_ssim
+  solr-field:
+      - field-name: recipient_s
+
+- spotlight-field: recipient_tesim
+  solr-field:
+      - field-name: recipient_s
+
+- spotlight-field: publications_tesim
+  solr-field:
+      - field-name: publications_s
+
+- spotlight-field: year_ssim
+  solr-field:
+      - field-name: year_s
+
+- spotlight-field: year_tesim
+  solr-field:
+      - field-name: year_s
+
+- spotlight-field: set_tesim
+  solr-field:
+      - field-name: set_s
+
+- spotlight-field: fascicle_tesim
+  solr-field:
+      - field-name: fascicle_s
+
+- spotlight-field: numeral_tesim
+  solr-field:
+      - field-name: numeral_s
+
+- spotlight-field: additional-notes_tesim
+  solr-field:
+      - field-name: additional_notes_s
+
+- spotlight-field: packet_tesim
+  solr-field:
+      - field-name: packet_s
+
+- spotlight-field: edition-full-name_tesim
+  solr-field:
+      - field-name: edition_full_name_s
+
+- spotlight-field: edition-short-name_ssim
+  solr-field:
+      - field-name: edition_short_name_s
+
+- spotlight-field: edition-short-name_tesim
+  solr-field:
+      - field-name: edition_short_name_s
+
+- spotlight-field: edition-citation_tesim
+  solr-field:
+      - field-name: eds-citation_tesim
+
+- spotlight-field: edition-author_ssim
+  solr-field:
+      - field-name: edition_author_s
+
+- spotlight-field: edition-author_tesim
+  solr-field:
+      - field-name: edition_author_s
+
+- spotlight-field: edition-date_ssim
+  solr-field:
+      - field-name: edition_date_s
+
+- spotlight-field: edition-date_tesim
+  solr-field:
+      - field-name: edition_date_s
+
+- spotlight-field: edition-completeness_tesim
+  solr-field:
+      - field-name: edition_completeness_s
+
+- spotlight-field: repository_ssim
+  multivalue-breaks: "yes"
+  solr-field:
+      - field-name: repository_1_s
+      - field-name: repository_2_s
+
+- spotlight-field: repository_tesim
+  multivalue-breaks: "yes"
+  solr-field:
+      - field-name: repository_1_s
+      - field-name: repository_2_s
+
+- spotlight-field: thumbnail_url_ssm
+  solr-field:
+      - field-name: thumbnail_url_ssm
+
+- spotlight-field: full_image_url_ssm
+  solr-field:
+      - field-name: full_image_url_ssm
+
+- spotlight-field: manifest_url_ssm
+  solr-field:
+      - field-name: manifest_url_ssm
+
+- spotlight-field: iiif_manifest_url_ssi
+  solr-field:
+      - field-name: iiif_manifest_url_ssi
