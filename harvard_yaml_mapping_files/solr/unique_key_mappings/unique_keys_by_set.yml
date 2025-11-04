@@ -16,5 +16,5 @@ acat-courses:
   unique_key: _id
 acat-faculty:
   unique_key: _id
-eda_source:
+edadata:
   unique_key: id
