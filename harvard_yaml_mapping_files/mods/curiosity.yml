@@ -1,3 +1,7 @@
+#  2026-03-05: Switched series_tesim mapping from mods + subpaths to XPath selecting mods:relatedItem[@type='series']. The previous configuration attempted to  
+#              concatenate multiple subpaths but only the first matching nested value was captured and subsequent sibling elements were not included.
+#              The updated XPath approach selects the entire relatedItem node and each series is indexed as a single facet value when multiple series are present. 
+#              All sub-elements are now included. Insertion of a custom delimiter between individual components is not possible.
 #  2026-02-27: Added permalink for dorb (VV)
 #  2025-05-23: Added permalink for cte (VV)
 #  2025-01-17: Added "- xpath-value: "//mods:relatedItem[@type='constituent']/mods:name"" to creator-contributor_tesim 
@@ -166,27 +170,17 @@
 
 - spotlight-field: series_tesim
   multivalue-breaks: "yes"
-  mods:
-      - path: relatedItem
-        attribute: type
-        attribute-value: series      
-        delimiter: ". "
-        subpaths:
-          - subpath: name/namePart
-          - subpath: titleInfo/title
-          - subpath: titleInfo/partName
+  xpath:
+    - xpath-value: "//mods:relatedItem[@type='series']"
+      xpath-namespace-prefix: mods
+      xpath-namespace-def: "http://www.loc.gov/mods/v3"
 
 - spotlight-field: series_ssim
   multivalue-breaks: "yes"
-  mods:
-      - path: relatedItem
-        attribute: type
-        attribute-value: series      
-        delimiter: ". "
-        subpaths:
-          - subpath: name/namePart
-          - subpath: titleInfo/title
-          - subpath: titleInfo/partName
+  xpath:
+    - xpath-value: "//mods:relatedItem[@type='series']"
+      xpath-namespace-prefix: mods
+      xpath-namespace-def: "http://www.loc.gov/mods/v3"
 
 # - spotlight-field: archival-series_tesim
 #  xpath:
