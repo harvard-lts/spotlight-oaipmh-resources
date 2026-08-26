@@ -1,3 +1,4 @@
+#  2026-08-26: Updated shelf-location_tesim comment to indicate that we are now using this field for Picturing Prayer as well (VV)
 #  2026-03-05: Switched series_tesim mapping from mods + subpaths to XPath selecting mods:relatedItem[@type='series']. The previous configuration attempted to  
 #              concatenate multiple subpaths but only the first matching nested value was captured and subsequent sibling elements were not included.
 #              The updated XPath approach selects the entire relatedItem node and each series is indexed as a single facet value when multiple series are present. 
@@ -471,7 +472,7 @@
       - xpath-value: "//mods:relatedItem[@type='host']/mods:location/mods:physicalLocation[@type='repository']"
       - xpath-value: "//mods:relatedItem[@type='constituent']/mods:location/mods:physicalLocation[@type='repository']"
 
-# Added to pull in album number for Early Photography of Japan, currently not displayed in any other site        
+# Added to pull in album number for Early Photography of Japan and manuscript ID for Picturing Prayer, currently not displayed on other sites        
 - spotlight-field: shelf-location_tesim
   multivalue-breaks: "yes"
   mods: 
