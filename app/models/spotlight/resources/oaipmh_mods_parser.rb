@@ -183,8 +183,10 @@ module Spotlight::Resources
     def transform_to_iiif_thumbnail(uri_string)
       # take the urn and add the thumb behavior
       uri_string.strip!
+      #handle when there is buttons=y?
+      uri_string=uri_string.split("?")[0]
       thumbnail_size = Spotlight::Engine.config.featured_image_thumb_size&.[](0) || 300
-      uri_string += ":THUMB:" + thumbnail_size.to_s
+      uri_string += ":THUMBNAIL:" + thumbnail_size.to_s
     end
 
     # Spotlight v3.3.0
