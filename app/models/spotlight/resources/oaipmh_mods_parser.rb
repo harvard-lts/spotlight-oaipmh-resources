@@ -108,7 +108,8 @@ module Spotlight::Resources
 
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
         # first we make the thumbnail
-        thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
+        #thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
+        thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL') if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
         assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
 
