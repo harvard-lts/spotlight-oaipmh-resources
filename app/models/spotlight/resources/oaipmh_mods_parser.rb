@@ -109,16 +109,10 @@ module Spotlight::Resources
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
         # first we make the thumbnail
 
+        #then we do the full url
         full_url = transform_urls(@item_solr['full_image_url_ssm'], 'VIEW')
         @item_solr['full_image_url_ssm'] = full_url
         assign_item_sidecar_data('full_image_url_ssm', full_url)
-        
-        #thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
-        thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL') if Spotlight::Oaipmh::Resources.use_iiif_images
-        @item_solr['thumbnail_url_ssm'] =  thumburl
-        assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
-
-        #then we do the full url
 
         manifest_url = transform_urls(@item_solr['full_image_url_ssm'], 'MANIFEST')
         proxy_url = "/iiif/proxy?url=#{manifest_url}"
@@ -126,6 +120,11 @@ module Spotlight::Resources
         @item_solr['iiif_manifest_url_ssi'] = proxy_url
         assign_item_sidecar_data('manifest_url_ssm', manifest_url)
         assign_item_sidecar_data('iiif_manifest_url_ssi', proxy_url)
+
+        #thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
+        thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL') if Spotlight::Oaipmh::Resources.use_iiif_images
+        @item_solr['thumbnail_url_ssm'] =  thumburl
+        assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
       end
     end
 
