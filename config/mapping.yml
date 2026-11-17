@@ -153,11 +153,6 @@
       - path: note
         attribute: type
         attribute-value: funding
-- spotlight-field: thumbnail_url_ssm
-  mods:
-      - path: location/url
-        attribute: access
-        attribute-value: preview
 - spotlight-field: full_image_url_ssm
   mods:
       - path: location/url
