@@ -161,11 +161,6 @@
       - path: location/url
         attribute: access
         attribute-value: raw object
-- spotlight-field: thumbnail_url_ssm
-  mods:
-      - path: location/url
-        attribute: access
-        attribute-value: preview
 - spotlight-field: rights_tesim
   mods:
       - path: accessCondition
