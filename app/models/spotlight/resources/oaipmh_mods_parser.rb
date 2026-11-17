@@ -109,9 +109,6 @@ module Spotlight::Resources
       if(@item_solr['full_image_url_ssm'].present? && !@item_solr['full_image_url_ssm'].eql?('null') && !Spotlight::Oaipmh::Resources.download_full_image)
         # first we make the thumbnail
         #then we do the full url
-        full_url = transform_urls(@item_solr['full_image_url_ssm'].deep_dup, 'VIEW')
-        @item_solr['full_image_url_ssm'] = full_url
-        assign_item_sidecar_data('full_image_url_ssm', full_url)
         manifest_url = transform_urls(@item_solr['full_image_url_ssm'].deep_dup, 'MANIFEST')
         proxy_url = "/iiif/proxy?url=#{manifest_url}"
         @item_solr['manifest_url_ssm'] = manifest_url
@@ -124,6 +121,9 @@ module Spotlight::Resources
         @item_solr['thumbnail_url_ssm'] =  thumburl
         assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
 
+        full_url = transform_urls(@item_solr['full_image_url_ssm'].deep_dup, 'VIEW')
+        @item_solr['full_image_url_ssm'] = full_url
+        assign_item_sidecar_data('full_image_url_ssm', full_url)
       end
     end
 
