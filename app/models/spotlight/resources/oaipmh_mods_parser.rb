@@ -116,8 +116,7 @@ module Spotlight::Resources
         assign_item_sidecar_data('manifest_url_ssm', manifest_url)
         assign_item_sidecar_data('iiif_manifest_url_ssi', proxy_url)
 
-        #thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
-        thumburl = transform_urls(@item_solr['full_image_url_ssm'].deep_dup, 'THUMBNAIL') if Spotlight::Oaipmh::Resources.use_iiif_images
+        thumburl = transform_urls(@item_solr['full_image_url_ssm'], 'THUMBNAIL:800') if Spotlight::Oaipmh::Resources.use_iiif_images
         @item_solr['thumbnail_url_ssm'] =  thumburl
         assign_item_sidecar_data('thumbnail_url_ssm', thumburl)
 
